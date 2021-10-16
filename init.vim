@@ -369,13 +369,19 @@ func! CompileRunGcc()
 		" exec "!time ./%<"
 	elseif &filetype == 'cpp'
 		set splitbelow
-		exec "!g++ -std=c++11 % -Wall -o %<"
+		exec "!g++ -std=c++2a % -Wall -o %<"
 		:sp
 		:res -5
 		:term ./%<
 	elseif &filetype == 'java'
 		exec "!javac %"
 		exec "!time java %<"
+	elseif &filetype == 'rust'
+		set splitbelow
+		:sp
+		:res -5
+		exec "!rustc %"
+		:term ./%<
 	elseif &filetype == 'sh'
 		:!time bash %
 	elseif &filetype == 'python'
@@ -446,7 +452,7 @@ Plug 'pechorin/any-jump.vim'
 Plug 'liuchengxu/vista.vim'
 
 " Debugger
- Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-c --enable-python --enable-go'}
+ Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-c --force-enable-rust --enable-python --enable-go'}
 
 " Auto Complete   tmux 不会用
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -455,7 +461,7 @@ Plug 'tpope/vim-obsession'
 
 " Snippets
 " Plug 'SirVer/ultisnips'
-" Plug 'theniceboy/vim-snippets'
+Plug 'theniceboy/vim-snippets'
 
 
 
@@ -495,6 +501,13 @@ Plug 'golang/vscode-go'
 " Python
 "
 
+
+
+"Latex
+"
+"
+
+Plug 'lervag/vimtex'
 
 "" Plug 'tmhedberg/SimpylFold', { 'for' :['python', 'vim-plug'] }
 Plug 'Vimjas/vim-python-pep8-indent', { 'for' :['python', 'vim-plug'] }
@@ -712,6 +725,7 @@ nnoremap <LEADER>g= :GitGutterNextHunk<CR>
 " ===
 let g:coc_global_extensions = [
 	\ 'coc-css',
+	\ 'coc-texlab',
 	\ 'coc-diagnostic',
 	\ 'coc-docker',
 	\ 'coc-snippets',
@@ -1126,25 +1140,6 @@ let g:go_highlight_variable_declarations = 0
 let g:go_doc_keywordprg_enabled = 0
 
 
-" ===
-" === AutoFormat
-" ===
-noremap \f :FormatCode<CR>
-
-" augroup autoformat_settings
-" autocmd FileType bzl AutoFormatBuffer buildifier
-"autocmd FileType proto,javascript,arduino AutoFormatBuffer clang-format
-"autocmd FileType c,cpp AutoFormatBuffer clang-format
-" autocmd FileType dart AutoFormatBuffer dartfmt
-" autocmd FileType go AutoFormatBuffer gofmt
-" autocmd FileType gn AutoFormatBuffer gn
-"autocmd FileType html , css,sass,scss,less,json AutoFormatBuffer js-beautify
-"autocmd FileType java AutoFormatBuffer google-java-format
-"autocmd FileType python AutoFormatBuffer yapf
-" Alternative: autocmd FileType python AutoFormatBuffer autopep8
-" autocmd FileType rust AutoFormatBuffer rustfmt
-" autocmd FileType vue AutoFormatBuffer prettier
-augroup END
 
 
 " ===
@@ -1344,8 +1339,8 @@ command! -bang -nargs=* LoadVimSpectorJsonTemplate call fzf#run({
 			\   'sink': function('<sid>read_template_into_buffer')
 			\ })
 " noremap <leader>vs :tabe .vimspector.json<CR>:LoadVimSpectorJsonTemplate<CR>
-sign define vimspectorBP text=☛ texthl=Normal
-sign define vimspectorBPDisabled text=☞ texthl=Normal
+sign define vimspectorBP text= texthl=Normal
+sign define vimspectorBPDisabled text= texthl=Normal
 sign define vimspectorPC text=🔶 texthl=SpellBad
 
 

@@ -44,8 +44,9 @@
 		"typeParameter": "\uf728",
 		"unit": "\uf475",
 		"value": "\uf89f",
-		"variable": "\ue71b"
+		"rootvariable": "\ue71b"
 	},
+	"http.proxy": "https://127.0.0.1:20172",
 	"diagnostic.signOffset": 1,
 	"diagnostic.errorSign": "\uf467",
 	"diagnostic.warningSign": "\uf071",
@@ -63,7 +64,7 @@
 	"list.previousKeymap": "<C-k>",
 	"snippets.ultisnips.directories": [
 		"$HOME/.config/nvim/Ultisnips/",
-		"$HOME/.config/nvim/plugged/vim-snippets/UltiSnips/"
+		"$HOME/.config/nvim/plugged/friendly-snippets/snippets/"
 	],
 	"coc.preferences.formatOnSaveFiletypes": ["javascript","prettier", "typescript", "1html", "1css", "1json",  "1python", "vue", "svelte", "1c"],
 
@@ -149,6 +150,7 @@
 		"--style",
 		"{SPACES_AROUND_POWER_OPERATOR: True, SPACES_BEFORE_COMMENT: 1}"
 	],
+	"html.enable": true,
 	"html.format.enable": true,
 	"javascript.referencesCodeLens.enable": true,
 	"javascript.showUnused": true,
@@ -185,13 +187,12 @@
 			"command": "lua-lsp",
 			"filetypes": ["lua"]
 		},
-    "go": {
-      "command": "gopls",
-      "rootPatterns": ["go.mod"],
-      "trace.server": "verbose",
-      "filetypes": ["go"]
-    },
-
+		"go": {
+		  "command": "gopls",
+		  "rootPatterns": ["go.mod"],
+		  "trace.server": "verbose",
+		  "filetypes": ["go"]
+		},
 		"bash": {
 			"command": "bash-language-server",
 			"args": ["start"],
@@ -207,6 +208,11 @@
 					"directory": "/tmp/ccls"
 				}
 			}
-		}
+		},
+		  "rust": {
+		"command": "rust-analyzer",
+		"filetypes": ["rust"],
+		"rootPatterns": ["Cargo.toml"]
+	  }
 	}
 }
