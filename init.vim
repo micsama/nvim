@@ -508,6 +508,34 @@ Plug 'golang/vscode-go'
 "
 
 Plug 'lervag/vimtex'
+Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
+" ===
+" === vimtex
+" ===
+" let g:tex_flavor='latex'
+" let g:vimtex_view_method='zathura'
+" let g:vimtex_quickfix_mode=0
+" let g:vimtex_mappings_enabled = 0
+" set conceallevel=1
+" let g:tex_conceal='abdmg'
+" let g:vimtex_text_obj_enabled = 0
+" let g:Tex_CompileRule_pdf = 'xelatex -synctex=1 --interaction=nonstopmode $*'
+" let g:vimtex_motion_enabled = 0
+" let maplocalleader=' '
+let g:tex_flavor='latex'
+" let g:vimtex_view_method='mupdf'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=2
+let g:tex_conceal='abdmg'
+" 对中文的支持
+let g:Tex_CompileRule_pdf = 'xelatex -synctex=1 --interaction=nonstopmode $*'
+let g:vimtex_compiler_latexmk_engines = {'_':'-xelatex'}
+let g:vimtex_compiler_latexrun_engines ={'_':'xelatex'}
+
+
+
+
 
 "" Plug 'tmhedberg/SimpylFold', { 'for' :['python', 'vim-plug'] }
 Plug 'Vimjas/vim-python-pep8-indent', { 'for' :['python', 'vim-plug'] }
@@ -1071,15 +1099,6 @@ noremap <LEADER>gi :FzfGitignore<CR>
 
 
 
-" ===
-" === vimtex
-" ===
-"let g:vimtex_view_method = ''
-let g:vimtex_view_general_viewer = 'llpp'
-let g:vimtex_mappings_enabled = 0
-let g:vimtex_text_obj_enabled = 0
-let g:vimtex_motion_enabled = 0
-let maplocalleader=' '
 
 
 " ===
@@ -1471,13 +1490,14 @@ let g:agit_no_default_mappings = 1
 """"""
 "  leetcode.vim  "
 """"""
-Plug 'ianding1/leetcode.vim' , { 'for': ['go', 'vim-plug']}
+Plug 'ianding1/leetcode.vim' , { 'for': ['cpp','python','rust', 'vim-plug']}
 nnoremap <leader>ll :LeetCodeList<cr>
 nnoremap <leader>lt :LeetCodeTest<cr>
 nnoremap <leader>ls :LeetCodeSubmit<cr>
 nnoremap <leader>li :LeetCodeSignIn<cr>
 let g:leetcode_china = 1
-let g:leetcode_solution_filetype ='golang'
+let g:leetcode_browser = 'chrome'
+let g:leetcode_solution_filetype ='rust'
 
 " ===
 " === nvim-treesitter
