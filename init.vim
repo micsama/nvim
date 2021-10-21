@@ -1490,14 +1490,6 @@ let g:agit_no_default_mappings = 1
 """"""
 "  leetcode.vim  "
 """"""
-Plug 'ianding1/leetcode.vim' , { 'for': ['cpp','python','rust', 'vim-plug']}
-nnoremap <leader>ll :LeetCodeList<cr>
-nnoremap <leader>lt :LeetCodeTest<cr>
-nnoremap <leader>ls :LeetCodeSubmit<cr>
-nnoremap <leader>li :LeetCodeSignIn<cr>
-let g:leetcode_china = 1
-let g:leetcode_browser = 'chrome'
-let g:leetcode_solution_filetype ='rust'
 
 " ===
 " === nvim-treesitter
