@@ -240,7 +240,8 @@ noremap = n
 " ===
 " Use <space> + new arrow keys for moving the cursor around windows
 noremap <LEADER>w <C-w>w
-noremap <a-w> <C-w>w
+" noremap <a-w> <C-w>w
+noremap ∑ <C-w>w
 " noremap <LEADER>k <C-w>k
 " noremap <LEADER>j <C-w>j
 " noremap <LEADER>h <C-w>h
@@ -280,8 +281,12 @@ noremap <LEADER>q <C-w>j:q<CR>
 " Create a new tab with tu
 noremap N  :tabe<CR>
 " Move around tabs with tn and ti
-noremap <a-k> :+tabnext<CR>
-noremap <a-j> :-tabnext<CR>
+noremap ß :sw<CR>
+noremap ∆ :-tabnext<CR>
+noremap ˚ :+tabnext<CR>
+
+" noremap <a-k> :+tabnext<CR>
+" noremap <a-j> :-tabnext<CR>
 " Move the tabs with tmn and tmi
 noremap t- :-tabmove<CR>
 noremap t= :+tabmove<CR>
@@ -475,6 +480,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'cohama/agit.vim'
 
 " Autoformat
+noremap \f :FormatCode<cr>
 Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 
@@ -523,8 +529,8 @@ Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
 " let g:vimtex_motion_enabled = 0
 " let maplocalleader=' '
 let g:tex_flavor='latex'
-" let g:vimtex_view_method='mupdf'
-let g:vimtex_view_method='zathura'
+let g:vimtex_view_method='skim'
+" let g:vimtex_view_method='zathura'
 let g:vimtex_quickfix_mode=0
 set conceallevel=2
 let g:tex_conceal='abdmg'
@@ -852,6 +858,12 @@ let g:snips_author = 'MicSama'
 autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 
 Plug 'rafamadriz/friendly-snippets'
+
+
+"dash插件
+Plug 'camspiers/snap'
+Plug 'mrjones2014/dash.nvim', { 'do': 'make install' }
+
 
 
 " ===

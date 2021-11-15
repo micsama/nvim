@@ -144,7 +144,7 @@
 	"tslint.autoFixOnSave": false,
 	"python.autoComplete.addBrackets": true,
 	"python.jediEnabled": true,
-	"jedi.executable.command":"/usr/bin/jedi-language-server",
+	"jedi.executable.command":"jedi-language-server",
 	"python.formatting.provider": "yapf",
 	"python.formatting.yapfArgs": [
 		"--style",
