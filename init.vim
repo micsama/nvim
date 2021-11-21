@@ -466,7 +466,7 @@ Plug 'tpope/vim-obsession'
 
 " Snippets
 " Plug 'SirVer/ultisnips'
-Plug 'theniceboy/vim-snippets'
+" Plug 'theniceboy/vim-snippets'
 
 
 
@@ -859,6 +859,9 @@ autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 
 Plug 'rafamadriz/friendly-snippets'
 
+"FTP插件
+Plug 'eshion/vim-sync/'
+let g:sync_exe_filenames = '.sync.sh;'
 
 "dash插件
 Plug 'camspiers/snap'
@@ -869,7 +872,8 @@ Plug 'mrjones2014/dash.nvim', { 'do': 'make install' }
 " ===
 " === vim-instant-markdown
 " ===
-let g:instant_markdown_browser = "google-chrome-unstable --new-window"
+let g:instant_markdown_browser = "open -a Safari"
+" let g:instant_markdown_browser = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
 let g:instant_markdown_slow = 0
 let g:instant_markdown_autostart = 0
 let g:instant_markdown_port = 12373
