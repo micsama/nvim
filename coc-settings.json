@@ -46,7 +46,7 @@
 		"value": "\uf89f",
 		"rootvariable": "\ue71b"
 	},
-	"http.proxy": "https://127.0.0.1:20172",
+	"http.proxy": "http://127.0.0.1:20172",
 	"diagnostic.signOffset": 1,
 	"diagnostic.errorSign": "\uf467",
 	"diagnostic.warningSign": "\uf071",

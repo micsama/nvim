@@ -280,6 +280,7 @@ noremap <LEADER>q <C-w>j:q<CR>
 " ===
 " Create a new tab with tu
 noremap N  :tabe<CR>
+noremap †  :tabe<CR>
 " Move around tabs with tn and ti
 noremap ß :sw<CR>
 noremap ∆ :-tabnext<CR>
