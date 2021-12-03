@@ -458,7 +458,7 @@ Plug 'pechorin/any-jump.vim'
 Plug 'liuchengxu/vista.vim'
 
 " Debugger
- Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-c --force-enable-rust --enable-python --enable-go'}
+ Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-c --enable-rust --enable-python --enable-go'}
 
 " Auto Complete   tmux 不会用
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
