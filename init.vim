@@ -858,7 +858,6 @@ imap <C-e> <Plug>(coc-snippets-expand-jump)
 let g:snips_author = 'MicSama'
 autocmd BufRead,BufNewFile tsconfig.json set filetype=jsonc
 
-Plug 'rafamadriz/friendly-snippets'
 
 "FTP插件
 Plug 'eshion/vim-sync/'
