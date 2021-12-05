@@ -46,7 +46,7 @@
 		"value": "\uf89f",
 		"rootvariable": "\ue71b"
 	},
-	"http.proxy": "http://127.0.0.1:20172",
+	"http.proxy": "http://127.0.0.1:7890",
 	"diagnostic.signOffset": 1,
 	"diagnostic.errorSign": "\uf467",
 	"diagnostic.warningSign": "\uf071",
@@ -57,7 +57,7 @@
 	"diagnostic.refreshAfterSave": false,
 	"diagnostic.checkCurrentLine": true,
 	"diagnostic.virtualTextPrefix": " ❯❯❯ ",
-	"diagnostic.virtualText": true,
+	"diagnostic.virtualText": false,
 	"codeLens.enable": true,
 	"list.previewHighlightGroup": "Statement",
 	"list.nextKeymap": "<C-j>",
