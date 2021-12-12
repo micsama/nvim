@@ -107,8 +107,9 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " ===
 let g:neoterm_autoscroll = 1
 autocmd TermOpen term://* startinsert
-tnoremap <C-N> <C-\><C-N>
-tnoremap <C-O> <C-\><C-N><C-O>
+tnoremap <C-N> <C-\><C-N> 
+"open fish / zsh config_file
+tnoremap <C-O> <C-\><C-N><C-O>  
 let g:terminal_color_0  = '#000000'
 let g:terminal_color_1  = '#FF5555'
 let g:terminal_color_2  = '#50FA7B'
@@ -184,14 +185,14 @@ let g:lazygit_use_neovim_remote = 1 " for neovim-remote support
 " ===
 " New cursor movement (the default arrow keys are used for resizing windows)
 "     ^
-"     u
-" < n   i >
-"     e
+"     k
+" < h   l >
+"     j
 "     v
 "     选到行末
 noremap <silent> \v v$h
 
-" U/E keys for 5 times u/e (faster navigation)
+" K/J keys for 5 times k/j (faster navigation)
 noremap <silent> K 8k
 noremap <silent> J 8j
 
@@ -218,14 +219,14 @@ inoremap <C-a> <ESC>A
 " ===
 " === Command Mode Cursor Movement
 " ===
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <C-p> <Up>
-cnoremap <C-n> <Down>
-cnoremap <C-b> <Left>
-cnoremap <C-f> <Right>
-cnoremap <M-b> <S-Left>
-cnoremap <M-w> <S-Right>
+" cnoremap <C-a> <Home>
+" cnoremap <C-e> <End>
+" cnoremap <C-p> <Up>
+" cnoremap <C-n> <Down>
+" cnoremap <C-b> <Left>
+" cnoremap <C-f> <Right>
+" cnoremap <M-b> <S-Left>
+" cnoremap <M-w> <S-Right>
 
 
 " ===
@@ -250,6 +251,7 @@ noremap ∑ <C-w>w
 " Disable the default s key
 noremap s <nop>
 "dzmfg
+"todo
 " split the screens to up (horizontal), down (horizontal), left (vertical), right (vertical)
 noremap su :set nosplitbelow<CR>:split<CR>:set splitbelow<CR>
 noremap se :set splitbelow<CR>:split<CR>
@@ -279,7 +281,7 @@ noremap <LEADER>q <C-w>j:q<CR>
 " === Tab management
 " ===
 " Create a new tab with tu
-noremap N  :tabe<CR>
+" noremap N  :tabe<CR>
 noremap †  :tabe<CR>
 " Move around tabs with tn and ti
 noremap ß :sw<CR>
@@ -393,7 +395,7 @@ func! CompileRunGcc()
 	elseif &filetype == 'python'
 		set splitbelow
 		:sp
-		:term python3 %
+		:term python %
 	elseif &filetype == 'html'
 		silent! exec "!".g:mkdp_browser." % &"
 	elseif &filetype == 'markdown'
@@ -630,6 +632,9 @@ Plug 'lambdalisue/suda.vim' " do stuff like :sudowrite
 "Plug 'xolox/vim-session'
 "Plug 'xolox/vim-misc' " vim-session dep
 
+Plug 'dag/vim-fish'
+
+
 Plug 'kdheepak/lazygit.nvim'
 " Dependencies
 " Plug 'MarcWeber/vim-addon-mw-utils'
@@ -712,7 +717,7 @@ let g:onedark_color_overrides = {
 
 "color dracula
 "color one
-
+"micsama
 colorscheme onedark
 " colorscheme deus
 
@@ -810,7 +815,7 @@ nnoremap <LEADER>h :call Show_documentation()<CR>
 " let $NVIM_COC_LOG_LEVEL = 'debug'
 " let $NVIM_COC_LOG_FILE = '/Users/david/Desktop/log.txt'
 
-nnoremap <silent><nowait> <LEADER>d :CocList diagnostics<cr>
+" nnoremap <silent><nowait> <LEADER>d :CocList diagnostics<cr>
 nmap <silent> <LEADER>- <Plug>(coc-diagnostic-prev)
 nmap <silent> <LEADER>= <Plug>(coc-diagnostic-next)
 nnoremap <c-c> :CocCommand<CR>
