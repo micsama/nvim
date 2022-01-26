@@ -184,9 +184,11 @@
 	},
 	"languageserver": {
 		"lua": {
-			"command": "lua-lsp",
-			"filetypes": ["lua"]
-		},
+      "command": "/Users/dzmfg/.vscode/extensions/sumneko.lua-2.5.6/server/bin/lua-language-server",
+      "args": ["-E", "/Users/dzmfg/.vscode/extensions/sumneko.lua-2.5.6/server/bin/main.lua"],
+      "rootPatterns": [".git"],
+      "filetypes": ["lua"]
+    },
 		"go": {
 		  "command": "gopls",
 		  "rootPatterns": ["go.mod"],

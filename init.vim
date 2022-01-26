@@ -504,12 +504,12 @@ Plug 'yuezk/vim-js', { 'for': ['vim-plug', 'tmpl','php', 'html', 'javascript', '
 Plug 'rust-lang/rust.vim'
 
 " Go
-Plug 'fatih/vim-go' , { 'for': ['go', 'vim-plug'], 'tag': '*' }
+" Plug 'fatih/vim-go' , { 'for': ['go', 'vim-plug'], 'tag': '*' }
 Plug 'golang/vscode-go'
 
 " Python
 "
-
+Plug 'jupyter-vim/jupyter-vim'
 
 
 "Latex
