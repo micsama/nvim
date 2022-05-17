@@ -764,6 +764,7 @@ nnoremap <LEADER>g= :GitGutterNextHunk<CR>
 " === coc.nvim
 " ===
 let g:coc_global_extensions = [
+	\ 'coc-rust-analyzer',
 	\ 'coc-css',
 	\ 'coc-texlab',
 	\ 'coc-diagnostic',
@@ -869,8 +870,8 @@ Plug 'eshion/vim-sync/'
 let g:sync_exe_filenames = '.sync.sh;'
 
 "dash插件
-Plug 'camspiers/snap'
-Plug 'mrjones2014/dash.nvim', { 'do': 'make install' }
+" Plug 'camspiers/snap'
+" Plug 'mrjones2014/dash.nvim', { 'do': 'make install' }
 
 
 
