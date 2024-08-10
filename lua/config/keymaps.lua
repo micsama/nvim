@@ -10,14 +10,21 @@ local nmappings = {
     { from = "Q", to = ":q<CR>" },
 
     -- bind to quick scollor
-    { from = "H", to = "7h",    mode = mode_nv },
-    { from = "J", to = "7j",    mode = mode_nv },
-    { from = "K", to = "7k",    mode = mode_nv },
-    { from = "L", to = "7l",    mode = mode_nv },
+    -- { from = "H", to = "7h",    mode = mode_nv },
+    { from = "J", to = "5j",    mode = mode_nv },
+    { from = "K", to = "5k",    mode = mode_nv },
+    -- { from = "L", to = "7l",    mode = mode_nv },
 
     -- no shift ^_^
     { from = ";", to = ":",     mode = mode_nv },
     { from = "`", to = "~",     mode = mode_nv },
+
+    -- plugins
+    { from = "R",             to = ":Joshuto<CR>" },
+
+    -- comment
+    { from = "<c-/>", to = ":TComment<CR>",     mode = {"n","v","i"} },
+
 
 }
 
@@ -35,6 +42,7 @@ local function run_vim_shortcut(shortcut)
     local escaped_shortcut = vim.api.nvim_replace_termcodes(shortcut, true, false, true)
     vim.api.nvim_feedkeys(escaped_shortcut, 'n', true)
 end
+
 
 -- close win below
 vim.keymap.set("n", "<leader>q", function()
