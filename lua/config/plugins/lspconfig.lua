@@ -52,11 +52,12 @@ M.config = {
 
 			require('mason').setup({})
 			require('mason-lspconfig').setup({
-				'tsserver',
-				'eslint',
+				-- 'tsserver',
+				-- 'eslint',
 				'gopls',
 				'jsonls',
-				'html',
+				-- 'html',
+				"rust_analyzer",
 				'clangd',
 				'dockerls',
 				'ansiblels',
@@ -112,6 +113,7 @@ M.config = {
 
 			require 'lspconfig'.html.setup {}
 			require 'lspconfig'.pyright.setup {}
+			require("lspconfig").rust_analyzer.setup {}
 
 			require 'lspconfig'.tsserver.setup {
 				init_options = {
@@ -209,14 +211,14 @@ M.config = {
 					"css",
 					"graphql",
 					"html",
-					"javascript",
-					"javascriptreact",
+					-- "javascript",
+					-- "javascriptreact",
 					"json",
-					"less",
+					-- "less",
 					"markdown",
-					"scss",
-					"typescript",
-					"typescriptreact",
+					-- "scss",
+					-- "typescript",
+					-- "typescriptreact",
 					"yaml",
 				},
 				cli_options = {
@@ -363,3 +365,4 @@ F.configureKeybinds = function()
 end
 
 return M
+

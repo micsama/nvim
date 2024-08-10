@@ -1,6 +1,8 @@
 vim.o.termguicolors = true
 vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
 
+
+
 vim.o.ttyfast = true
 vim.o.autochdir = true
 vim.o.exrc = true
@@ -75,6 +77,9 @@ vim.g.terminal_color_11 = '#F4F99D'
 vim.g.terminal_color_12 = '#CAA9FA'
 vim.g.terminal_color_13 = '#FF92D0'
 vim.g.terminal_color_14 = '#9AEDFE'
+
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
 
 vim.cmd([[autocmd TermOpen term://* startinsert]])
 vim.cmd([[
