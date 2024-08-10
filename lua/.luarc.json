@@ -1,0 +1,14 @@
+{
+	"workspace": {
+		"library": [
+			"/Users/dzmfg/workspace/tools/nvim-macos-arm64/share/nvim/runtime/lua",
+			"/Users/dzmfg/workspace/tools/nvim-macos-arm64/share/nvim/runtime/lua/vim",
+			"/Users/dzmfg/workspace/tools/nvim-macos-arm64/share/nvim/runtime/lua/vim/lsp"
+		],
+		"maxPreload": 2000,
+		"preloadFileSize": 1000
+	},
+    "diagnostics.globals": [
+        "compileRun"
+    ]
+}
