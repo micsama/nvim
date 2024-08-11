@@ -1,5 +1,13 @@
 # nvim config for dzmfg
+
+## 着急
+1. 标签页,buffer以及切换
+2. joshuto
+3. python debug 
+4. 打开命令行
+
 ## 待办：
+
 1. markdown预览等事项
 2. jupyter。https://github.com/benlubas/molten-nvim
 3. 快捷键记录。
@@ -13,3 +21,5 @@
 3. rust配置
 4. python debug配置
 5. snippets 配置 
+
+

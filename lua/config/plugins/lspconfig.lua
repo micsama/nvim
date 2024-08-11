@@ -60,11 +60,12 @@ M.config = {
 				"rust_analyzer",
 				'clangd',
 				'dockerls',
-				'ansiblels',
-				'terraformls',
+				-- 'ansiblels',
+				-- 'terraformls',
 				'texlab',
 				'pyright',
-				'yamlls',
+				'harper_ls',
+				-- 'yamlls',
 			})
 
 			lsp.on_attach(function(client, bufnr)
@@ -365,4 +366,3 @@ F.configureKeybinds = function()
 end
 
 return M
-
