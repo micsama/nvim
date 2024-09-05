@@ -35,10 +35,11 @@ require("lazy").setup({
 	require("config.plugins.telescope"),
 	require("config.plugins.treesitter"),
 	require("config.plugins.colorscheme"),
-	require("config.plugins.joshuto"),
+	require("config.plugins.filemanager"),
 	-- 滚动条
 	require("config.plugins.scrollbar"),
 	require("config.plugins.snippets"),
+	require("config.plugins.python"),
 
 	require("config.plugins.git"),
 

@@ -11,3 +11,4 @@ _machine_specific.vim
 _local_plugins/
 
 lua/config/machine_specific.lua
+lazy-lock.json

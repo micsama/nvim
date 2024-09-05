@@ -60,11 +60,12 @@ M.config = {
 				"rust_analyzer",
 				'clangd',
 				'dockerls',
+				-- 'ruff',
 				-- 'ansiblels',
 				-- 'terraformls',
-				'texlab',
+				-- 'texlab',
+				-- 'harper_ls',
 				'pyright',
-				'harper_ls',
 				-- 'yamlls',
 			})
 
@@ -98,23 +99,29 @@ M.config = {
 				end,
 			})
 
-			lsp.format_on_save({
-				format_opts = {
-					-- async = false,
-					-- timeout_ms = 10000,
-				},
-			})
 
 
 			local lspconfig = require('lspconfig')
 
 			require("config.lsp.lua").setup(lspconfig, lsp)
 			require("config.lsp.json").setup(lspconfig, lsp)
-			require("config.lsp.html").setup(lspconfig, lsp)
 
-			require 'lspconfig'.html.setup {}
-			require 'lspconfig'.pyright.setup {}
+
+			-- require('lspconfig').ruff.setup({
+			-- 	init_options = {
+			-- 		settings = {
+			-- 			configuration = "~/.config/nvim/ruff.toml",
+			-- 			configurationPreference = "filesystemFirst",
+			-- 			lineLength = 100,
+			-- 			fixAll = true,
+			-- 			organizeImports = true,
+			-- 			showSyntaxErrors = true
+			-- 		}
+			-- 	}
+			-- })
 			require("lspconfig").rust_analyzer.setup {}
+			require("lspconfig").pyright.setup {}
+			require("lspconfig").jsonljsonls.setup {}
 
 			require 'lspconfig'.tsserver.setup {
 				init_options = {
@@ -260,6 +267,7 @@ M.config = {
 				dockerfile = true,
 				terraform = true,
 				tex = true,
+				python = true
 			}
 
 			vim.api.nvim_create_autocmd("BufWritePre", {

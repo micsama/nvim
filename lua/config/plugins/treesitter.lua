@@ -19,8 +19,8 @@ return {
 					"dockerfile",
 					"yaml",
 					"python",
-                    "toml",
-                    "rust"
+					"toml",
+					"rust"
 				},
 				highlight = {
 					enable = true,
@@ -65,3 +65,4 @@ return {
 		end
 	},
 }
+

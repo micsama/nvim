@@ -1,31 +1,41 @@
 vim.g.mapleader = " "
 
+local mode_all = { "n", "v", "i" }
 local mode_nv = { "n", "v" }
 local mode_v = { "v" }
 local mode_i = { "i" }
 
 local nmappings = {
 	-- quick save and quit
-	{ from = "S",            to = ":w<CR>",                                              mode = mode_nv },
-	{ from = "Q",            to = ":q<CR>",                                              mode = mode_nv },
+	{ from = "<a-s>",        to = ":w<CR>",                                              mode = mode_nvi },
+	{ from = "<S>",          to = ":w<CR>",                                              mode = mode_nv },
+	{ from = "<a-q>",        to = ":q<CR>",                                              mode = mode_nv },
 
-	-- bind to quick scollor
+	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
 	{ from = "K",            to = "5k",                                                  mode = mode_nv },
-	{ from = "Y",            to = "\"+y",                                                mode = mode_v },
+	{ from = "<a-y>",        to = "\"+y",                                                mode = mode_v },
 
 	-- no shift ^_^
 	{ from = ";",            to = ":",                                                   mode = mode_nv },
 	{ from = "`",            to = "~",                                                   mode = mode_nv },
 
-	-- plugins
-	{ from = "R",            to = ":Joshuto<CR>",                                        mode = mode_nv },
+	-- file manager & tab manager
+	{ from = "<a-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
+	{ from = "<a-j>",        to = ":-tabnext<CR>", },
+	{ from = "<a-k>",        to = ":+tabnext<CR>", },
+	{ from = "<a-b>",        to = ":Neotree toggle<CR>", },
+
 	{ from = "<leader>o",    to = "za" },
 
-
 	-- comment
-	{ from = "<c-/>",        to = ":TComment<CR>",                                       mode = { "n", "v", "i" } },
+	{ from = "<a-/>",        to = "<esc>:TComment<CR>",                                  mode = mode_nv },
+
+	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
+
+	-- quick open nvim config
+	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>",                   mode = "n" },
 
 
 	-- Window & splits
@@ -50,19 +60,6 @@ local nmappings = {
 	{ from = "sv",           to = "<C-w>t<C-w>H", },
 	{ from = "srh",          to = "<C-w>b<C-w>K", },
 	{ from = "srv",          to = "<C-w>b<C-w>H", },
-
-	-- Tab management
-	-- { from = "<c-t>",        to = ":tabe<CR>", },
-	{ from = "<c-T>",        to = ":tab split<CR>", },
-	{ from = "<c-j>",        to = ":-tabnext<CR>", },
-	{ from = "<c-h>",        to = ":-tabmove<CR>", },
-	-- { from = "<c-l>",        to = ":+tabmove<CR>", },
-
-
-
-
-
-
 }
 
 

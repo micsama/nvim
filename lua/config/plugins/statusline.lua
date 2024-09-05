@@ -31,8 +31,10 @@ return {
 				lualine_a = { 'filename' },
 				lualine_b = { 'branch', 'diff', 'diagnostics' },
 				lualine_c = {},
-				lualine_x = {},
-				lualine_y = { 'filesize', 'fileformat', 'filetype' },
+				lualine_x = {
+					"swenv",
+				},
+				lualine_y = { 'filesize', 'filetype' },
 				lualine_z = { 'location' }
 			},
 			inactive_sections = {
@@ -50,3 +52,4 @@ return {
 		}
 	end
 }
+

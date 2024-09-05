@@ -8,4 +8,3 @@ return {
 		vim.g.joshuto_floating_window_winblend = 0
 	end
 }
-
