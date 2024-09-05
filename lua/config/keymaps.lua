@@ -29,7 +29,8 @@ local nmappings = {
 	{ from = "<leader>o",    to = "za" },
 
 	-- comment
-	{ from = "<a-/>",        to = "<esc>:TComment<CR>",                                  mode = mode_nv },
+	{ from = "<a-/>",        to = "<esc>:TComment<CR>",                                  mode = "i" },
+	{ from = "<a-/>",        to = ":TComment<CR>",                                       mode = mode_nv },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },

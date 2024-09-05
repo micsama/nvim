@@ -32,6 +32,13 @@ end
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
+	-- require("config.plugins.language.lspconfignew").config,
+	require("config.plugins.language.lspconfig").config,
+	require("config.plugins.language.python"),
+	require("config.plugins.language.rust"),
+	require("config.plugins.language.markdown"),
+	require("config.plugins.language.debugger"),
+
 	require("config.plugins.telescope"),
 	require("config.plugins.treesitter"),
 	require("config.plugins.colorscheme"),
@@ -39,7 +46,6 @@ require("lazy").setup({
 	-- 滚动条
 	require("config.plugins.scrollbar"),
 	require("config.plugins.snippets"),
-	require("config.plugins.python"),
 
 	require("config.plugins.git"),
 
@@ -60,7 +66,6 @@ require("lazy").setup({
 
 	-- 等待继续配置
 	require("config.plugins.autocomplete").config,
-	require("config.plugins.lspconfig").config,
 
 	require("config.plugins.wilder"),
 	require("config.plugins.indent"),
@@ -73,11 +78,8 @@ require("lazy").setup({
 	require("config.plugins.surround"),
 	require("config.plugins.copilot"),
 
-	require("config.plugins.markdown"),
 	require("config.plugins.fun"),
-	require("config.plugins.debugger"),
 
 	require("config.plugins.wezterm"),
-	require("config.plugins.rust")
 
 })
