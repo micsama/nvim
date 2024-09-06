@@ -5,6 +5,14 @@ M.config = {
 		'VonHeikemen/lsp-zero.nvim', -- lsp-zero插件，用于简化Neovim中的LSP配置
 		branch = 'v4.x',
 		dependencies = {
+			{
+				"folke/trouble.nvim", -- Trouble插件，用于增强显示LSP诊断信息
+				config = function()
+					require("trouble").setup({
+						use_diagnostic_signs = true, -- 使用LSP的诊断符号
+					})
+				end,
+			},
 			{ 'neovim/nvim-lspconfig' }, -- LSP配置插件，用于配置各类语言服务器
 			{
 				'williamboman/mason.nvim', -- Mason插件，用于管理LSP、DAP等开发工具的安装
