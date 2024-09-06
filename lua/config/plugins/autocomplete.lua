@@ -1,46 +1,61 @@
 local has_words_before = function()
 	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+	return col ~= 0 and not vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s")
 end
+
 local limitStr = function(str)
-	if #str > 25 then
-		str = string.sub(str, 1, 22) .. "..."
-	end
-	return str
+	return #str > 25 and string.sub(str, 1, 22) .. "..." or str
 end
 
-local dartColonFirst = function(entry1, entry2)
-	if vim.bo.filetype ~= "dart" then
-		return nil
+local entry_comparator = function(entry1, entry2)
+	if vim.bo.filetype == "python" then
+		local entry1StartsWithUnderscore = string.sub(entry1.completion_item.label, 1, 1) == "_" and
+				entry1.source.name == 'nvim_lsp'
+		local entry2StartsWithUnderscore = string.sub(entry2.completion_item.label, 1, 1) == "_" and
+				entry2.source.name == 'nvim_lsp'
+		if entry1StartsWithUnderscore ~= entry2StartsWithUnderscore then
+			return not entry1StartsWithUnderscore
+		end
 	end
-	local entry1EndsWithColon = string.find(entry1.completion_item.label, ":") and entry1.source.name == 'nvim_lsp'
-	local entry2EndsWithColon = string.find(entry2.completion_item.label, ":") and entry2.source.name == 'nvim_lsp'
-	if entry1EndsWithColon and not entry2EndsWithColon then
-		return true
-	elseif not entry1EndsWithColon and entry2EndsWithColon then
-		return false
-	end
-	return nil
-end
-
-local dartColonFirst = function(entry1, entry2)
-	if vim.bo.filetype ~= "python" then
-		return nil
-	end
-	local entry1StartsWithUnderscore = string.sub(entry1.completion_item.label, 1, 1) == "_" and
-			entry1.source.name == 'nvim_lsp'
-	local entry2StartsWithUnderscore = string.sub(entry2.completion_item.label, 1, 1) == "_" and
-			entry2.source.name == 'nvim_lsp'
-	if entry1StartsWithUnderscore and not entry2StartsWithUnderscore then
-		return false
-	elseif not entry1StartsWithUnderscore and entry2StartsWithUnderscore then
-		return true
-	end
-	return nil
-end
-
-local label_comparator = function(entry1, entry2)
 	return entry1.completion_item.label < entry2.completion_item.label
+end
+
+local setCompHL = function()
+	local hl_settings = {
+		{ "CmpItemAbbrMatch",         "#82AAFF", "NONE",   true },
+		{ "CmpItemAbbrMatchFuzzy",    "#82AAFF", "NONE",   true },
+		{ "CmpItemAbbrDeprecated",    "#7E8294", "NONE",   nil, true },
+		{ "CmpItemMenu",              "#808080", "NONE",   nil, nil, true },
+		{ "CmpItemKindField",         "#2E3440", "#B5585F" },
+		{ "CmpItemKindProperty",      "#2E3440", "#B5585F" },
+		{ "CmpItemKindEvent",         "#2E3440", "#B5585F" },
+		{ "CmpItemKindText",          "#2E3440", "#9FBD73" },
+		{ "CmpItemKindEnum",          "#2E3440", "#9FBD73" },
+		{ "CmpItemKindKeyword",       "#2E3440", "#9FBD73" },
+		{ "CmpItemKindConstant",      "#2E3440", "#D4BB6C" },
+		{ "CmpItemKindConstructor",   "#2E3440", "#D4BB6C" },
+		{ "CmpItemKindReference",     "#2E3440", "#D4BB6C" },
+		{ "CmpItemKindFunction",      "#2E3440", "#A377BF" },
+		{ "CmpItemKindStruct",        "#2E3440", "#A377BF" },
+		{ "CmpItemKindClass",         "#2E3440", "#A377BF" },
+		{ "CmpItemKindModule",        "#2E3440", "#A377BF" },
+		{ "CmpItemKindOperator",      "#2E3440", "#A377BF" },
+		{ "CmpItemKindVariable",      "#2E3440", "#cccccc" },
+		{ "CmpItemKindFile",          "#2E3440", "#7E8294" },
+		{ "CmpItemKindUnit",          "#2E3440", "#D4A959" },
+		{ "CmpItemKindSnippet",       "#2E3440", "#D4A959" },
+		{ "CmpItemKindFolder",        "#2E3440", "#D4A959" },
+		{ "CmpItemKindMethod",        "#2E3440", "#6C8ED4" },
+		{ "CmpItemKindValue",         "#2E3440", "#6C8ED4" },
+		{ "CmpItemKindEnumMember",    "#2E3440", "#6C8ED4" },
+		{ "CmpItemKindInterface",     "#2E3440", "#58B5A8" },
+		{ "CmpItemKindColor",         "#2E3440", "#58B5A8" },
+		{ "CmpItemKindTypeParameter", "#2E3440", "#58B5A8" },
+	}
+
+	for _, hl in ipairs(hl_settings) do
+		vim.api.nvim_set_hl(0, hl[1], { fg = hl[2], bg = hl[3], bold = hl[4], strikethrough = hl[5], italic = hl[6] })
+	end
 end
 
 local M = {}
@@ -53,109 +68,36 @@ M.config = {
 		"hrsh7th/cmp-nvim-lsp",
 		"hrsh7th/cmp-nvim-lua",
 		"hrsh7th/cmp-calc",
-		-- "andersevenrud/cmp-tmux",
 		{
 			"onsails/lspkind.nvim",
 			lazy = false,
-			config = function()
-				require("lspkind").init()
-			end
+			config = function() require("lspkind").init() end
 		},
 		{
 			"quangnguyen30192/cmp-nvim-ultisnips",
-			config = function()
-				-- optional call to setup (see customization section)
-				require("cmp_nvim_ultisnips").setup {}
-			end,
-		}
-		-- "L3MON4D3/LuaSnip",
+			config = function() require("cmp_nvim_ultisnips").setup() end,
+		},
 	},
 }
 
-local setCompHL = function()
-	local fgdark = "#2E3440"
-
-	vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { fg = "#82AAFF", bg = "NONE", bold = true })
-	vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#82AAFF", bg = "NONE", bold = true })
-	vim.api.nvim_set_hl(0, "CmpItemAbbrDeprecated", { fg = "#7E8294", bg = "NONE", strikethrough = true })
-
-	vim.api.nvim_set_hl(0, "CmpItemMenu", { fg = "#808080", bg = "NONE", italic = true })
-	vim.api.nvim_set_hl(0, "CmpItemKindField", { fg = fgdark, bg = "#B5585F" })
-	vim.api.nvim_set_hl(0, "CmpItemKindProperty", { fg = fgdark, bg = "#B5585F" })
-	vim.api.nvim_set_hl(0, "CmpItemKindEvent", { fg = fgdark, bg = "#B5585F" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindText", { fg = fgdark, bg = "#9FBD73" })
-	vim.api.nvim_set_hl(0, "CmpItemKindEnum", { fg = fgdark, bg = "#9FBD73" })
-	vim.api.nvim_set_hl(0, "CmpItemKindKeyword", { fg = fgdark, bg = "#9FBD73" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindConstant", { fg = fgdark, bg = "#D4BB6C" })
-	vim.api.nvim_set_hl(0, "CmpItemKindConstructor", { fg = fgdark, bg = "#D4BB6C" })
-	vim.api.nvim_set_hl(0, "CmpItemKindReference", { fg = fgdark, bg = "#D4BB6C" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindFunction", { fg = fgdark, bg = "#A377BF" })
-	vim.api.nvim_set_hl(0, "CmpItemKindStruct", { fg = fgdark, bg = "#A377BF" })
-	vim.api.nvim_set_hl(0, "CmpItemKindClass", { fg = fgdark, bg = "#A377BF" })
-	vim.api.nvim_set_hl(0, "CmpItemKindModule", { fg = fgdark, bg = "#A377BF" })
-	vim.api.nvim_set_hl(0, "CmpItemKindOperator", { fg = fgdark, bg = "#A377BF" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindVariable", { fg = fgdark, bg = "#cccccc" })
-	vim.api.nvim_set_hl(0, "CmpItemKindFile", { fg = fgdark, bg = "#7E8294" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindUnit", { fg = fgdark, bg = "#D4A959" })
-	vim.api.nvim_set_hl(0, "CmpItemKindSnippet", { fg = fgdark, bg = "#D4A959" })
-	vim.api.nvim_set_hl(0, "CmpItemKindFolder", { fg = fgdark, bg = "#D4A959" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindMethod", { fg = fgdark, bg = "#6C8ED4" })
-	vim.api.nvim_set_hl(0, "CmpItemKindValue", { fg = fgdark, bg = "#6C8ED4" })
-	vim.api.nvim_set_hl(0, "CmpItemKindEnumMember", { fg = fgdark, bg = "#6C8ED4" })
-
-	vim.api.nvim_set_hl(0, "CmpItemKindInterface", { fg = fgdark, bg = "#58B5A8" })
-	vim.api.nvim_set_hl(0, "CmpItemKindColor", { fg = fgdark, bg = "#58B5A8" })
-	vim.api.nvim_set_hl(0, "CmpItemKindTypeParameter", { fg = fgdark, bg = "#58B5A8" })
-end
-
-local moveCursorBeforeComma = function()
-	if vim.bo.filetype ~= "dart" then
-		return
-	end
-	vim.defer_fn(function()
-		local line = vim.api.nvim_get_current_line()
-		local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-		local char = line:sub(col - 2, col)
-		if char == ": ," then
-			vim.api.nvim_win_set_cursor(0, { row, col - 1 })
-		end
-	end, 100)
-end
-
 M.configfunc = function()
-	local lspkind = require("lspkind")
-	vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
 	local cmp = require("cmp")
+	local lspkind = require("lspkind")
 	local cmp_ultisnips_mappings = require("cmp_nvim_ultisnips.mappings")
-	-- local luasnip = require("luasnip")
 
 	setCompHL()
 	cmp.setup({
 		preselect = cmp.PreselectMode.None,
 		snippet = {
-			expand = function(args)
-				-- luasnip.lsp_expand(args.body)
-				vim.fn["UltiSnips#Anon"](args.body)
-			end,
+			expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end,
 		},
 		window = {
-			completion = {
-				-- winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,Search:None",
-				col_offset = -3,
-				side_padding = 0,
-			},
+			completion = { col_offset = -3, side_padding = 0 },
 			documentation = cmp.config.window.bordered(),
 		},
 		sorting = {
 			comparators = {
-				-- label_comparator,
-				dartColonFirst,
+				entry_comparator,
 				cmp.config.compare.offset,
 				cmp.config.compare.exact,
 				cmp.config.compare.score,
@@ -168,14 +110,9 @@ M.configfunc = function()
 			maxwidth = 60,
 			maxheight = 10,
 			format = function(entry, vim_item)
-				local kind = lspkind.cmp_format({
-					mode = "symbol_text",
-					symbol_map = { Codeium = "", },
-				})(entry, vim_item)
-				local strings = vim.split(kind.kind, "%s", { trimempty = true })
-				kind.kind = " " .. (strings[1] or "") .. " "
+				local kind = lspkind.cmp_format({ mode = "symbol_text", symbol_map = { Codeium = "" } })(entry, vim_item)
+				kind.kind = " " .. (vim.split(kind.kind, "%s", { trimempty = true })[1] or "") .. " "
 				kind.menu = limitStr(entry:get_completion_item().detail or "")
-
 				return kind
 			end,
 		},
@@ -186,22 +123,16 @@ M.configfunc = function()
 			{ name = "path" },
 			{ name = "nvim_lua" },
 			{ name = "calc" },
-			-- { name = "luasnip" },
-			-- { name = 'tmux',    option = { all_panes = true, } },  -- this is kinda slow
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<C-o>'] = cmp.mapping.complete(),
 			["<c-e>"] = cmp.mapping(
-				function()
-					cmp_ultisnips_mappings.compose { "expand", "jump_forwards" } (function() end)
-				end,
-				{ "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
+				function() cmp_ultisnips_mappings.compose { "expand", "jump_forwards" } (function() end) end,
+				{ "i", "s" }
 			),
 			["<c-n>"] = cmp.mapping(
-				function(fallback)
-					cmp_ultisnips_mappings.jump_backwards(fallback)
-				end,
-				{ "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
+				function(fallback) cmp_ultisnips_mappings.jump_backwards(fallback) end,
+				{ "i", "s" }
 			),
 			['<c-f>'] = cmp.mapping({
 				i = function(fallback)
@@ -224,10 +155,8 @@ M.configfunc = function()
 				i = function(fallback)
 					if cmp.visible() then
 						cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-						moveCursorBeforeComma()
 					elseif has_words_before() then
 						cmp.complete()
-						moveCursorBeforeComma()
 					else
 						fallback()
 					end
@@ -237,7 +166,6 @@ M.configfunc = function()
 				i = function(fallback)
 					if cmp.visible() then
 						cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-						moveCursorBeforeComma()
 					else
 						fallback()
 					end
@@ -246,7 +174,6 @@ M.configfunc = function()
 		}),
 	})
 end
-
 
 return M
 
