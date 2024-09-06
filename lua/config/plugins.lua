@@ -65,7 +65,7 @@ require("lazy").setup({
 	{ "dstein64/vim-startuptime" },
 
 	-- 等待继续配置
-	require("config.plugins.autocomplete").config,
+	-- require("config.plugins.autocomplete").config,
 
 	require("config.plugins.wilder"),
 	require("config.plugins.indent"),

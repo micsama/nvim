@@ -73,10 +73,6 @@ M.config = {
 			lazy = false,
 			config = function() require("lspkind").init() end
 		},
-		{
-			"quangnguyen30192/cmp-nvim-ultisnips",
-			config = function() require("cmp_nvim_ultisnips").setup() end,
-		},
 	},
 }
 
