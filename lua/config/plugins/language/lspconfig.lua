@@ -11,7 +11,7 @@ M.config = {
 	},
 	{
 		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v3.x',
+		branch = 'v4.x',
 		dependencies = {
 			{
 				"folke/trouble.nvim",
@@ -40,33 +40,25 @@ M.config = {
 			"folke/neodev.nvim",
 			"ray-x/lsp_signature.nvim",
 			"ldelossa/nvim-dap-projects",
-			"MunifTanjim/prettier.nvim",
 			-- "mjlbach/lsp_signature.nvim",
 			"airblade/vim-rooter",
 			"b0o/schemastore.nvim",
 		},
 
 		config = function()
-			local lsp = require('lsp-zero').preset({})
+			local lsp = require('lsp-zero')
 			M.lsp = lsp
 
 			require('mason').setup({})
 			require('mason-lspconfig').setup({
-				-- 'tsserver',
-				-- 'eslint',
-				'gopls',
+				-- 'gopls',
 				'jsonls',
-				-- 'html',
 				"rust_analyzer",
-				'clangd',
+				-- 'clangd',
 				'dockerls',
-				-- 'ruff',
-				-- 'ansiblels',
-				-- 'terraformls',
-				-- 'texlab',
-				-- 'harper_ls',
+				'ruff',
 				'pyright',
-				-- 'yamlls',
+				'yamlls',
 			})
 
 			lsp.on_attach(function(client, bufnr)
@@ -102,85 +94,43 @@ M.config = {
 
 
 			local lspconfig = require('lspconfig')
-
 			require("config.lsp.lua").setup(lspconfig, lsp)
 			require("config.lsp.json").setup(lspconfig, lsp)
-
-
-			-- require('lspconfig').ruff.setup({
-			-- 	init_options = {
-			-- 		settings = {
-			-- 			configuration = "~/.config/nvim/ruff.toml",
-			-- 			configurationPreference = "filesystemFirst",
-			-- 			lineLength = 100,
-			-- 			fixAll = true,
-			-- 			organizeImports = true,
-			-- 			showSyntaxErrors = true
-			-- 		}
-			-- 	}
-			-- })
-			require("lspconfig").rust_analyzer.setup {}
-			require("lspconfig").pyright.setup {}
-			require("lspconfig").jsonljsonls.setup {}
-
-			require 'lspconfig'.tsserver.setup {
-				init_options = {
-					plugins = {
-					},
-				},
-				filetypes = {
-					"javascript",
-					"typescript",
-				},
+			lspconfig.pyright.setup {
+				settings = {
+					python = {
+						pythonPath = "/opt/homebrew/Caskroom/miniforge/base/bin/python",
+						analysis = {
+							autoImportCompletions = false,
+							autoSearchPaths = true,
+							diagnosticMode = "openFilesOnly",
+							useLibraryCodeForTypes = true
+						}
+					}
+				}
 			}
 
-			require 'lspconfig'.terraformls.setup {}
+			lspconfig.ruff.setup({
+				init_options = {
+					settings = {
+						configuration = "~/.config/nvim/ruff.toml",
+						configurationPreference = "filesystemFirst",
+						lineLength = 100,
+						fixAll = true,
+						organizeImports = true,
+						showSyntaxErrors = true
+					}
+				}
+			})
+			lspconfig.rust_analyzer.setup {}
+			lspconfig.jsonls.setup {}
 			vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 				pattern = { "*.tf", "*.tfvars", "*.lua" },
 				callback = function()
 					vim.lsp.buf.format()
 				end,
 			})
-			require 'lspconfig'.yamlls.setup({
-				settings = {
-					redhat = {
-						telemetry = {
-							enabled = false
-						}
-					},
-					yaml = {
-						schemaStore = {
-							enable = false,
-							url = "",
-						},
-						-- schemas = require('schemastore').yaml.schemas(),
-						validate = false,
-						customTags = {
-							"!fn",
-							"!And",
-							"!If",
-							"!Not",
-							"!Equals",
-							"!Or",
-							"!FindInMap sequence",
-							"!Base64",
-							"!Cidr",
-							"!Ref",
-							"!Sub",
-							"!GetAtt",
-							"!GetAZs",
-							"!ImportValue",
-							"!Select",
-							"!Split",
-							"!Join sequence"
-						}
-					},
-				}
-			})
 
-			require 'lspconfig'.gopls.setup {}
-
-			lsp.setup()
 
 
 			-- Neovim hasn't added foldingRange to default capabilities, users must add it manually
@@ -211,61 +161,13 @@ M.config = {
 			F.configureDocAndSignature()
 			F.configureKeybinds()
 
-			local prettier = require("prettier")
-
-			prettier.setup({
-				bin = 'prettierd',
-				filetypes = {
-					"css",
-					"graphql",
-					"html",
-					-- "javascript",
-					-- "javascriptreact",
-					"json",
-					-- "less",
-					"markdown",
-					-- "scss",
-					-- "typescript",
-					-- "typescriptreact",
-					"yaml",
-				},
-				cli_options = {
-					arrow_parens = "always",
-					bracket_spacing = true,
-					bracket_same_line = false,
-					embedded_language_formatting = "auto",
-					end_of_line = "lf",
-					html_whitespace_sensitivity = "css",
-					-- jsx_bracket_same_line = false,
-					jsx_single_quote = false,
-					print_width = 80,
-					prose_wrap = "preserve",
-					quote_props = "as-needed",
-					semi = true,
-					single_attribute_per_line = false,
-					single_quote = false,
-					tab_width = 2,
-					trailing_comma = "es5",
-					use_tabs = false,
-					vue_indent_script_and_style = false,
-				},
-			})
-
 			local format_on_save_filetypes = {
-				dart = true,
 				json = true,
 				go = true,
 				lua = true,
-				html = true,
-				javascript = true,
-				typescript = true,
-				typescriptreact = true,
 				c = true,
 				cpp = true,
-				objc = true,
-				objcpp = true,
 				dockerfile = true,
-				terraform = true,
 				tex = true,
 				python = true
 			}
@@ -280,6 +182,7 @@ M.config = {
 					end
 				end,
 			})
+			lsp.setup()
 		end
 	},
 }

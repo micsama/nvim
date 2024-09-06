@@ -32,8 +32,8 @@ end
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
-	-- require("config.plugins.language.lspconfignew").config,
-	require("config.plugins.language.lspconfig").config,
+	require("config.plugins.language.lspconfignew").config,
+	-- require("config.plugins.language.lspconfig").config,
 	require("config.plugins.language.python"),
 	require("config.plugins.language.rust"),
 	require("config.plugins.language.markdown"),

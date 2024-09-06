@@ -1,13 +1,5 @@
 local M = {}
 
--- Helper function to determine if we should add a semicolon
-local function should_add_semicolon(filetype)
-	local semicolon_filetypes = {
-		"javascript", "typescript", "java", "c", "cpp", "php", "dart"
-	}
-	return vim.tbl_contains(semicolon_filetypes, filetype)
-end
-
 -- Helper function to find the start of the current argument
 local function find_argument_start(line, col)
 	local start = col
@@ -55,12 +47,10 @@ function M.ctrlu()
 	local line = vim.api.nvim_get_current_line()
 	local _, col = unpack(vim.api.nvim_win_get_cursor(0))
 	col = col + 1 -- Convert to 1-based index
-	local filetype = vim.bo.filetype
 
 	-- Case 1: Cursor at the end of the line
 	if col > #line then
-		local suffix = "(" .. (should_add_semicolon(filetype) and ");" or ")")
-		vim.api.nvim_set_current_line(line .. suffix)
+		vim.api.nvim_set_current_line(line .. "()")
 		vim.api.nvim_win_set_cursor(0, { vim.fn.line('.'), #line + 1 })
 		return
 	end
@@ -89,3 +79,4 @@ function M.ctrlu()
 end
 
 return M
+
