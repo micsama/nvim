@@ -53,7 +53,7 @@ require("lazy").setup({
 	require("config.plugins.fun"),
 
 	-- 语言支持与配置
-	require("config.plugins.language.lspconfig").config,
+	require("config.plugins.language.lspconfig"),
 	require("config.plugins.language.python"),
 	require("config.plugins.language.rust"),
 	require("config.plugins.language.markdown"),

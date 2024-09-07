@@ -1,7 +1,6 @@
 -- lsp_config.lua
-local M = {}
 
-M.config = {
+local config = {
 	{
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v4.x',
@@ -204,4 +203,4 @@ M.config = {
 	},
 }
 
-return M
+return config
