@@ -30,56 +30,63 @@ for _, v in ipairs(lazy_keys) do
 end
 
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { noremap = true })
+-- Visual and Passive Enhancements: 被动以及美化插件
+local visual_and_passive_enhancements = {
+	require("config.plugins.treesitter"),
+	require("config.plugins.colorscheme"),
+	require("config.plugins.scrollbar"),
+	require("config.plugins.statusline"),
+	require("config.plugins.winbar"),
+	require("config.plugins.indent"),
+	require("config.plugins.notify"),
+	require("config.plugins.tabline"),
+	require("config.plugins.surround"),
+}
 
-require("lazy").setup({
+-- Active Editor Tools: 编辑器主动功能插件
+local active_editor_tools = {
+	require("config.plugins.telescope"),
+	require("config.plugins.filemanager"),
+	require("config.plugins.editor"),
+	require("config.plugins.comment"),
+	require("config.plugins.project"),
+	require("config.plugins.window-management"),
+	require("config.plugins.yank"),
+	require("config.plugins.search"),
+	require("config.plugins.undo"),
+	require("config.plugins.fun"),
+	require("config.plugins.wezterm"),
+}
+
+-- Language and LSP Support: LSP插件
+local language_and_lsp_support = {
 	require("config.plugins.language.lspconfig").config,
-	require("config.plugins.autocomplete").config,
-
 	require("config.plugins.language.python"),
 	require("config.plugins.language.rust"),
 	require("config.plugins.language.markdown"),
 	require("config.plugins.language.debugger"),
+}
 
-	require("config.plugins.telescope"),
-	require("config.plugins.treesitter"),
-	require("config.plugins.colorscheme"),
-	require("config.plugins.filemanager"),
-	-- 滚动条
-	require("config.plugins.scrollbar"),
+-- Completion and Snippet Plugins: 补全等插件
+local completion_and_snippet_plugins = {
+	require("config.plugins.autocomplete").config,
 	require("config.plugins.snippets"),
-
-	require("config.plugins.git"),
-
-	require("config.plugins.winbar"),
-	require("config.plugins.notify"),
-
-	require("config.plugins.statusline"),
-	require("config.plugins.editor"),
-
-	require("config.plugins.comment"),
-	require("config.plugins.project"),
-
-	require("config.plugins.window-management"),
-	require("config.plugins.yank"),
-
-	require("config.plugins.tex"),
-	{ "dstein64/vim-startuptime" },
-
-	-- 等待继续配置
-
-	require("config.plugins.wilder"),
-	require("config.plugins.indent"),
-
-
-	require("config.plugins.search"),
-	require("config.plugins.undo"),
-
-	require("config.plugins.tabline"),
-	require("config.plugins.surround"),
 	require("config.plugins.copilot"),
+}
 
-	require("config.plugins.fun"),
+-- Miscellaneous Plugins: 其他插件
+local miscellaneous_plugins = {
+	{ "dstein64/vim-startuptime" },
+	require("config.plugins.wilder"),
+	require("config.plugins.git"),
+	require("config.plugins.tex"),
+}
 
-	require("config.plugins.wezterm"),
-
+-- 集中加载所有分组的插件
+require("lazy").setup({
+	table.unpack(visual_and_passive_enhancements),
+	table.unpack(active_editor_tools),
+	table.unpack(language_and_lsp_support),
+	table.unpack(completion_and_snippet_plugins),
+	table.unpack(miscellaneous_plugins),
 })
