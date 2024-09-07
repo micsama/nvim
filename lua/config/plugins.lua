@@ -32,8 +32,9 @@ end
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { noremap = true })
 
 require("lazy").setup({
-	require("config.plugins.language.lspconfignew").config,
-	-- require("config.plugins.language.lspconfig").config,
+	require("config.plugins.language.lspconfig").config,
+	require("config.plugins.autocomplete").config,
+
 	require("config.plugins.language.python"),
 	require("config.plugins.language.rust"),
 	require("config.plugins.language.markdown"),
@@ -65,7 +66,6 @@ require("lazy").setup({
 	{ "dstein64/vim-startuptime" },
 
 	-- 等待继续配置
-	-- require("config.plugins.autocomplete").config,
 
 	require("config.plugins.wilder"),
 	require("config.plugins.indent"),

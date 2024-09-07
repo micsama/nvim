@@ -121,9 +121,16 @@ return {
 		config = function() require('ufo').setup() end
 	},
 	{
+		"keaising/im-select.nvim",
+		config = function()
+			require("im_select").setup({})
+		end,
+	},
+	{
 		"windwp/nvim-autopairs",
 		config = function()
 			require("nvim-autopairs").setup({})
 		end
 	},
 }
+

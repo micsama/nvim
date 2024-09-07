@@ -38,7 +38,8 @@ M.config = {
 			{ "quangnguyen30192/cmp-nvim-ultisnips" },
 			{ 'hrsh7th/cmp-nvim-lua' },
 			{ 'hrsh7th/cmp-calc' },
-			{ 'onsails/lspkind.nvim', },
+			{ 'onsails/lspkind.nvim',
+			},
 		},
 		config = function()
 			local lsp = require('lsp-zero')
@@ -47,7 +48,6 @@ M.config = {
 			require('mason-lspconfig').setup({
 				ensure_installed = { 'rust_analyzer', 'pyright', 'jsonls', 'lua_ls', 'ruff' },
 			})
-			config = function() require("lspkind").init() end
 
 			-- 提取通用的 on_attach 配置
 			local on_attach = function(client, bufnr)

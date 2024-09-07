@@ -12,7 +12,8 @@ local nmappings = {
 	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
 	{ from = "K",            to = "5k",                                                  mode = mode_nv },
-	{ from = "<a-y>",        to = "\"+y",                                                mode = mode_v },
+	{ from = "Y",            to = "\"+y",                                                mode = mode_v },
+	-- { from = "<a-y>",        to = "\"+y",                                                mode = mode_v },
 
 	-- no shift ^_^
 	{ from = ";",            to = ":",                                                   mode = mode_nv },
