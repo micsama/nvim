@@ -1,6 +1,6 @@
 return {
-	"nvim-treesitter/playground",
 	{
+		-- 语法树的支持，包括缩进等
 		"nvim-treesitter/nvim-treesitter",
 		lazy = false,
 		priority = 1000,
@@ -8,6 +8,7 @@ return {
 		config = function()
 			vim.opt.smartindent = false
 			require("nvim-treesitter.configs").setup({
+				modules = {},
 				auto_install = true,
 				sync_install = false,
 				ensure_installed = {
@@ -15,16 +16,18 @@ return {
 					"bash",
 					"go",
 					"lua",
-					"vim",
 					"dockerfile",
 					"yaml",
 					"python",
 					"toml",
 					"rust"
 				},
+				ignore_install = { "all" },
 				highlight = {
 					enable = true,
 					disable = {}, -- list of language that will be disabled
+					additional_vim_regex_highlighting = false,
+
 				},
 				indent = {
 					enable = true
@@ -32,15 +35,16 @@ return {
 				incremental_selection = {
 					enable = true,
 					keymaps = {
-						init_selection    = "<c-n>",
-						node_incremental  = "<c-n>",
-						node_decremental  = "<c-h>",
+						init_selection    = "<CR>",
+						node_incremental  = "<CR>",
+						node_decremental  = "<s-CR>",
 						scope_incremental = "<c-l>",
 					},
 				}
 			})
 		end
 	},
+	-- 在嵌套的函数中查看上下文
 	{
 		"nvim-treesitter/nvim-treesitter-context",
 		config = function()
@@ -65,4 +69,3 @@ return {
 		end
 	},
 }
-

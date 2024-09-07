@@ -68,12 +68,15 @@ local function limit_string(str)
 end
 
 -- 设置补全的主要功能
-local function setup_cmp(cmp, cmp_ultisnips_mappings, lspkind)
-	local mode_is = {}
+local function setup_cmp(cmp, lspkind)
+	-- snippet
+	require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
 	cmp.setup({
 		preselect = cmp.PreselectMode.None,
 		snippet = {
-			expand = function(args) vim.fn["UltiSnips#Anon"](args.body) end,
+			expand = function(args)
+				require("luasnip").lsp_expand(args.body)
+			end
 		},
 		window = {
 			completion = { col_offset = -3, side_padding = 0 },
@@ -103,29 +106,22 @@ local function setup_cmp(cmp, cmp_ultisnips_mappings, lspkind)
 			end,
 		},
 		sources = cmp.config.sources({
-			{ name = "nvim_lsp" },
-			{ name = "buffer" },
+			{ name = 'nvim_lsp', priority = 1000 },                                     -- 设置 LSP 的优先级最高
+			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } }, -- 代码片段的优先级
+			{ name = 'buffer',   priority = 500 },                                      -- 缓冲区补全
 		}, {
-			{ name = "path" },
-			{ name = "nvim_lua" },
-			{ name = "calc" },
+			{ name = 'path',     priority = 250 },                                      -- 路径补全
+			{ name = 'nvim_lua', priority = 700 },                                      -- Neovim Lua API 的补全
+			{ name = 'calc',     priority = 200 },                                      -- 计算补全
 		}),
 		mapping = cmp.mapping.preset.insert({
-			["<c-e>"] = cmp.mapping(
-				function() cmp_ultisnips_mappings.compose { "expand", "jump_forwards" } (function() end) end,
-				mode_is
-			),
-			["<c-n>"] = cmp.mapping(
-				function(fallback) cmp_ultisnips_mappings.jump_backwards(fallback) end,
-				mode_is
-			),
 			['<C-f>'] = cmp.mapping(function(fallback)
 				if cmp.visible() then
 					cmp.close() -- 当补全菜单可见时，关闭菜单
 				else
 					cmp.complete() -- 当补全菜单不可见时，显示补全菜单
 				end
-			end, mode_is), -- 可用于插入模式和选择模式
+			end),         -- 可用于插入模式和选择模式
 
 			['<CR>'] = cmp.mapping({
 				i = function(fallback)
@@ -168,18 +164,22 @@ M.config = {
 			{ 'hrsh7th/cmp-buffer' },
 			{ 'hrsh7th/cmp-path' },
 			{ 'hrsh7th/cmp-nvim-lsp' },
-			{ "quangnguyen30192/cmp-nvim-ultisnips" },
 			{ 'hrsh7th/cmp-nvim-lua' },
 			{ 'hrsh7th/cmp-calc' },
 			{ 'onsails/lspkind.nvim' },
+			{
+				"L3MON4D3/LuaSnip",
+				version = "v2.x",
+				build = "make install_jsregexp",
+				dependencies = { "rafamadriz/friendly-snippets", 'saadparwaiz1/cmp_luasnip' },
+			},
 		},
 		config = function()
 			local cmp = require("cmp")
 			local lspkind = require("lspkind")
-			local cmp_ultisnips_mappings = require("cmp_nvim_ultisnips.mappings")
 
 			set_highlights()
-			setup_cmp(cmp, cmp_ultisnips_mappings, lspkind)
+			setup_cmp(cmp, lspkind)
 		end,
 	},
 }

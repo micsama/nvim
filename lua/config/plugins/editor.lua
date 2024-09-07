@@ -66,7 +66,8 @@ return {
 		}
 	},
 	{ 'theniceboy/antovim', lazy = false, },
-	{ 'gcmt/wildfire.vim',  lazy = false, },
+	-- wildfire已经被treesitter替代了功能
+	-- { 'gcmt/wildfire.vim',  lazy = false, },
 	{
 		"fedepujol/move.nvim",
 		config = function()
@@ -133,4 +134,3 @@ return {
 		end
 	},
 }
-

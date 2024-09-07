@@ -4,7 +4,7 @@ local mode_v = { "v" }
 
 local nmappings = {
 	-- quick save and quit
-	{ from = "<a-s>",        to = ":w<CR>",                                              mode = mode_nvi },
+	{ from = "<a-s>",        to = ":w<CR>",                                              mode = { "n", "i", "v" } },
 	{ from = "<S>",          to = ":w<CR>",                                              mode = mode_nv },
 	{ from = "<a-q>",        to = ":q<CR>",                                              mode = mode_nv },
 	{ from = "<a-q>",        to = "<esc>:q<CR>",                                         mode = "i" },
