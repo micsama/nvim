@@ -34,7 +34,6 @@ local function on_attach(client, bufnr)
 			['go'] = vim.lsp.buf.type_definition,
 			['gr'] = vim.lsp.buf.references,
 			['<leader>rn'] = vim.lsp.buf.rename,
-			['<leader>aw'] = vim.lsp.buf.code_action,
 			['<leader>,'] = vim.lsp.buf.code_action,
 			['<leader>t'] = ':Trouble<CR>',
 			['<leader>-'] = function() vim.diagnostic.goto_prev({ float = true }) end,
@@ -98,6 +97,7 @@ local lsp_servers = {
 			python = {
 				pythonPath = "/opt/homebrew/Caskroom/miniforge/base/bin/python",
 				analysis = {
+					autoImportCompletions = false,
 					ignore = { '*' },
 				},
 			},
@@ -167,7 +167,8 @@ return {
 					'pyright',
 					'jsonls',
 					'lua_ls',
-					'ruff' },
+					'ruff'
+				},
 			})
 			-- 设置各个 LSP server
 			for server, config in pairs(lsp_servers) do

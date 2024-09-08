@@ -114,7 +114,7 @@ local function setup_cmp(cmp, lspkind)
 			{ name = 'calc',     priority = 200 },                                      -- 计算补全
 		}),
 		mapping = cmp.mapping.preset.insert({
-			['<C-f>'] = cmp.mapping(function(fallback)
+			['<c-g>'] = cmp.mapping(function(fallback)
 				if cmp.visible() then
 					cmp.close() -- 当补全菜单可见时，关闭菜单
 				else

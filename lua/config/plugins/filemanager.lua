@@ -9,7 +9,24 @@ return {
 			-- "3rd/image.nvim",           -- Optional image support in preview window: See `# Preview Mode` for more information
 		},
 		config = function()
-
+			require("neo-tree").setup({
+				source_selector = {
+					winbar = true,
+				},
+				filesystem = {
+					follow_current_file = { enable = true }, -- 当切换文件时，自动切换到文件所在的目录
+					hijack_netrw_behavior = "open_default", -- 使用neo-tree替代netrw
+					use_libuv_file_watcher = true,      -- 使用libuv来监听文件变化
+					cwd_target = {
+						in_terminal = true,               -- 使用当前终端工作目录
+						from_neotree = true,              -- 使用neo-tree窗口的工作目录
+					},
+					filtered_items = {
+						hide_dotfiles = false,
+						hide_gitignored = true,
+					},
+				},
+			})
 		end
 	},
 	{

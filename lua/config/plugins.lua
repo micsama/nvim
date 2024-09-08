@@ -32,13 +32,15 @@ end
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { noremap = true })
 require("lazy").setup({
 
-	-- 编辑器美化与界面优化
+	-- 编辑器美化与使用优化
 	require("config.plugins.colorscheme"),
+	require("config.plugins.wilder"),
 	require("config.plugins.treesitter"),
 	require("config.plugins.statusline"),
 	require("config.plugins.winbar"),
 	require("config.plugins.scrollbar"),
 	require("config.plugins.tabline"),
+	require("config.plugins.dash"),
 	require("config.plugins.indent"), --等官方修复bug
 
 	-- 增强编辑效率
@@ -67,8 +69,7 @@ require("lazy").setup({
 	require("config.plugins.git"),
 	require("config.plugins.yank"),
 	require("config.plugins.surround"),
-	require("config.plugins.wilder"),
-	require("config.plugins.tex"),
+	-- require("config.plugins.tex"),
 	require("config.plugins.wezterm"),
 	{ "dstein64/vim-startuptime" },
 })

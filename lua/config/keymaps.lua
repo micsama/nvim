@@ -40,7 +40,7 @@ local nmappings = {
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
 
 	-- quick open nvim config
-	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>",                   mode = "n" },
+	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>:Neotree ./<CR>",    mode = "n" },
 
 
 	-- Window & splits
