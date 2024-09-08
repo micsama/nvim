@@ -1,5 +1,4 @@
 -- cmp_config.lua
-local M = {}
 
 -- 设置高亮样式
 local function set_highlights()
@@ -157,7 +156,7 @@ local function setup_cmp(cmp, lspkind)
 end
 
 -- 主配置函数
-M.config = {
+return {
 	{
 		'hrsh7th/nvim-cmp',
 		dependencies = {
@@ -183,5 +182,3 @@ M.config = {
 		end,
 	},
 }
-
-return M

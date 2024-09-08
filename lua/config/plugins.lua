@@ -39,7 +39,7 @@ require("lazy").setup({
 	require("config.plugins.winbar"),
 	require("config.plugins.scrollbar"),
 	require("config.plugins.tabline"),
-	require("config.plugins.indent"),
+	require("config.plugins.indent"), --等官方修复bug
 
 	-- 增强编辑效率
 	require("config.plugins.filemanager"),
@@ -60,7 +60,7 @@ require("lazy").setup({
 	require("config.plugins.language.debugger"),
 
 	-- 自动补全
-	require("config.plugins.autocomplete").config,
+	require("config.plugins.autocomplete"),
 
 	-- 其他功能扩展
 	require("config.plugins.comment"),

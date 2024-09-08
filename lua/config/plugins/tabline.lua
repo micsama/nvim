@@ -15,6 +15,7 @@ return {
 				style = "icon",
 			},
 			show_buffer_close_icons = false,
+			color_icons = true,
 			show_close_icon = false,
 			enforce_regular_tabs = true,
 			show_duplicate_prefix = false,
@@ -24,3 +25,4 @@ return {
 		}
 	}
 }
+

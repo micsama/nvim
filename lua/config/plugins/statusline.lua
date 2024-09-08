@@ -7,11 +7,13 @@
 return {
 
 	"nvim-lualine/lualine.nvim",
+	dependencies = { 'nvim-tree/nvim-web-devicons' },
+
 	config = function()
 		require('lualine').setup {
 			options = {
 				icons_enabled = true,
-				theme = 'auto',
+				theme = 'autO',
 				component_separators = { left = '', right = '' },
 				section_separators = { left = '', right = '' },
 				disabled_filetypes = {
@@ -31,9 +33,7 @@ return {
 				lualine_a = { 'filename' },
 				lualine_b = { 'branch', 'diff', 'diagnostics' },
 				lualine_c = {},
-				lualine_x = {
-					"swenv",
-				},
+				lualine_x = {},
 				lualine_y = { 'filesize', 'filetype' },
 				lualine_z = { 'location' }
 			},
@@ -52,4 +52,3 @@ return {
 		}
 	end
 }
-

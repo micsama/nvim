@@ -8,27 +8,19 @@ return {
 					enable = true,
 					use_treesitter = true,
 					style = {
-						{ fg = "#806d9c" },
+						{ fg = "#b06d9c" },
 					},
-				},
-				indent = {
-					chars = { "│", "¦", "┆", "┊", },
-					use_treesitter = true,
 				},
 				blank = {
 					enable = true,
 				},
-				line_num = {
-					use_treesitter = true,
-				},
+				-- TODO 等官方修复bug
+				-- line_num = {
+				-- 	enable = true,
+				-- 	use_treesitter = true,
+				-- },
 			})
 		end
 	},
-	-- {
-	-- 	"lukas-reineke/indent-blankline.nvim",
-	-- 	opts = {
-	-- 		show_current_context = true,
-	-- 		show_current_context_start = false,
-	-- 	}
-	-- },
 }
+
