@@ -42,12 +42,12 @@ require("lazy").setup({
 	require("config.plugins.indent"), --等官方修复bug
 
 	-- 增强编辑效率
-	require("config.plugins.filemanager"),
+	require("config.plugins.filemanager"), --以后再看其他的功能
 	require("config.plugins.telescope"),
 	require("config.plugins.notify"),
 	require("config.plugins.editor"),
-	require("config.plugins.project"),
-	require("config.plugins.search"),
+	require("config.plugins.project"), --删除了vimrooter
+	require("config.plugins.search"), --回头再研究
 	require("config.plugins.undo"),
 	require("config.plugins.window-management"),
 	require("config.plugins.fun"),

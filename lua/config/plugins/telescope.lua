@@ -1,4 +1,3 @@
--- TODO 等待修改
 return {
 	{
 		'nvim-telescope/telescope.nvim',

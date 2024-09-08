@@ -11,7 +11,7 @@ endfun
 inoremap <c-u> <ESC>:call <SID>MakePair()<CR>
 ]])
 local ctrlu = require("plugin.ctrlu").ctrlu
-vim.keymap.set("i", "<C-u>", ctrlu, { silent = true })
+vim.keymap.set("i", "<C-9>", ctrlu, { silent = true })
 
 return {
 	{
@@ -23,8 +23,9 @@ return {
 					'treesitter',
 					'regex',
 				},
+				delay = 200,
 			})
-			vim.cmd("hi IlluminatedWordText guibg=#393E4D gui=none")
+			vim.cmd("hi IlluminatedWordText guibg=#393E4D gui=underline")
 		end
 	},
 	{
@@ -65,9 +66,6 @@ return {
 			buftypes = {},
 		}
 	},
-	{ 'theniceboy/antovim', lazy = false, },
-	-- wildfire已经被treesitter替代了功能
-	-- { 'gcmt/wildfire.vim',  lazy = false, },
 	{
 		"fedepujol/move.nvim",
 		config = function()
@@ -89,8 +87,8 @@ return {
 			})
 			local opts = { noremap = true, silent = true }
 			-- Normal-mode commands
-			vim.keymap.set('n', '<c-y>', ':MoveLine(1)<CR>', opts)
-			vim.keymap.set('n', '<c-l>', ':MoveLine(-1)<CR>', opts)
+			vim.keymap.set('n', '<c-j>', ':MoveLine(1)<CR>', opts)
+			vim.keymap.set('n', '<c-k>', ':MoveLine(-1)<CR>', opts)
 
 			-- Visual-mode commands
 			vim.keymap.set('v', '<c-e>', ':MoveBlock(1)<CR>', opts)
@@ -98,6 +96,7 @@ return {
 		end
 	},
 	{
+		-- TODO 不会用
 		"gbprod/substitute.nvim",
 		config = function()
 			local substitute = require("substitute")
@@ -117,6 +116,7 @@ return {
 		end
 	},
 	{
+		-- TODO 继续研究
 		"kevinhwang91/nvim-ufo",
 		dependencies = { "kevinhwang91/promise-async", },
 		config = function() require('ufo').setup() end
@@ -128,6 +128,7 @@ return {
 		end,
 	},
 	{
+		-- TODO 继续研究
 		"windwp/nvim-autopairs",
 		config = function()
 			require("nvim-autopairs").setup({})

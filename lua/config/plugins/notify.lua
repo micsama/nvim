@@ -37,3 +37,4 @@ return {
 		vim.keymap.set("n", "<LEADER>c;", notify.dismiss, opts);
 	end
 }
+

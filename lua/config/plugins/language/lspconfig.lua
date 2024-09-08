@@ -75,6 +75,7 @@ end
 
 -- 合并配置中的重复代码，设置 LSP server
 local lsp_servers = {
+	vimls = {},
 	rust_analyzer = {
 		settings = {
 			["rust-analyzer"] = {
@@ -140,7 +141,6 @@ return {
 			{ 'williamboman/mason-lspconfig.nvim' },
 			{ 'ray-x/lsp_signature.nvim' },
 			{ 'folke/neodev.nvim' },
-			{ 'airblade/vim-rooter' },
 			{
 				'j-hui/fidget.nvim',
 				tag = "legacy",
@@ -162,6 +162,7 @@ return {
 			require('mason').setup({})
 			require('mason-lspconfig').setup({
 				ensure_installed = {
+					'vimls',
 					'rust_analyzer',
 					'pyright',
 					'jsonls',
