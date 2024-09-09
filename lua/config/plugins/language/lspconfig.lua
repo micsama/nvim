@@ -57,7 +57,7 @@ local function format_on_save()
 	local format_on_save_filetypes = {
 		python = true,
 		rust = true,
-		json = true,
+		-- json = true,
 		lua = true
 	}
 	vim.api.nvim_create_autocmd("BufWritePre", {

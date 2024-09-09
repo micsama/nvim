@@ -107,7 +107,7 @@ local function setup_cmp(cmp, lspkind)
 		sources = cmp.config.sources({
 			{ name = 'nvim_lsp', priority = 1000 },                                     -- 设置 LSP 的优先级最高
 			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } }, -- 代码片段的优先级
-			{ name = 'buffer',   priority = 500 },                                      -- 缓冲区补全
+			{ name = 'buffer',   priority = 400 },                                      -- 缓冲区补全
 		}, {
 			{ name = 'path',     priority = 250 },                                      -- 路径补全
 			{ name = 'nvim_lua', priority = 700 },                                      -- Neovim Lua API 的补全
