@@ -62,6 +62,8 @@ local nmappings = {
 	{ from = "sv",           to = "<C-w>t<C-w>H", },
 	{ from = "srh",          to = "<C-w>b<C-w>K", },
 	{ from = "srv",          to = "<C-w>b<C-w>H", },
+	-- debug
+	{ from = "<f5>",         to = ":w<CR>:Telescope dap configurations<CR>" },
 }
 
 

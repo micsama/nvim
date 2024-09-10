@@ -5,6 +5,15 @@ return {
 		event = { "WinNew" },
 	},
 	{
+		's1n7ax/nvim-window-picker',
+		name = 'window-picker',
+		event = 'VeryLazy',
+		version = '2.*',
+		config = function()
+			require 'window-picker'.setup()
+		end,
+	},
+	{
 		"nyngwang/NeoZoom.lua",
 		config = function()
 			vim.keymap.set('n', '<a-f>', ':NeoZoomToggle<CR>', { silent = true, nowait = true })
