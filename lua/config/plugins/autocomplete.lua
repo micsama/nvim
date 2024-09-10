@@ -176,7 +176,6 @@ return {
 		config = function()
 			local cmp = require("cmp")
 			local lspkind = require("lspkind")
-
 			set_highlights()
 			setup_cmp(cmp, lspkind)
 		end,

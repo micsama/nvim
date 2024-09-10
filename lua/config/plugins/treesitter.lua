@@ -2,6 +2,7 @@ return {
 	{
 		-- 语法树的支持，包括缩进等
 		"nvim-treesitter/nvim-treesitter",
+		dependencies = { "nushell/tree-sitter-nu" },
 		lazy = false,
 		priority = 1000,
 		build = ":TSUpdate",
@@ -12,6 +13,7 @@ return {
 				auto_install = true,
 				sync_install = false,
 				ensure_installed = {
+					"fish",
 					"markdown",
 					"bash",
 					"go",

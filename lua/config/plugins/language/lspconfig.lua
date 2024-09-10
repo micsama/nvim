@@ -95,7 +95,7 @@ local lsp_servers = {
 		pyright = { disableOrganizeImports = true, },
 		settings = {
 			python = {
-				pythonPath = "/opt/homebrew/Caskroom/miniforge/base/bin/python",
+				pythonPath = "python",
 				analysis = {
 					autoImportCompletions = false,
 					ignore = { '*' },
