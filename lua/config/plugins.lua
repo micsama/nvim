@@ -45,6 +45,7 @@ require("lazy").setup({
 
 	-- 增强编辑效率
 	require("config.plugins.filemanager"), --以后再看其他的功能
+	require("config.plugins.whichkey"),
 	require("config.plugins.telescope"),
 	require("config.plugins.notify"),
 	require("config.plugins.editor"),

@@ -1,10 +1,12 @@
 return {
 	{
 		"ahmedkhalf/project.nvim",
+		dependencies = { 'nvim-telescope/telescope.nvim' },
 		config = function()
 			require("project_nvim").setup {
 				patterns = { ".git", "Makefile", "package.json" }
 			}
+			require('telescope').load_extension('projects')
 		end
 	},
 	{
@@ -17,7 +19,4 @@ return {
 		end,
 		dependencies = { { 'nvim-tree/nvim-web-devicons' } }
 	},
-	config = function()
-		require('telescope').load_extension('projects')
-	end
 }

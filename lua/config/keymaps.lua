@@ -34,7 +34,7 @@ local nmappings = {
 	{ from = "<a-k>",        to = ":+tabnext<CR>", },
 	{ from = "<a-h>",        to = ":-tabmove<CR>", },
 	{ from = "<a-l>",        to = ":+tabmove<CR>", },
-	{ from = "<a-b>",        to = ":Neotree toggle<CR>", },
+	{ from = "<a-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
@@ -93,7 +93,7 @@ vim.keymap.set("n", "<leader>q", function()
 	end
 end, { noremap = true, silent = true })
 local builtin = require('telescope.builtin')
--- TODO
+-- TODO: 将插件的快捷键能归类的就归类
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
