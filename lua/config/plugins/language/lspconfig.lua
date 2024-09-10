@@ -130,7 +130,6 @@ return {
 		'VonHeikemen/lsp-zero.nvim',
 		branch = 'v4.x',
 		dependencies = {
-			{ "folke/trouble.nvim" },
 			{ 'neovim/nvim-lspconfig' },
 			{
 				'williamboman/mason.nvim',

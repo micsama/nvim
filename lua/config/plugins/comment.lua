@@ -1,8 +1,24 @@
 return {
-	"tomtom/tcomment_vim",
-	event = "BufRead",
-	config = function()
-		vim.g.tcomment_maps = true
-		vim.g.tcomment_textobject_inlinecomment = ''
-	end
+	{
+		'numToStr/Comment.nvim',
+		config = function()
+			require('Comment').setup({
+				toggler = {
+					line = "<a-/>"
+				},
+				opleader = {
+					line = '<a-/>',
+				},
+				mappings = {
+					basic = true,
+				},
+			})
+		end
+	},
+	{
+		"folke/todo-comments.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {
+		}
+	}
 }

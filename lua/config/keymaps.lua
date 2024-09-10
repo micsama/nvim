@@ -1,4 +1,3 @@
-vim.g.mapleader = " "
 local mode_nv = { "n", "v" }
 local mode_v = { "v" }
 
@@ -13,7 +12,6 @@ local nmappings = {
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
 	{ from = "K",            to = "5k",                                                  mode = mode_nv },
 	{ from = "Y",            to = "\"+y",                                                mode = mode_v },
-	-- { from = "<a-y>",        to = "\"+y",                                                mode = mode_v },
 
 	-- no shift ^_^
 	{ from = ";",            to = ":",                                                   mode = mode_nv },
@@ -24,24 +22,25 @@ local nmappings = {
 
 
 
+	{ from = "<leader>or",   to = ":OverseerRun<CR>" },
+	{ from = "<leader>oo",   to = ":OverseerToggle<CR>" },
+	{ from = "<c-k>",        to = ":ToggleTerm<CR>",                                     mode = { "n", "i" } },
+	{ from = "<c-k>",        to = "<c-\\><c-n>:ToggleTerm<CR>",                          mode = { "t" } },
+
+
 	-- file manager & tab manager
 	{ from = "<a-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
 	{ from = "<a-j>",        to = ":-tabnext<CR>", },
 	{ from = "<a-k>",        to = ":+tabnext<CR>", },
+	{ from = "<a-h>",        to = ":-tabmove<CR>", },
+	{ from = "<a-l>",        to = ":+tabmove<CR>", },
 	{ from = "<a-b>",        to = ":Neotree toggle<CR>", },
-
-	{ from = "<leader>o",    to = "za" },
-
-	-- comment
-	{ from = "<a-/>",        to = "<esc>:TComment<CR>",                                  mode = "i" },
-	{ from = "<a-/>",        to = ":TComment<CR>",                                       mode = mode_nv },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
 
 	-- quick open nvim config
 	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>",      mode = "n" },
-
 
 	-- Window & splits
 	{ from = "<leader>w",    to = "<C-w>w", },
@@ -70,7 +69,7 @@ vim.keymap.set("n", "q", "<nop>", { noremap = true })
 vim.keymap.set("n", ",q", "q", { noremap = true })
 
 -- 终端模式下启用esc
-vim.api.nvim_set_keymap('t', '<Esc>', [[<C-\><C-n>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('t', '<Esc><ESC>', [[<C-\><C-n>]], { noremap = true, silent = true })
 
 
 for _, mapping in ipairs(nmappings) do
@@ -93,3 +92,9 @@ vim.keymap.set("n", "<leader>q", function()
 		run_vim_shortcut([[<C-w>j:q<CR>]])
 	end
 end, { noremap = true, silent = true })
+local builtin = require('telescope.builtin')
+-- TODO
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
