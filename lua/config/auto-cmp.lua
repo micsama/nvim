@@ -1,6 +1,6 @@
 -- cmp_config.lua
 
--- 设置高亮样式
+--
 local function set_highlights()
 	local xj_font_color = "#1D4E45"
 	local highlight_groups = {
@@ -35,19 +35,19 @@ local function set_highlights()
 		{ "CmpItemKindTypeParameter", xj_font_color, "#58B5A8" },
 	}
 
-	-- 应用高亮菜单的颜色
+	--
 	for _, hl in ipairs(highlight_groups) do
 		vim.api.nvim_set_hl(0, hl[1], { fg = hl[2], bg = hl[3], bold = hl[4], strikethrough = hl[5], italic = hl[6] })
 	end
 end
 
--- 检查当前光标前是否有文字
+--
 local function has_words_before()
 	local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))
 	return col ~= 0 and not vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s")
 end
 
--- 比较器：用于排序补全项，处理Python文件中以_开头的项优先级
+-- Python_
 local function entry_comparator(entry1, entry2)
 	if vim.bo.filetype == "python" then
 		local entry1StartsWithUnderscore = string.sub(entry1.completion_item.label, 1, 1) == "_" and
@@ -61,12 +61,12 @@ local function entry_comparator(entry1, entry2)
 	return entry1.completion_item.label < entry2.completion_item.label
 end
 
--- 截取长字符串以适应界面显示
+--
 local function limit_string(str)
 	return #str > 30 and string.sub(str, 1, 22) .. "..." or str
 end
 
--- 设置补全的主要功能
+--
 local function setup_cmp(cmp, lspkind)
 	-- snippet
 	require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
@@ -98,29 +98,29 @@ local function setup_cmp(cmp, lspkind)
 			maxheight = 10,
 			expandable_indicator = true,
 			format = function(entry, vim_item)
-				local kind = lspkind.cmp_format({ mode = "symbol_text", symbol_map = { Codeium = "" } })(entry, vim_item)
+				local kind = lspkind.cmp_format({ mode = "symbol_text", symbol_map = { Codeium = "" } })(entry, vim_item)
 				kind.kind = " " .. (vim.split(kind.kind, "%s", { trimempty = true })[1] or "") .. " "
 				kind.menu = limit_string(entry:get_completion_item().detail or "")
 				return kind
 			end,
 		},
 		sources = cmp.config.sources({
-			{ name = 'nvim_lsp', priority = 1000 },                                     -- 设置 LSP 的优先级最高
-			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } }, -- 代码片段的优先级
-			{ name = 'buffer',   priority = 400 },                                      -- 缓冲区补全
+			{ name = 'nvim_lsp', priority = 1000 },                                     --  LSP
+			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } }, --
+			{ name = 'buffer',   priority = 400 },                                      --
 		}, {
-			{ name = 'path',     priority = 250 },                                      -- 路径补全
-			{ name = 'nvim_lua', priority = 700 },                                      -- Neovim Lua API 的补全
-			{ name = 'calc',     priority = 200 },                                      -- 计算补全
+			{ name = 'path',     priority = 250 },                                      --
+			{ name = 'nvim_lua', priority = 700 },                                      -- Neovim Lua API
+			{ name = 'calc',     priority = 200 },                                      --
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<c-g>'] = cmp.mapping(function(fallback)
 				if cmp.visible() then
-					cmp.close() -- 当补全菜单可见时，关闭菜单
+					cmp.close() --
 				else
-					cmp.complete() -- 当补全菜单不可见时，显示补全菜单
+					cmp.complete() --
 				end
-			end),         -- 可用于插入模式和选择模式
+			end),         --
 
 			['<CR>'] = cmp.mapping({
 				i = function(fallback)
@@ -155,45 +155,46 @@ local function setup_cmp(cmp, lspkind)
 	})
 end
 
--- 主配置函数
 return {
+	-- 主 cmp 配置
 	{
 		'hrsh7th/nvim-cmp',
 		event = { 'InsertEnter' }, -- 在进入插入模式时加载
-
-		dependencies = {
-			{ 'hrsh7th/cmp-buffer' },
-			{ 'hrsh7th/cmp-path' },
-			{ 'hrsh7th/cmp-nvim-lsp' },
-			{ 'hrsh7th/cmp-nvim-lua' },
-			{ 'hrsh7th/cmp-calc' },
-			{ 'onsails/lspkind.nvim' },
-			{ "hrsh7th/cmp-cmdline" },
-			{
-				"L3MON4D3/LuaSnip",
-				version = "v2.x",
-				build = "make install_jsregexp",
-				dependencies = { "rafamadriz/friendly-snippets", 'saadparwaiz1/cmp_luasnip' },
-			},
-		},
 		config = function()
 			local cmp = require("cmp")
 			local lspkind = require("lspkind")
+			set_highlights()     -- 设置高亮
+			setup_cmp(cmp, lspkind) -- 设置补全功能
+		end,
+		dependencies = {
+			{ 'onsails/lspkind.nvim' },                                                    -- 图标和格式
+			{ "L3MON4D3/LuaSnip",        version = "v2.x", build = "make install_jsregexp" }, -- 代码片段
+			{ 'saadparwaiz1/cmp_luasnip' },                                                -- LuaSnip 的补全源
+			-- 合并补全源插件
+			{
+				'hrsh7th/cmp-buffer',  -- 缓冲区补全
+				'hrsh7th/cmp-path',    -- 路径补全
+				'hrsh7th/cmp-nvim-lsp', -- LSP 补全
+				'hrsh7th/cmp-nvim-lua', -- Neovim Lua API 补全
+				'hrsh7th/cmp-calc',    -- 计算补全
+				event = { 'InsertEnter' }, -- 在进入插入模式时加载
+			},
+		},
+	},
+	-- cmdline
+	{
+		'hrsh7th/cmp-cmdline',    --
+		event = { 'CmdlineEnter' }, --
+		config = function()
+			local cmp = require("cmp")
 			cmp.setup.cmdline(':', {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({
 					{ name = 'path' }
 				}, {
-					{
-						name = 'cmdline',
-						option = {
-							ignore_cmds = { 'Man', '!' }
-						}
-					}
+					{ name = 'cmdline', option = { ignore_cmds = { 'Man', '!' } } }
 				})
 			})
-			set_highlights()
-			setup_cmp(cmp, lspkind)
 		end,
 	},
 }

@@ -1,12 +1,12 @@
--- lsp_config.lua
--- 提取 on_attach 函数，用于设置 LSP 连接时的操作
+-- 设置 on_attach 函数，用于设置 LSP 连接时的操作
 local function on_attach(client, bufnr)
 	require("lsp_signature").on_attach(client, bufnr)
-	-- 在 on_attach 函数中添加以下代码来启用 inlay hints
+	-- 启用 inlay hints
 	if client.server_capabilities.inlayHintProvider then
-		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr }) -- 设置 enable 为 true，指定当前的 bufnr
+		vim.lsp.inlay_hint(bufnr, true)
 	end
 
+	-- 设置诊断配置
 	vim.diagnostic.config({
 		severity_sort = true,
 		underline = true,
@@ -16,6 +16,7 @@ local function on_attach(client, bufnr)
 		float = true,
 	})
 
+	-- 设置 LSP 图标
 	local lsp = require('lsp-zero')
 	lsp.set_sign_icons({
 		error = '✘',
@@ -23,33 +24,6 @@ local function on_attach(client, bufnr)
 		hint = '⚑',
 		info = '»',
 	})
-
-	-- 定义快捷键配置
-	local keymaps = {
-		['n'] = {
-			['<leader>h'] = vim.lsp.buf.hover,
-			['gd'] = vim.lsp.buf.definition,
-			['gD'] = '<cmd>tab split | lua vim.lsp.buf.definition()<CR>',
-			['gi'] = vim.lsp.buf.implementation,
-			['go'] = vim.lsp.buf.type_definition,
-			['gr'] = vim.lsp.buf.references,
-			['<leader>rn'] = vim.lsp.buf.rename,
-			['<leader>,'] = vim.lsp.buf.code_action,
-			['<leader>t'] = ':Trouble<CR>',
-			['<leader>-'] = function() vim.diagnostic.goto_prev({ float = true }) end,
-			['<leader>='] = function() vim.diagnostic.goto_next({ float = true }) end,
-		},
-		['i'] = {
-			['<c-f>'] = vim.lsp.buf.signature_help,
-		},
-	}
-
-	-- 应用快捷键
-	for mode, mappings in pairs(keymaps) do
-		for keys, cmd in pairs(mappings) do
-			vim.keymap.set(mode, keys, cmd, { buffer = bufnr, noremap = true, nowait = true })
-		end
-	end
 end
 
 -- 自动格式化保存函数优化
@@ -57,8 +31,7 @@ local function format_on_save()
 	local format_on_save_filetypes = {
 		python = true,
 		rust = true,
-		-- json = true,
-		lua = true
+		lua = true,
 	}
 	vim.api.nvim_create_autocmd("BufWritePre", {
 		pattern = "*",
@@ -155,6 +128,26 @@ return {
 				end,
 			},
 		},
+		-- 使用 keys 和事件懒加载
+		keys = {
+			-- Normal mode keymaps
+			{ 'n', '<leader>h',  function() vim.lsp.buf.hover() end,                        desc = "LSP Hover" },
+			{ 'n', 'gd',         function() vim.lsp.buf.definition() end,                   desc = "Go to Definition" },
+			{ 'n', 'gD',         '<cmd>tab split | lua vim.lsp.buf.definition()<CR>',       desc = "Open Definition in New Tab" },
+			{ 'n', 'gi',         function() vim.lsp.buf.implementation() end,               desc = "Go to Implementation" },
+			{ 'n', 'go',         function() vim.lsp.buf.type_definition() end,              desc = "Go to Type Definition" },
+			{ 'n', 'gr',         function() vim.lsp.buf.references() end,                   desc = "Go to References" },
+			{ 'n', '<leader>rn', function() vim.lsp.buf.rename() end,                       desc = "Rename Symbol" },
+			{ 'n', '<leader>,',  function() vim.lsp.buf.code_action() end,                  desc = "Code Action" },
+			{ 'n', '<leader>t',  '<cmd>Trouble<CR>',                                        desc = "Open Trouble" },
+			{ 'n', '<leader>-',  function() vim.diagnostic.goto_prev({ float = true }) end, desc = "Previous Diagnostic" },
+			{ 'n', '<leader>=',  function() vim.diagnostic.goto_next({ float = true }) end, desc = "Next Diagnostic" },
+
+			-- Insert mode keymaps
+			{ 'i', '<c-f>',      function() vim.lsp.buf.signature_help() end,               desc = "Signature Help" },
+		},
+		-- 通过文件事件进行懒加载
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lsp = require('lsp-zero')
 

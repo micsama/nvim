@@ -34,7 +34,7 @@ local nmappings = {
 	{ from = "<a-k>",        to = ":+tabnext<CR>", },
 	{ from = "<a-h>",        to = ":-tabmove<CR>", },
 	{ from = "<a-l>",        to = ":+tabmove<CR>", },
-	{ from = "<a-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
+	-- { from = "<a-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
