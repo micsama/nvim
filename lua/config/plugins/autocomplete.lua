@@ -159,6 +159,8 @@ end
 return {
 	{
 		'hrsh7th/nvim-cmp',
+		event = { 'InsertEnter' }, -- 在进入插入模式时加载
+
 		dependencies = {
 			{ 'hrsh7th/cmp-buffer' },
 			{ 'hrsh7th/cmp-path' },
@@ -166,6 +168,7 @@ return {
 			{ 'hrsh7th/cmp-nvim-lua' },
 			{ 'hrsh7th/cmp-calc' },
 			{ 'onsails/lspkind.nvim' },
+			{ "hrsh7th/cmp-cmdline" },
 			{
 				"L3MON4D3/LuaSnip",
 				version = "v2.x",
@@ -176,6 +179,19 @@ return {
 		config = function()
 			local cmp = require("cmp")
 			local lspkind = require("lspkind")
+			cmp.setup.cmdline(':', {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = cmp.config.sources({
+					{ name = 'path' }
+				}, {
+					{
+						name = 'cmdline',
+						option = {
+							ignore_cmds = { 'Man', '!' }
+						}
+					}
+				})
+			})
 			set_highlights()
 			setup_cmp(cmp, lspkind)
 		end,

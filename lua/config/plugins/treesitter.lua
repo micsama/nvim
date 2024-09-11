@@ -3,7 +3,8 @@ return {
 		-- 语法树的支持，包括缩进等
 		"nvim-treesitter/nvim-treesitter",
 		dependencies = { "nushell/tree-sitter-nu" },
-		lazy = false,
+		-- lazy = false,
+		event = { 'BufReadPost', 'BufNewFile' },
 		priority = 1000,
 		build = ":TSUpdate",
 		config = function()

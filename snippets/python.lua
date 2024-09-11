@@ -46,4 +46,26 @@ if __name__ == "__main__":
         ]],
 		{ f(get_current_datetime, {}), f(get_filename, {}), i(1, "Description"), i(0) }
 	)),
+
+	-- 读取 JSON 文件并解析的代码片段
+	s("rj", fmt(
+		[[
+with open({}, "r") as f:
+    lines = [json.loads(line) for line in f]
+for line in lines:
+	{}
+        ]],
+		{ i(1, '"filename"'), i(0) }
+	)),
+
+	-- 将列表数据写入 JSON 文件的代码片段
+	s("wj", fmt(
+		[[
+with open({}, "w") as f:
+    f.writelines([json.dumps(item,ensure_ascii=False) + "\\n" for item in {}])
+
+{}
+        ]],
+		{ i(1, '"filename"'), i(2, "data_list"), i(0) }
+	)),
 }

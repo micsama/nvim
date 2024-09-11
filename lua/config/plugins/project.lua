@@ -26,7 +26,7 @@ return {
 			-- })
 		end
 	}, {
-	-- TODO:继续配置，不同标签页不统一，快捷键开关，esc等等
+	-- TODO:继续配置，不同标签页不统一
 	'akinsho/toggleterm.nvim',
 	version = "*",
 	opts = { --[[ things you want to change go here]]
@@ -36,5 +36,14 @@ return {
 			}
 		end
 	}
-}, { "folke/trouble.nvim" }
+},
+	{ "folke/trouble.nvim" },
+	{
+		-- big file & large file
+		"LunarVim/bigfile.nvim",
+		opt = {
+			filesize = 2
+
+		},
+	}
 }

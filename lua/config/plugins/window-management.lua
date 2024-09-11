@@ -1,7 +1,7 @@
 return {
 	{
 		"nvim-zh/colorful-winsep.nvim",
-		config = { smooth = true, },
+		opts = { smooth = true, },
 		event = { "WinNew" },
 	},
 	{

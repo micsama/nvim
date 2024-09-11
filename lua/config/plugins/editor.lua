@@ -33,6 +33,13 @@ return {
 		lazy = false,
 		ft = { "markdown", "txt" },
 	},
+	-- TODO:研究下面这个插件,平滑滚动
+	-- {
+	-- 	"karb94/neoscroll.nvim",
+	-- 	config = function()
+	-- 		require('neoscroll').setup({})
+	-- 	end
+	-- }
 	-- {
 	-- 	"psliwka/vim-smoothie",
 	-- 	init = function()

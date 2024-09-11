@@ -1,5 +1,6 @@
 return {
 	"rcarriga/nvim-notify",
+	event = "VeryLazy",
 	config = function()
 		local notify = require("notify")
 		vim.notify = function(msg, ...)
@@ -37,4 +38,3 @@ return {
 		vim.keymap.set("n", "<LEADER>c;", notify.dismiss, opts);
 	end
 }
-

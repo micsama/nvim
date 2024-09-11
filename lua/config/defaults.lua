@@ -62,18 +62,6 @@ vim.o.shell = "/opt/homebrew/bin/fish"
 
 
 
-vim.cmd([[
-silent !mkdir -p $HOME/.config/nvim/tmp/backup
-silent !mkdir -p $HOME/.config/nvim/tmp/undo
-"silent !mkdir -p $HOME/.config/nvim/tmp/sessions
-set backupdir=$HOME/.config/nvim/tmp/backup,.
-set directory=$HOME/.config/nvim/tmp/backup,.
-if has('persistent_undo')
-	set undofile
-	set undodir=$HOME/.config/nvim/tmp/undo,.
-endif
-]])
-
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, { pattern = "*.md", command = "setlocal spell", })
 vim.api.nvim_create_autocmd("BufEnter", { pattern = "*", command = "silent! lcd %:p:h", })
 
@@ -110,17 +98,36 @@ tnoremap <C-O> <C-\><C-N><C-O>
 
 vim.cmd([[hi NonText ctermfg=gray guifg=grey10]])
 
-local config_path = vim.fn.stdpath("config")
-local current_config_path = config_path .. "/lua/config/machine_specific.lua"
-if not vim.loop.fs_stat(current_config_path) then
-	local current_config_file = io.open(current_config_path, "wb")
-	local default_config_path = config_path .. "/default_config/_machine_specific_default.lua"
-	local default_config_file = io.open(default_config_path, "rb")
-	if default_config_file and current_config_file then
-		local content = default_config_file:read("*all")
-		current_config_file:write(content)
-		io.close(default_config_file)
-		io.close(current_config_file)
-	end
-end
-require("config.machine_specific")
+vim.cmd([[
+    set backupdir=$HOME/.config/nvim/tmp/backup,.
+    set directory=$HOME/.config/nvim/tmp/backup,.
+    if has('persistent_undo')
+        set undofile
+        set undodir=$HOME/.config/nvim/tmp/undo,.
+    endif
+]])
+-- NOTE:只在第一次加载。很耗时
+-- local function ensure_directory(path)
+-- 	if vim.fn.isdirectory(path) == 0 then
+-- 		vim.fn.mkdir(path, "p")
+-- 	end
+-- end
+--
+-- -- 创建目录的部分
+-- ensure_directory(vim.fn.expand("$HOME/.config/nvim/tmp/backup"))
+-- ensure_directory(vim.fn.expand("$HOME/.config/nvim/tmp/undo"))
+-- local config_path = vim.fn.stdpath("config")
+-- local current_config_path = config_path .. "/lua/config/machine_specific.lua"
+--
+-- if not vim.loop.fs_stat(current_config_path) then
+-- 	local default_config_path = config_path .. "/default_config/_machine_specific_default.lua"
+-- 	local default_config_file = io.open(default_config_path, "rb")
+-- 	if default_config_file then
+-- 		local current_config_file = io.open(current_config_path, "wb")
+-- 		if current_config_file then
+-- 			current_config_file:write(default_config_file:read("*all"))
+-- 			io.close(current_config_file)
+-- 		end
+-- 		io.close(default_config_file)
+-- 	end
+-- end
