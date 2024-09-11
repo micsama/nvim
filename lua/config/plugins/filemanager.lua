@@ -6,6 +6,9 @@ return {
 			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
 			"MunifTanjim/nui.nvim",
 		},
+		keys = {
+			{ '<a-b>', '<cmd>Neotree toggle<CR>', desc = 'Toggle NeoTree' }, -- 设置快捷键 <a-b> 为懒加载触发
+		},
 		config = function()
 			require("neo-tree").setup({
 				source_selector = {

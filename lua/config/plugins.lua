@@ -63,7 +63,6 @@ require("lazy").setup({
 	require("config.plugins.language.dap"),
 
 	-- 自动补全
-	require("config.plugins.autocomplete"),
 
 	-- 其他功能扩展
 	require("config.plugins.comment"),
@@ -73,4 +72,5 @@ require("lazy").setup({
 	-- require("config.plugins.tex"),
 	require("config.plugins.wezterm"),
 	{ "dstein64/vim-startuptime" },
+	require("config.plugins.language.auto-cmp"),
 })

@@ -16,17 +16,21 @@ vim.keymap.set("i", "<C-9>", ctrlu, { silent = true })
 return {
 	{
 		"RRethy/vim-illuminate",
+		-- 设置为在进入插入模式或光标移动时加载
+		event = { "InsertEnter", "CursorMoved" },
 		config = function()
 			require('illuminate').configure({
 				providers = {
-					-- 'lsp',
+					-- 'lsp', -- 可根据需要启用
 					'treesitter',
 					'regex',
 				},
-				delay = 200,
+				delay = 250, -- 延迟时间，单位为毫秒
 			})
-			vim.cmd("hi IlluminatedWordText guibg=#393E4D gui=underline")
-		end
+
+			-- 设置高亮样式
+			vim.api.nvim_set_hl(0, "IlluminatedWordText", { bg = "#393E4D", underline = true })
+		end,
 	},
 	{
 		"dkarter/bullets.vim",
@@ -122,11 +126,29 @@ return {
 			vim.keymap.set("x", "s", substitute.visual, { noremap = true })
 		end
 	},
+	-- TODO: 继续研究
 	{
-		-- TODO 继续研究
-		"kevinhwang91/nvim-ufo",
-		dependencies = { "kevinhwang91/promise-async", },
-		config = function() require('ufo').setup() end
+		'kevinhwang91/nvim-ufo',
+		dependencies = { 'kevinhwang91/promise-async' },
+		-- 通过键绑定来实现懒加载
+		keys = {
+			{ 'zR', function() require('ufo').openAllFolds() end,  desc = 'Open all folds' },
+			{ 'zM', function() require('ufo').closeAllFolds() end, desc = 'Close all folds' },
+		},
+		config = function()
+			-- 设置折叠相关选项
+			vim.o.foldcolumn = '1' -- 显示折叠列
+			vim.o.foldlevel = 99 -- 高折叠层级，用于 ufo 提供者
+			vim.o.foldlevelstart = 99
+			vim.o.foldenable = true
+
+			-- 使用 ufo 的默认设置，可以选择不同的提供者
+			require('ufo').setup({
+				provider_selector = function(bufnr, filetype, buftype)
+					return { 'treesitter', 'indent' } -- 使用 treesitter 和 indent 作为默认提供者
+				end,
+			})
+		end,
 	},
 	{
 		"keaising/im-select.nvim",
