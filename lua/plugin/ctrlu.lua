@@ -79,4 +79,3 @@ function M.ctrlu()
 end
 
 return M
-

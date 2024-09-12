@@ -3,10 +3,10 @@ local mode_v = { "v" }
 
 local nmappings = {
 	-- quick save and quit
-	{ from = "<a-s>",        to = ":w<CR>",                                              mode = { "n", "i", "v" } },
+	{ from = "<m-s>",        to = ":w<CR>",                                              mode = { "n", "i", "v" } },
 	{ from = "<S>",          to = ":w<CR>",                                              mode = mode_nv },
-	{ from = "<a-q>",        to = ":q<CR>",                                              mode = mode_nv },
-	{ from = "<a-q>",        to = "<esc>:q<CR>",                                         mode = "i" },
+	{ from = "<m-q>",        to = ":q<CR>",                                              mode = mode_nv },
+	{ from = "<M-q>",        to = "<esc>:q<CR>",                                         mode = "i" },
 
 	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
@@ -18,7 +18,7 @@ local nmappings = {
 	{ from = "`",            to = "~",                                                   mode = mode_nv },
 
 	-- 设置自动换行
-	{ from = "<a-z>",        to = ":set wrap!<CR>",                                      mode = mode_nv },
+	{ from = "<M-z>",        to = ":set wrap!<CR>",                                      mode = mode_nv },
 
 
 
@@ -29,12 +29,12 @@ local nmappings = {
 
 
 	-- file manager & tab manager
-	{ from = "<a-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
-	{ from = "<a-j>",        to = ":-tabnext<CR>", },
-	{ from = "<a-k>",        to = ":+tabnext<CR>", },
-	{ from = "<a-h>",        to = ":-tabmove<CR>", },
-	{ from = "<a-l>",        to = ":+tabmove<CR>", },
-	-- { from = "<a-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
+	{ from = "<M-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
+	{ from = "<M-j>",        to = ":-tabnext<CR>", },
+	{ from = "<M-k>",        to = ":+tabnext<CR>", },
+	{ from = "<M-h>",        to = ":-tabmove<CR>", },
+	{ from = "<M-l>",        to = ":+tabmove<CR>", },
+	-- { from = "<M-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },

@@ -8,7 +8,7 @@ return {
 			},
 			options = {
 				cursorline = true,
-				-- transparency = true
+				transparency = false,
 			}
 		})
 		vim.cmd("colorscheme onedark")
