@@ -4,10 +4,10 @@ return {
 		config = function()
 			require('Comment').setup({
 				toggler = {
-					line = "<a-/>"
+					line = "<D-/>"
 				},
 				opleader = {
-					line = '<a-/>',
+					line = '<D-/>',
 				},
 				mappings = {
 					basic = true,

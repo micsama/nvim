@@ -1,6 +1,5 @@
 local mode_nv = { "n", "v" }
-local mode_v = { "v" }
-
+local mode_it = { "i", "t" }
 local nmappings = {
 	-- quick save and quit
 	{ from = "<D-s>",        to = ":w<CR>",                                              mode = mode_nv },
@@ -12,7 +11,7 @@ local nmappings = {
 	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
 	{ from = "K",            to = "5k",                                                  mode = mode_nv },
-	{ from = "Y",            to = "\"+y",                                                mode = mode_v },
+	{ from = "Y",            to = "\"+y",                                                mode = "v" },
 
 	-- no shift ^_^
 	{ from = ";",            to = ":",                                                   mode = mode_nv },
@@ -26,16 +25,18 @@ local nmappings = {
 	{ from = "<leader>or",   to = ":OverseerRun<CR>" },
 	{ from = "<leader>oo",   to = ":OverseerToggle<CR>" },
 	{ from = "<D-g>",        to = ":ToggleTerm<CR>",                                     mode = { "n", "i" } },
-	{ from = "<D-g>",        to = "<c-\\><c-n>:ToggleTerm<CR>",                          mode = { "t" } },
+	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm<CR>",                          mode = { "t" } },
 
 
 	-- file manager & tab manager
 	{ from = "<D-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
-	{ from = "<D-j>",        to = ":-tabnext<CR>", },
-	{ from = "<D-k>",        to = ":+tabnext<CR>", },
+	{ from = "<D-j>",        to = ":-tabnext<CR>",                                       mode = mode_nv },
+	{ from = "<D-k>",        to = ":+tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-h>",        to = ":-tabmove<CR>", },
 	{ from = "<D-l>",        to = ":+tabmove<CR>", },
-	-- { from = "<M-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
+	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                            mode = "t" },
+	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                            mode = "t" },
+	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                 mode = "t" },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
@@ -63,8 +64,6 @@ local nmappings = {
 	{ from = "sv",           to = "<C-w>t<C-w>H", },
 	{ from = "srh",          to = "<C-w>b<C-w>K", },
 	{ from = "srv",          to = "<C-w>b<C-w>H", },
-	-- debug
-	{ from = "<f5>",         to = ":w<CR>:Telescope dap configurations<CR>" },
 }
 
 
@@ -96,7 +95,8 @@ vim.keymap.set("n", "<leader>q", function()
 	end
 end, { noremap = true, silent = true })
 local builtin = require('telescope.builtin')
--- TODO: 将插件的快捷键能归类的就归类
+
+-- TODO: 将插件的快捷键能归类的就归类1
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})

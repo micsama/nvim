@@ -53,12 +53,24 @@ vim.g.neovide_underline_stroke_scale = 1.0
 -- vim.g.neovide_refresh_rate = 60
 -- vim.g.neovide_refresh_rate_idle = 5
 -- 复制粘贴
-vim.keymap.set('v', '<D-c>', '"+y')         -- Copy
-vim.keymap.set('n', '<D-v>', '"+P')         -- Paste normal mode
-vim.keymap.set('v', '<D-v>', '"+P')         -- Paste visual mode
-vim.keymap.set('c', '<D-v>', '<C-R>+')      -- Paste command mode
-vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli') -- Paste insert mode
+vim.keymap.set('v', '<D-c>', '"+y')              -- Copy
+vim.keymap.set('n', '<D-v>', '"+P')              -- Paste normal mode
+vim.keymap.set('v', '<D-v>', '"+P')              -- Paste visual mode
+vim.keymap.set('c', '<D-v>', '<C-R>+')           -- Paste command mode
+vim.keymap.set('i', '<D-v>', '<C-R>+')           -- Paste insert mode
+vim.keymap.set('t', '<D-v>', [[<C-\><C-N>"+pa]]) -- Paste insert mode
 
+-- 绑定 D-1 到 D-9 用于切换到对应的标签页
+for i = 1, 9 do
+	vim.keymap.set("n", "<D-" .. i .. ">", function()
+		local tab_count = vim.fn.tabpagenr('$') -- 获取当前标签页总数
+		if i <= tab_count then
+			vim.cmd("tabnext " .. i) -- 切换到第 i 个标签页
+		else
+			vim.notify("现在没有标签页: " .. i, vim.log.levels.WARN) -- 通知用户标签页不存在
+		end
+	end, { desc = "Switch to tab " .. i })
+end
 
 
 
