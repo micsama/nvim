@@ -9,6 +9,7 @@
 
 -- 字体
 vim.o.guifont = "FiraCode Nerd Font:h15"
+vim.opt.linespace = 0
 
 -- 窗口模糊
 vim.g.neovide_window_blurred = true
@@ -50,14 +51,15 @@ vim.g.neovide_underline_stroke_scale = 1.0
 -- 刷新率 有vsync所以不需要
 -- vim.g.neovide_refresh_rate = 60
 -- vim.g.neovide_refresh_rate_idle = 5
-
 -- 复制粘贴
-vim.keymap.set('n', '<D-s>', ':w<CR>')      -- Save
 vim.keymap.set('v', '<D-c>', '"+y')         -- Copy
 vim.keymap.set('n', '<D-v>', '"+P')         -- Paste normal mode
 vim.keymap.set('v', '<D-v>', '"+P')         -- Paste visual mode
 vim.keymap.set('c', '<D-v>', '<C-R>+')      -- Paste command mode
 vim.keymap.set('i', '<D-v>', '<ESC>l"+Pli') -- Paste insert mode
+
+
+
 
 
 -- 动态窗口比例：

@@ -62,7 +62,7 @@ for line in lines:
 	s("wj", fmt(
 		[[
 with open({}, "w") as f:
-    f.writelines([json.dumps(item,ensure_ascii=False) + "\\n" for item in {}])
+    f.writelines([json.dumps(item,ensure_ascii=False) + "\n" for item in {}])
 
 {}
         ]],
