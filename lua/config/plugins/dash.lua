@@ -1,15 +1,15 @@
 return {
-	-- {
-	-- 	"ahmedkhalf/project.nvim",
-	-- 	dependencies = { 'nvim-telescope/telescope.nvim' },
-	-- 	event = "VeryLazy",
-	-- 	config = function()
-	-- 		require("project_nvim").setup {
-	-- 			patterns = { ".git", "Makefile", "package.json" }
-	-- 		}
-	-- 		require('telescope').load_extension('projects')
-	-- 	end
-	-- },
+	{
+		"ahmedkhalf/project.nvim",
+		dependencies = { 'nvim-telescope/telescope.nvim' },
+		event = "VeryLazy",
+		config = function()
+			require("project_nvim").setup {
+				patterns = { ".git", "Makefile", "package.json" }
+			}
+			require('telescope').load_extension('projects')
+		end
+	},
 	{
 		'nvimdev/dashboard-nvim',
 		event = 'VimEnter',
