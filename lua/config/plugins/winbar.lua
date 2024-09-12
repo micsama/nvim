@@ -1,11 +1,15 @@
 return {
 	"Bekaboo/dropbar.nvim",
+	event = "BufReadPost", -- 懒加载配置：当读取文件时加载插件
+	keys = {
+		{ '<Leader>;', function() require("dropbar.api").pick() end,                desc = 'Pick dropbar menu' },
+		{ '[c',        function() require("dropbar.api").goto_context_start() end,  desc = 'Go to context start' },
+		{ ']c',        function() require("dropbar.api").select_next_context() end, desc = 'Select next context' },
+	},
 	config = function()
 		local api = require("dropbar.api")
-		vim.keymap.set('n', '<Leader>;', api.pick)
-		vim.keymap.set('n', '[c', api.goto_context_start)
-		vim.keymap.set('n', ']c', api.select_next_context)
 
+		-- Confirm function to handle Enter and interaction with menu
 		local confirm = function()
 			local menu = api.get_current_dropbar_menu()
 			if not menu then
@@ -18,6 +22,7 @@ return {
 			end
 		end
 
+		-- Function to quit the current menu
 		local quit_curr = function()
 			local menu = api.get_current_dropbar_menu()
 			if menu then
@@ -27,10 +32,7 @@ return {
 
 		require("dropbar").setup({
 			menu = {
-				-- When on, automatically set the cursor to the closest previous/next
-				-- clickable component in the direction of cursor movement on CursorMoved
-				quick_navigation = true,
-				---@type table<string, string|function|table<string, string|function>>
+				quick_navigation = true, -- 自动快速导航
 				keymaps = {
 					['<LeftMouse>'] = function()
 						local menu = api.get_current_dropbar_menu()
@@ -69,5 +71,8 @@ return {
 				},
 			},
 		})
-	end
+
+		-- 设置 Tab 页显示编号
+		-- vim.o.tabline = '%!v:lua.require("dropbar.tabline").setup()'
+	end,
 }

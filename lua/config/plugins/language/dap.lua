@@ -35,6 +35,7 @@ return {
 	},
 	-- 使用按键绑定懒加载
 	keys = {
+		{ "<f5>",       ":w<CR>:Telescope dap configurations<CR>",                                                   desc = "start debug" },
 		{ "<F10>",      function() require('dap').step_over() end,                                                   desc = "DAP Step Over" },
 		{ "<F11>",      function() require('dap').step_into() end,                                                   desc = "DAP Step Into" },
 		{ "<F12>",      function() require('dap').step_out() end,                                                    desc = "DAP Step Out" },
