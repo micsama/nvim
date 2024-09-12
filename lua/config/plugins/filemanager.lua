@@ -7,7 +7,7 @@ return {
 			"MunifTanjim/nui.nvim",
 		},
 		keys = {
-			{ '<a-b>', '<cmd>Neotree toggle<CR>', desc = 'Toggle NeoTree' }, -- 设置快捷键 <a-b> 为懒加载触发
+			{ '<M-b>', '<CMD>Neotree reveal toggle dir=./<CR> ', desc = 'Toggle NeoTree' }, -- 设置快捷键 <a-b> 为懒加载触发
 		},
 		config = function()
 			require("neo-tree").setup({
