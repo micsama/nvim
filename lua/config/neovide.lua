@@ -8,7 +8,8 @@
 -- vim.g.neovide_background_color = "#0f1117" .. alpha()
 
 -- 字体
-vim.o.guifont = "FiraCode Nerd Font:h15"
+-- vim.o.guifont = "FiraCode Nerd Font:h15"
+vim.o.guifont = "FiraCode Nerd Font,PingFang SC:h15"
 vim.opt.linespace = 0
 
 -- 窗口模糊
