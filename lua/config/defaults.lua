@@ -59,6 +59,7 @@ vim.o.ttyfast = true        -- 提升终端性能
 vim.o.virtualedit = 'block' -- 允许块状选择模式的虚拟编辑
 vim.g.mapleader = " "
 vim.o.shell = "/opt/homebrew/bin/fish"
+vim.g.python3_host_prog = '/opt/homebrew/Caskroom/miniforge/base/bin/python'
 
 
 

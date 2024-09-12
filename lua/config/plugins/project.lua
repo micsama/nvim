@@ -41,9 +41,19 @@ return {
 	{
 		-- big file & large file
 		"LunarVim/bigfile.nvim",
+		lazy = false,
 		opt = {
-			filesize = 2
-
+			filesize = 4,
+			features = { -- features to disable
+				"indent_blankline",
+				"illuminate",
+				"lsp",
+				"treesitter",
+				-- "syntax",
+				"matchparen",
+				"vimopts",
+				-- "filetype",
+			},
 		},
 	}
 }

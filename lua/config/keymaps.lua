@@ -3,10 +3,11 @@ local mode_v = { "v" }
 
 local nmappings = {
 	-- quick save and quit
-	{ from = "<m-s>",        to = ":w<CR>",                                              mode = { "n", "i", "v" } },
+	{ from = "<D-s>",        to = ":w<CR>",                                              mode = mode_nv },
+	{ from = "<M-s>",        to = ":w<CR>",                                              mode = mode_nv },
 	{ from = "<S>",          to = ":w<CR>",                                              mode = mode_nv },
-	{ from = "<m-q>",        to = ":q<CR>",                                              mode = mode_nv },
-	{ from = "<M-q>",        to = "<esc>:q<CR>",                                         mode = "i" },
+	{ from = "<D-w>",        to = ":q<CR>",                                              mode = mode_nv },
+	{ from = "<D-w>",        to = "<esc>:q<CR>",                                         mode = "i" },
 
 	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
@@ -24,16 +25,16 @@ local nmappings = {
 
 	{ from = "<leader>or",   to = ":OverseerRun<CR>" },
 	{ from = "<leader>oo",   to = ":OverseerToggle<CR>" },
-	{ from = "<c-k>",        to = ":ToggleTerm<CR>",                                     mode = { "n", "i" } },
-	{ from = "<c-k>",        to = "<c-\\><c-n>:ToggleTerm<CR>",                          mode = { "t" } },
+	{ from = "<D-g>",        to = ":ToggleTerm<CR>",                                     mode = { "n", "i" } },
+	{ from = "<D-g>",        to = "<c-\\><c-n>:ToggleTerm<CR>",                          mode = { "t" } },
 
 
 	-- file manager & tab manager
-	{ from = "<M-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
-	{ from = "<M-j>",        to = ":-tabnext<CR>", },
-	{ from = "<M-k>",        to = ":+tabnext<CR>", },
-	{ from = "<M-h>",        to = ":-tabmove<CR>", },
-	{ from = "<M-l>",        to = ":+tabmove<CR>", },
+	{ from = "<D-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
+	{ from = "<D-j>",        to = ":-tabnext<CR>", },
+	{ from = "<D-k>",        to = ":+tabnext<CR>", },
+	{ from = "<D-h>",        to = ":-tabmove<CR>", },
+	{ from = "<D-l>",        to = ":+tabmove<CR>", },
 	-- { from = "<M-b>",        to = ":Neotree reveal toggle dir=./<CR> ", },
 
 	-- no_highlight search

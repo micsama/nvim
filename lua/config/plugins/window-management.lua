@@ -15,8 +15,10 @@ return {
 	},
 	{
 		"nyngwang/NeoZoom.lua",
+		keys = {
+			'<D-f>', "<CMD>NeoZoomToggle<CR>", { mode = 'n', desc = "Zoom your window largr" },
+		},
 		config = function()
-			vim.keymap.set('n', '<a-f>', ':NeoZoomToggle<CR>', { silent = true, nowait = true })
 			require('neo-zoom').setup {
 				popup = { enabled = true }, -- this is the default.
 				exclude_buftypes = { 'terminal' },
