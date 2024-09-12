@@ -7,7 +7,7 @@ vim.o.cursorline = true                -- 高亮光标所在行
 vim.o.colorcolumn = '100'              -- 设置列标尺
 vim.o.showmode = false                 -- 隐藏模式提示
 vim.o.scrolloff = 4                    -- 光标上下保留行数
-vim.o.wrap = false                     -- 不自动换行
+vim.o.wrap = true                      -- 自动换行
 vim.o.visualbell = true                -- 使用视觉提示而非声音提示
 vim.o.signcolumn = "yes"
 

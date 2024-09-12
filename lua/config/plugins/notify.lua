@@ -1,7 +1,7 @@
 return {
 	{
 		"rcarriga/nvim-notify",
-		-- 使用键绑定懒加载
+		event = "VeryLazy",
 		keys = {
 			{
 				",;",
