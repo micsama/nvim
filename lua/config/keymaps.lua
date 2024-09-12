@@ -6,7 +6,7 @@ local nmappings = {
 	{ from = "<M-s>",        to = ":w<CR>",                                              mode = mode_nv },
 	{ from = "<S>",          to = ":w<CR>",                                              mode = mode_nv },
 	{ from = "<D-w>",        to = ":q<CR>",                                              mode = mode_nv },
-	{ from = "<D-w>",        to = "<esc>:q<CR>",                                         mode = "i" },
+	-- { from = "<D-w>",        to = "<esc>:q<CR>",                                         mode =  },
 
 	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                  mode = mode_nv },
@@ -24,8 +24,8 @@ local nmappings = {
 
 	{ from = "<leader>or",   to = ":OverseerRun<CR>" },
 	{ from = "<leader>oo",   to = ":OverseerToggle<CR>" },
-	{ from = "<D-g>",        to = ":ToggleTerm<CR>",                                     mode = { "n", "i" } },
-	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm<CR>",                          mode = { "t" } },
+	{ from = "<D-g>",        to = ":ToggleTerm<CR>",                                     mode = mode_nv },
+	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm<CR>",                          mode = mode_it },
 
 
 	-- file manager & tab manager
@@ -34,15 +34,15 @@ local nmappings = {
 	{ from = "<D-k>",        to = ":+tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-h>",        to = ":-tabmove<CR>", },
 	{ from = "<D-l>",        to = ":+tabmove<CR>", },
-	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                            mode = "t" },
-	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                            mode = "t" },
-	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                 mode = "t" },
+	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                            mode = mode_it },
+	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                            mode = mode_it },
+	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                 mode = mode_it },
 
 	-- no_highlight search
-	{ from = "<leader><CR>", to = ":nohlsearch<CR>",                                     mode = mode_nv },
+	{ from = "<leader><CR>", to = ":nohlsearch<CR>", },
 
 	-- quick open nvim config
-	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>",      mode = "n" },
+	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>", },
 
 	-- Window & splits
 	{ from = "<leader>w",    to = "<C-w>w", },
@@ -71,7 +71,7 @@ vim.keymap.set("n", "q", "<nop>", { noremap = true })
 vim.keymap.set("n", ",q", "q", { noremap = true })
 
 -- 终端模式下启用esc
-vim.api.nvim_set_keymap('t', '<Esc><ESC>', [[<C-\><C-n>]], { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('t', '<Esc><ESC>', [[<C-\><C-n>]], { noremap = true, silent = true })
 
 
 for _, mapping in ipairs(nmappings) do
@@ -94,10 +94,3 @@ vim.keymap.set("n", "<leader>q", function()
 		run_vim_shortcut([[<C-w>j:q<CR>]])
 	end
 end, { noremap = true, silent = true })
-local builtin = require('telescope.builtin')
-
--- TODO: 将插件的快捷键能归类的就归类1
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})

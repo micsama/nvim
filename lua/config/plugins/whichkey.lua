@@ -18,7 +18,6 @@ return {
 		},
 		config = function()
 			require("which-key").add({
-				{ "<leader>ff", group = "FindFile", icon = "a" },
 			})
 		end
 	},
