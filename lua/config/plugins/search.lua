@@ -3,12 +3,12 @@ return {
 	{
 		"kevinhwang91/nvim-hlslens",
 		keys = {
-			{ "=",  [[<cmd>execute('normal! ' . v:count1 . 'n')<cr>]] .. [[<cmd>lua require("hlslens").start()<cr>]], desc = "Next match" },
-			{ "-",  [[<cmd>execute('normal! ' . v:count1 . 'N')<cr>]] .. [[<cmd>lua require("hlslens").start()<cr>]], desc = "Previous match" },
-			{ "*",  "*" .. [[<cmd>lua require("hlslens").start()<cr>]],                                               desc = "Search forward" },
-			{ "#",  "#" .. [[<cmd>lua require("hlslens").start()<cr>]],                                               desc = "Search backward" },
-			{ "g*", "g*" .. [[<cmd>lua require("hlslens").start()<cr>]],                                              desc = "Search word forward" },
-			{ "g#", "g#" .. [[<cmd>lua require("hlslens").start()<cr>]],                                              desc = "Search word backward" },
+			-- { "=",  [[<cmd>execute('normal! ' . v:count1 . 'n')<cr>]] .. [[<cmd>lua require("hlslens").start()<cr>]], desc = "Next match" },
+			-- { "-",  [[<cmd>execute('normal! ' . v:count1 . 'N')<cr>]] .. [[<cmd>lua require("hlslens").start()<cr>]], desc = "Previous match" },
+			{ "*",  "*" .. [[<cmd>lua require("hlslens").start()<cr>]],  desc = "Search forward" },
+			{ "#",  "#" .. [[<cmd>lua require("hlslens").start()<cr>]],  desc = "Search backward" },
+			{ "g*", "g*" .. [[<cmd>lua require("hlslens").start()<cr>]], desc = "Search word forward" },
+			{ "g#", "g#" .. [[<cmd>lua require("hlslens").start()<cr>]], desc = "Search word backward" },
 		},
 		config = function()
 			require("scrollbar.handlers.search").setup()
@@ -88,4 +88,3 @@ return {
 		end,
 	},
 }
-
