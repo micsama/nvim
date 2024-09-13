@@ -17,10 +17,10 @@ return {
 				},
 				extensions = {
 					fzf = {
-						fuzzy = true,                               -- false will only do exact matching
-						override_generic_sorter = true,             -- override the generic sorter
-						override_file_sorter = true,                -- override the file sorter
-						case_mode = "smart_case",                   -- or "ignore_case" or "respect_case"
+						fuzzy = true,             -- false will only do exact matching
+						override_generic_sorter = true, -- override the generic sorter
+						override_file_sorter = true, -- override the file sorter
+						case_mode = "smart_case", -- or "ignore_case" or "respect_case"
 					}
 				}
 			}
@@ -34,6 +34,7 @@ return {
 			{ '<leader>fg', function() require('telescope.builtin').live_grep() end,  desc = 'Live Grep' },
 			{ '<leader>fb', function() require('telescope.builtin').buffers() end,    desc = 'Find Buffers' },
 			{ '<leader>fh', function() require('telescope.builtin').help_tags() end,  desc = 'Find Help Tags' },
+			{ '<leader>y',  [[<CMD>Telescope neoclip<CR>]],                           desc = 'neoclip' },
 		},
 	}
 }
