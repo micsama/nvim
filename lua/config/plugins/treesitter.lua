@@ -14,12 +14,11 @@ return {
 				auto_install = true,
 				sync_install = false,
 				ensure_installed = {
+					"csv",
 					"fish",
 					"markdown",
 					"bash",
-					"go",
 					"lua",
-					"dockerfile",
 					"yaml",
 					"python",
 					"toml",

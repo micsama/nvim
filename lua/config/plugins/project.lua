@@ -25,18 +25,20 @@ return {
 			-- 	params = {}, -- 如果需要，可以在这里添加任务参数
 			-- })
 		end
-	}, {
-	-- TODO:继续配置，不同标签页不统一
-	'akinsho/toggleterm.nvim',
-	version = "*",
-	opts = { --[[ things you want to change go here]]
+	},
+	{
+		-- TODO:继续配置，不同标签页不统一
+		'akinsho/toggleterm.nvim',
+		version = "*",
+		opts = {
+			shade_terminals = false,
+			autochdir = true,
+		},
 		config = function()
 			require("toggleterm").setup {
-				shade_terminals = false
 			}
 		end
-	}
-},
+	},
 	{ "folke/trouble.nvim" },
 	{
 		-- big file & large file

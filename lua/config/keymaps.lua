@@ -24,8 +24,8 @@ local nmappings = {
 
 	{ from = "<leader>or",   to = ":OverseerRun<CR>" },
 	{ from = "<leader>oo",   to = ":OverseerToggle<CR>" },
-	{ from = "<D-g>",        to = ":ToggleTerm<CR>",                                     mode = mode_nv },
-	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm<CR>",                          mode = mode_it },
+	{ from = "<D-g>",        to = ":ToggleTerm dir=git_dir<CR>",                         mode = mode_nv },
+	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>",              mode = mode_it },
 
 
 	-- file manager & tab manager
@@ -45,7 +45,7 @@ local nmappings = {
 	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>", },
 
 	-- Window & splits
-	{ from = "<leader>w",    to = "<C-w>w", },
+	--
 	{ from = "<leader>k",    to = "<C-w>k", },
 	{ from = "<leader>j",    to = "<C-w>j", },
 	{ from = "<leader>h",    to = "<C-w>h", },

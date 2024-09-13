@@ -3,7 +3,7 @@ local function on_attach(client, bufnr)
 	require("lsp_signature").on_attach(client, bufnr)
 	-- 启用 inlay hints
 	if client.server_capabilities.inlayHintProvider then
-		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr }) -- 设置 enable 为 true，指定当前的 bufnr
+		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 	end
 
 	-- 设置诊断配置
@@ -17,8 +17,7 @@ local function on_attach(client, bufnr)
 	})
 
 	-- 设置 LSP 图标
-	local lsp = require('lsp-zero')
-	lsp.set_sign_icons({
+	require('lsp-zero').set_sign_icons({
 		error = '✘',
 		warn = '▲',
 		hint = '⚑',
@@ -26,46 +25,51 @@ local function on_attach(client, bufnr)
 	})
 end
 
--- 自动格式化保存函数优化
-local function format_on_save()
+-- 通用格式化函数，区分手动和自动
+_G.format_buffer = function(is_manual)
 	local format_on_save_filetypes = {
 		python = true,
 		rust = true,
 		lua = true,
 	}
+
+	-- 自动保存时需要检查文件类型
+	if not is_manual and not format_on_save_filetypes[vim.bo.filetype] then
+		return
+	end
+
+	local lineno = vim.api.nvim_win_get_cursor(0)
+	vim.lsp.buf.format({ async = false })
+	pcall(vim.api.nvim_win_set_cursor, 0, lineno)
+end
+
+-- 自动格式化保存
+local function format_on_save()
 	vim.api.nvim_create_autocmd("BufWritePre", {
 		pattern = "*",
 		callback = function()
-			if format_on_save_filetypes[vim.bo.filetype] then
-				local lineno = vim.api.nvim_win_get_cursor(0)
-				vim.lsp.buf.format({ async = false })
-				pcall(vim.api.nvim_win_set_cursor, 0, lineno)
-			end
+			_G.format_buffer(false) -- 自动保存时传入 false
 		end,
 	})
 end
 
--- 合并配置中的重复代码，设置 LSP server
+-- 初始化自动格式化保存功能
+format_on_save()
+
+-- LSP 服务器配置
 local lsp_servers = {
 	vimls = {},
 	rust_analyzer = {
 		settings = {
 			["rust-analyzer"] = {
-				completion = {
-					autoimport = {
-						enable = false
-					}
-				},
-				inlayHints = {
-					typeHints = true,
-				},
+				completion = { autoimport = { enable = false } },
+				inlayHints = { typeHints = true },
 				cargo = { allFeatures = true },
 				checkOnSave = { command = "clippy" },
 			}
 		},
 	},
 	pyright = {
-		pyright = { disableOrganizeImports = true, },
 		settings = {
 			python = {
 				pythonPath = "python",
@@ -79,11 +83,17 @@ local lsp_servers = {
 	jsonls = {},
 	lua_ls = {
 		settings = {
-			Lua = { diagnostics = { globals = { 'vim' } }, workspace = { library = vim.api.nvim_get_runtime_file("", true), checkThirdParty = false } },
+			Lua = {
+				diagnostics = { globals = { 'vim' } },
+				workspace = {
+					library = vim.api.nvim_get_runtime_file("", true),
+					checkThirdParty = false,
+				},
+			},
 		},
 	},
 	ruff = {
-		trace = 'messaegs',
+		trace = 'messages',
 		init_options = {
 			settings = {
 				logLevel = 'debug',
@@ -118,35 +128,54 @@ return {
 				tag = "legacy",
 				config = function()
 					require("fidget").setup({
-						text = {
-							spinner = "dots",
-						},
-						window = {
-							blend = 0,
-						},
+						text = { spinner = "dots" },
+						window = { blend = 0 },
 					})
 				end,
 			},
 		},
-		-- 使用 keys 和事件懒加载
 		keys = {
-			-- Normal mode keymaps
-			{ '<leader>h',  function() vim.lsp.buf.hover() end,                        { mode = 'n', desc = "LSP Hover" } },
-			{ 'gd',         function() vim.lsp.buf.definition() end,                   { mode = 'n', desc = "Go to Definition" } },
-			{ 'gD',         '<cmd>tab split | lua vim.lsp.buf.definition()<CR>',       { mode = 'n', desc = "Open Definition in New Tab" } },
-			{ 'gi',         function() vim.lsp.buf.implementation() end,               { mode = 'n', desc = "Go to Implementation" } },
-			{ 'go',         function() vim.lsp.buf.type_definition() end,              { mode = 'n', desc = "Go to Type Definition" } },
-			{ 'gr',         function() vim.lsp.buf.references() end,                   { mode = 'n', desc = "Go to References" } },
-			{ '<leader>rn', function() vim.lsp.buf.rename() end,                       { mode = 'n', desc = "Rename Symbol" } },
-			{ '<leader>,',  function() vim.lsp.buf.code_action() end,                  { mode = 'n', desc = "Code Action" } },
-			{ '<leader>t',  '<cmd>Trouble<CR>',                                        { mode = 'n', desc = "Open Trouble" } },
-			{ '<leader>-',  function() vim.diagnostic.goto_prev({ float = true }) end, { mode = 'n', desc = "Previous Diagnostic" } },
-			{ '<leader>=',  function() vim.diagnostic.goto_next({ float = true }) end, { mode = 'n', desc = "Next Diagnostic" } },
+			-- LSP相关快捷键
+			{ '<leader>h',  function() vim.lsp.buf.hover() end,                  desc = "LSP Hover" },
+			{ 'gd',         function() vim.lsp.buf.definition() end,             desc = "Go to Definition" },
+			{ 'gD',         '<cmd>tab split | lua vim.lsp.buf.definition()<CR>', desc = "Open Definition in New Tab" },
+			{ 'gi',         function() vim.lsp.buf.implementation() end,         desc = "Go to Implementation" },
+			{ 'go',         function() vim.lsp.buf.type_definition() end,        desc = "Go to Type Definition" },
+			{ 'gr',         function() vim.lsp.buf.references() end,             desc = "Go to References" },
+			{ '<leader>rn', function() vim.lsp.buf.rename() end,                 desc = "Rename Symbol" },
+			{ '<leader>,',  function() vim.lsp.buf.code_action() end,            desc = "Code Action" },
+			{ '<leader>t',  '<cmd>Trouble<CR>',                                  desc = "Open Trouble" },
+			-- { '<leader>-',  function() vim.diagnostic.goto_prev({ float = true }) end, desc = "Previous Diagnostic" },
+			-- { '<leader>=',  function() vim.diagnostic.goto_next({ float = true }) end, desc = "Next Diagnostic" },
+			-- { '<leader>=',  function() vim.diagnostic.jump({ float = true }) end,      desc = "Next Diagnostic" },
+			-- 跳转到上一个诊断信息
+			{
+				'<leader>-',
+				function()
+					vim.diagnostic.jump({
+						count = -1,                     -- 指定跳转到上一个
+						float = true,                   -- 显示浮动窗口
+						pos = vim.api.nvim_win_get_cursor(0), -- 当前光标位置
+					})
+				end,
+				desc = "Previous Diagnostic"
+			},
 
-			-- Insert mode keymaps
-			{ '<c-f>',      function() vim.lsp.buf.signature_help() end,               { mode = 'i', desc = "Signature Help" } },
+			-- 跳转到下一个诊断信息
+			{
+				'<leader>=',
+				function()
+					vim.diagnostic.jump({
+						count = 1,                      -- 指定跳转到下一个
+						float = true,                   -- 显示浮动窗口
+						pos = vim.api.nvim_win_get_cursor(0), -- 当前光标位置
+					})
+				end,
+				desc = "Next Diagnostic"
+			},
+			-- Insert mode keymap
+			{ '<c-f>', function() vim.lsp.buf.signature_help() end, mode = 'i', desc = "Signature Help" },
 		},
-		-- 通过文件事件进行懒加载
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lsp = require('lsp-zero')
@@ -162,12 +191,15 @@ return {
 					'ruff'
 				},
 			})
+
 			-- 设置各个 LSP server
 			for server, config in pairs(lsp_servers) do
 				require('lspconfig')[server].setup(vim.tbl_extend("force", config, { on_attach = on_attach }))
 			end
 			lsp.setup()
-			format_on_save()
+
+			-- 绑定快捷键进行手动格式化
+			vim.api.nvim_set_keymap('n', '<M-S-f>', ':lua _G.format_buffer(true)<CR>', { noremap = true, silent = true })
 		end,
 	},
 }

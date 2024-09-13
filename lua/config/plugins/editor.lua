@@ -18,6 +18,7 @@ local ctrlu = require("plugin.ctrlu").ctrlu
 -- 插件配置
 return {
 	-- 高亮当前光标下的词
+	-- NOTE: vim.lsp.buf_get_clients()
 	{
 		"RRethy/vim-illuminate",
 		event = { "InsertEnter", "CursorMoved" }, -- 插入模式进入或光标移动时加载
