@@ -9,7 +9,7 @@
 
 -- 字体
 -- vim.o.guifont = "FiraCode Nerd Font:h15"
-vim.o.guifont = "FiraCode Nerd Font,PingFang SC:h15"
+vim.o.guifont = "FantasqueSansM Nerd Font Propo,FiraCode Nerd Font,PingFang SC:h18"
 vim.opt.linespace = 0
 
 -- 窗口模糊

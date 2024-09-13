@@ -43,7 +43,7 @@ end
 
 --
 local function has_words_before()
-	local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
 	return col ~= 0 and not vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s")
 end
 
@@ -105,22 +105,22 @@ local function setup_cmp(cmp, lspkind)
 			end,
 		},
 		sources = cmp.config.sources({
-			{ name = 'nvim_lsp', priority = 1000 },                                              --  LSP
-			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } },       --
-			{ name = 'buffer',   priority = 400 },                                               --
+			{ name = 'nvim_lsp', priority = 1000 },                                     --  LSP
+			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } }, --
+			{ name = 'buffer',   priority = 400 },                                      --
 		}, {
-			{ name = 'path',     priority = 250 },                                               --
-			{ name = 'nvim_lua', priority = 700 },                                               -- Neovim Lua API
-			{ name = 'calc',     priority = 200 },                                               --
+			{ name = 'path',     priority = 250 },                                      --
+			{ name = 'nvim_lua', priority = 700 },                                      -- Neovim Lua API
+			{ name = 'calc',     priority = 200 },                                      --
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<c-g>'] = cmp.mapping(function(fallback)
 				if cmp.visible() then
-					cmp.close()              --
+					cmp.close() --
 				else
-					cmp.complete()           --
+					cmp.complete() --
 				end
-			end),                        --
+			end),         --
 
 			['<CR>'] = cmp.mapping({
 				i = function(fallback)
@@ -160,47 +160,47 @@ return {
 	--  cmp
 	{
 		'hrsh7th/nvim-cmp',
-		event = { 'InsertEnter' },     --
+		event = { 'InsertEnter' }, --
 		config = function()
 			local cmp = require("cmp")
 			local lspkind = require("lspkind")
-			set_highlights()              --
-			setup_cmp(cmp, lspkind)       --
+			set_highlights()     --
+			setup_cmp(cmp, lspkind) --
 		end,
 		dependencies = {
-			{ 'onsails/lspkind.nvim' },                                                      --
+			{ 'onsails/lspkind.nvim' },                                                        --
 			{ "L3MON4D3/LuaSnip",            version = "v2.x", build = "make install_jsregexp" }, --
-			{ "rafamadriz/friendly-snippets" },                                              --
-			{ 'saadparwaiz1/cmp_luasnip' }                                                   -- LuaSnip
+			{ "rafamadriz/friendly-snippets" },                                                --
+			{ 'saadparwaiz1/cmp_luasnip' }                                                     -- LuaSnip
 		},
 	},
 
 	--
 	{
-		'hrsh7th/cmp-buffer',          --
-		event = { 'InsertEnter' },     --
+		'hrsh7th/cmp-buffer',    --
+		event = { 'InsertEnter' }, --
 	},
 	{
-		'hrsh7th/cmp-path',            --
-		event = { 'InsertEnter' },     --
+		'hrsh7th/cmp-path',      --
+		event = { 'InsertEnter' }, --
 	},
 	{
-		'hrsh7th/cmp-nvim-lsp',        -- LSP
-		event = { 'InsertEnter' },     --
+		'hrsh7th/cmp-nvim-lsp',  -- LSP
+		event = { 'InsertEnter' }, --
 	},
 	{
-		'hrsh7th/cmp-nvim-lua',        -- Neovim Lua API
-		event = { 'InsertEnter' },     --
+		'hrsh7th/cmp-nvim-lua',  -- Neovim Lua API
+		event = { 'InsertEnter' }, --
 	},
 	{
-		'hrsh7th/cmp-calc',            --
-		event = { 'InsertEnter' },     --
+		'hrsh7th/cmp-calc',      --
+		event = { 'InsertEnter' }, --
 	},
 
 	-- cmdline
 	{
-		'hrsh7th/cmp-cmdline',          --
-		event = { 'CmdlineEnter' },     --
+		'hrsh7th/cmp-cmdline',    --
+		event = { 'CmdlineEnter' }, --
 		config = function()
 			local cmp = require("cmp")
 			cmp.setup.cmdline(':', {

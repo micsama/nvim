@@ -1,5 +1,6 @@
 return {
 	{
+		-- NOTE: vim.lsp.buf_get_clients()
 		"ahmedkhalf/project.nvim",
 		dependencies = { 'nvim-telescope/telescope.nvim' },
 		event = "VeryLazy",
