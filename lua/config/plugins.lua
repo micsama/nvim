@@ -60,6 +60,7 @@ require("lazy").setup({
 	require("config.plugins.language.python"),
 	require("config.plugins.language.rust"),
 	require("config.plugins.language.markdown"),
+	require("config.plugins.language.other"),
 	require("config.plugins.language.dap"),
 
 	-- 自动补全
