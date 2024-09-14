@@ -66,10 +66,10 @@ return {
 	{
 		"fedepujol/move.nvim",
 		keys = { -- 设置快捷键以实现懒加载
-			{ "<C-s-j>", ":MoveLine(1)<CR>",   mode = "n", desc = "Move line down" },
-			{ "<C-j>",   ":MoveLine(-1)<CR>",  mode = "n", desc = "Move line up" },
-			{ "<C-j>",   ":MoveBlock(1)<CR>",  mode = "v", desc = "Move block down" },
-			{ "<C-s-j>", ":MoveBlock(-1)<CR>", mode = "v", desc = "Move block up" },
+			{ "<a-k>", ":MoveLine(1)<CR>",   mode = "n", desc = "Move line down" },
+			{ "<a-j>", ":MoveLine(-1)<CR>",  mode = "n", desc = "Move line up" },
+			{ "<a-j>", ":MoveBlock(1)<CR>",  mode = "v", desc = "Move block down" },
+			{ "<a-k>", ":MoveBlock(-1)<CR>", mode = "v", desc = "Move block up" },
 		},
 		config = function()
 			require('move').setup({

@@ -2,9 +2,9 @@ local mode_nv = { "n", "v" }
 local mode_it = { "i", "t" }
 local nmappings = {
 	-- quick save and quit
-	{ from = "<D-s>",        to = ":w<CR>",                                              mode = mode_nv },
-	{ from = "<M-s>",        to = ":w<CR>",                                              mode = mode_nv },
-	{ from = "<S>",          to = ":w<CR>",                                              mode = mode_nv },
+	{ from = "<D-s>",        to = ":up<CR>",                                             mode = mode_nv },
+	{ from = "<M-s>",        to = ":up<CR>",                                             mode = mode_nv },
+	{ from = "<S>",          to = ":up<CR>",                                             mode = mode_nv },
 	{ from = "<D-w>",        to = ":q<CR>",                                              mode = mode_nv },
 	-- { from = "<D-w>",        to = "<esc>:q<CR>",                                         mode =  },
 
@@ -22,8 +22,6 @@ local nmappings = {
 
 
 
-	{ from = "<leader>or",   to = ":OverseerRun<CR>" },
-	{ from = "<leader>oo",   to = ":OverseerToggle<CR>" },
 	{ from = "<D-g>",        to = ":ToggleTerm dir=git_dir<CR>",                         mode = mode_nv },
 	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>",              mode = mode_it },
 
@@ -46,6 +44,7 @@ local nmappings = {
 
 	-- Window & splits
 	--
+	{ from = "<leader>w",    to = "<CMD>wincmd w<CR>", },
 	{ from = "<leader>k",    to = "<C-w>k", },
 	{ from = "<leader>j",    to = "<C-w>j", },
 	{ from = "<leader>h",    to = "<C-w>h", },

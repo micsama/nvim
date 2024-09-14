@@ -15,9 +15,9 @@ return {
 	},
 	{
 		"nyngwang/NeoZoom.lua",
-		-- keys = {
-		-- 	'<D-f>', "<CMD>NeoZoomToggle<CR>", { mode = 'n', desc = "Zoom your window largr" },
-		-- },
+		keys = {
+			'<D-f>', "<CMD>NeoZoomToggle<CR>", { mode = 'n', desc = "Zoom your window largr" },
+		},
 		config = function()
 			require('neo-zoom').setup {
 				popup = { enabled = true }, -- this is the default.
