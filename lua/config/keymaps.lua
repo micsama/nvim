@@ -22,8 +22,6 @@ local nmappings = {
 
 
 
-	{ from = "<D-g>",        to = ":ToggleTerm dir=git_dir<CR>",                         mode = mode_nv },
-	{ from = "<D-g>",        to = "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>",              mode = mode_it },
 
 
 	-- file manager & tab manager
