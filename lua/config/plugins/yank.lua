@@ -5,6 +5,9 @@ return {
 			'nvim-telescope/telescope.nvim',
 			{ 'kkharji/sqlite.lua', module = 'sqlite' },
 		},
+		keys = {
+			{ "<leader>y", "<CMD>telescope neoclip<CR>", desc = "Open neoclip" }
+		},
 		config = function()
 			require('neoclip').setup({
 				history = 1000,
@@ -26,4 +29,3 @@ return {
 		end
 	},
 }
-

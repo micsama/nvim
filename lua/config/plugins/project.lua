@@ -64,17 +64,16 @@ return {
 		end
 	},
 	{
-		-- TODO:继续配置，不同标签页不统一
 		'akinsho/toggleterm.nvim',
 		version = "*",
+		keys = {
+			{ "<D-g>", ":ToggleTerm dir=git_dir<CR>",            mode = { "n", "v" }, desc = "Toggle terminal" },
+			{ "<D-g>", "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>", mode = { "i", "t" }, desc = "Toggle terminal" },
+		},
 		opts = {
 			shade_terminals = false,
 			autochdir = true,
 		},
-		config = function()
-			require("toggleterm").setup {
-			}
-		end
 	},
 	{ "folke/trouble.nvim" },
 	{

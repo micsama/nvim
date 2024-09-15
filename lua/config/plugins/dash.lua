@@ -4,6 +4,9 @@ return {
 		"ahmedkhalf/project.nvim",
 		dependencies = { 'nvim-telescope/telescope.nvim' },
 		event = "VeryLazy",
+		keys = {
+			{ '<leader>fp', [[<CMD>Telescope projects<CR>]], desc = 'Find Project' },
+		},
 		config = function()
 			require("project_nvim").setup {
 				patterns = { ".git", "Makefile", "package.json" }
