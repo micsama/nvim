@@ -2,48 +2,48 @@ local mode_nv = { "n", "v" }
 local mode_it = { "i", "t" }
 local nmappings = {
 	-- quick save and quit
-	{ from = "<D-s>",        to = ":up<CR>",                                             mode = mode_nv },
-	{ from = "<M-s>",        to = ":up<CR>",                                             mode = mode_nv },
-	{ from = "<S>",          to = ":up<CR>",                                             mode = mode_nv },
-	{ from = "<D-w>",        to = ":q<CR>",                                              mode = mode_nv },
+	{ from = "<D-s>",        to = "<CMD>up<CR>",                                             mode = mode_nv },
+	{ from = "<M-s>",        to = "<CMD>up<CR>",                                             mode = mode_nv },
+	{ from = "<S>",          to = "<CMD>up<CR>",                                             mode = mode_nv },
+	{ from = "<D-w>",        to = "<CMD>q<CR>",                                              mode = mode_nv },
 	-- { from = "<D-w>",        to = "<esc>:q<CR>",                                         mode =  },
 
 	-- bind to quick scollor and copy2system clipboard
-	{ from = "J",            to = "5j",                                                  mode = mode_nv },
-	{ from = "K",            to = "5k",                                                  mode = mode_nv },
-	{ from = "Y",            to = "\"+y",                                                mode = "v" },
+	{ from = "J",            to = "5j",                                                      mode = mode_nv },
+	{ from = "K",            to = "5k",                                                      mode = mode_nv },
+	{ from = "Y",            to = "\"+y",                                                    mode = "v" },
 
 	-- no shift ^_^
-	{ from = ";",            to = ":",                                                   mode = mode_nv },
-	{ from = "`",            to = "~",                                                   mode = mode_nv },
+	{ from = ";",            to = ":",                                                       mode = mode_nv },
+	{ from = "`",            to = "~",                                                       mode = mode_nv },
 
 	-- 设置自动换行
-	{ from = "<M-z>",        to = ":set wrap!<CR>",                                      mode = mode_nv },
+	{ from = "<M-z>",        to = "<CMD>set wrap!<CR>",                                      mode = mode_nv },
 
 	-- 设置插入模式下的cmd+方向键
-	{ from = "<D-left>",     to = "<C-o>0",                                              mode = mode_it },
-	{ from = "<D-right>",    to = "<C-o>$",                                              mode = mode_it },
-	{ from = "<D-left>",     to = "<C-o>0",                                              mode = mode_it },
-	{ from = "<D-left>",     to = "<C-o>0",                                              mode = mode_it },
+	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
+	{ from = "<D-right>",    to = "<C-o>$",                                                  mode = mode_it },
+	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
+	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 
 
 
 
 	-- file manager & tab manager
-	{ from = "<D-t>",        to = ":tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
-	{ from = "<D-j>",        to = ":-tabnext<CR>",                                       mode = mode_nv },
-	{ from = "<D-k>",        to = ":+tabnext<CR>",                                       mode = mode_nv },
-	{ from = "<D-h>",        to = ":-tabmove<CR>", },
-	{ from = "<D-l>",        to = ":+tabmove<CR>", },
-	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                            mode = mode_it },
-	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                            mode = mode_it },
-	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                 mode = mode_it },
+	{ from = "<D-t>",        to = "<CMD>tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
+	{ from = "<D-j>",        to = "<CMD>-tabnext<CR>",                                       mode = mode_nv },
+	{ from = "<D-k>",        to = "<CMD>+tabnext<CR>",                                       mode = mode_nv },
+	{ from = "<D-h>",        to = "<CMD>-tabmove<CR>", },
+	{ from = "<D-l>",        to = "<CMD>+tabmove<CR>", },
+	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                                mode = mode_it },
+	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                                mode = mode_it },
+	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                     mode = mode_it },
 
 	-- no_highlight search
-	{ from = "<leader><CR>", to = ":nohlsearch<CR>", },
+	{ from = "<leader><CR>", to = "<CMD>nohlsearch<CR>", },
 
 	-- quick open nvim config
-	{ from = "<leader>rc",   to = ":edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>", },
+	{ from = "<leader>rc",   to = "<CMD>edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>", },
 
 	-- Window & splits
 	--
@@ -54,14 +54,14 @@ local nmappings = {
 	{ from = "<leader>l",    to = "<C-w>l", },
 	{ from = "qf",           to = "<C-w>o", },
 	{ from = "s",            to = "<nop>", },
-	{ from = "sj",           to = ":set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", },
-	{ from = "sk",           to = ":set splitbelow<CR>:split<CR>", },
-	{ from = "sl",           to = ":set nosplitright<CR>:vsplit<CR>:set splitright<CR>", },
-	{ from = "sh",           to = ":set splitright<CR>:vsplit<CR>", },
-	{ from = "<up>",         to = ":res +5<CR>", },
-	{ from = "<down>",       to = ":res -5<CR>", },
-	{ from = "<left>",       to = ":vertical resize-5<CR>", },
-	{ from = "<right>",      to = ":vertical resize+5<CR>", },
+	{ from = "sj",           to = "<CMD>set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", },
+	{ from = "sk",           to = "<CMD>set splitbelow<CR>:split<CR>", },
+	{ from = "sl",           to = "<CMD>set nosplitright<CR>:vsplit<CR>:set splitright<CR>", },
+	{ from = "sh",           to = "<CMD>set splitright<CR>:vsplit<CR>", },
+	{ from = "<up>",         to = "<CMD>res +5<CR>", },
+	{ from = "<down>",       to = "<CMD>res -5<CR>", },
+	{ from = "<left>",       to = "<CMD>vertical resize-5<CR>", },
+	{ from = "<right>",      to = "<CMD>vertical resize+5<CR>", },
 	{ from = "sh",           to = "<C-w>t<C-w>K", },
 	{ from = "sv",           to = "<C-w>t<C-w>H", },
 	{ from = "srh",          to = "<C-w>b<C-w>K", },
