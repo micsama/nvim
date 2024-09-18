@@ -20,6 +20,11 @@ local nmappings = {
 	-- 设置自动换行
 	{ from = "<M-z>",        to = ":set wrap!<CR>",                                      mode = mode_nv },
 
+	-- 设置插入模式下的cmd+方向键
+	{ from = "<D-left>",     to = "<C-o>0",                                              mode = mode_it },
+	{ from = "<D-right>",    to = "<C-o>$",                                              mode = mode_it },
+	{ from = "<D-left>",     to = "<C-o>0",                                              mode = mode_it },
+	{ from = "<D-left>",     to = "<C-o>0",                                              mode = mode_it },
 
 
 
