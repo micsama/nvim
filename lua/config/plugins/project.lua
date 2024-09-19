@@ -75,7 +75,10 @@ return {
 			autochdir = true,
 		},
 	},
-	{ "folke/trouble.nvim" },
+	{
+		"folke/trouble.nvim",
+		cmd = "Trouble",
+	},
 	{
 		-- big file & large file
 		"LunarVim/bigfile.nvim",
