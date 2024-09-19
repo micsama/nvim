@@ -11,8 +11,13 @@ return {
 		},
 		config = function()
 			require("neo-tree").setup({
+				close_if_last_window = true,
+				popup_border_style = "rounded",
 				source_selector = {
 					winbar = true,
+				},
+				window = {
+					width = 30,
 				},
 				filesystem = {
 					follow_current_file = { enable = false }, -- 当切换文件时，自动切换到文件所在的目录

@@ -1,14 +1,24 @@
 return {
 	{
 		'numToStr/Comment.nvim',
-		keys = {
-			{ 'gc', '<Plug>(comment_toggle_linewise)',        mode = 'n', desc = 'Toggle comment in NORMAL mode' },
-			{ 'gc', '<Plug>(comment_toggle_linewise_visual)', mode = 'x', desc = 'Toggle comment in VISUAL mode' },
-		}
+		config = function()
+			require('Comment').setup(
+				{
+					toggler = {
+						line = '<D-/>',
+					},
+					opleader = {
+						---Line-comment keymap
+						line = '<D-/>',
+					},
+				}
+			)
+		end
 	},
 	{
 		"folke/todo-comments.nvim",
-		event = "BufRead", -- Lazy load when a buffer is read
+		lazy = false,
+		--event = "BufRead", -- Lazy load when a buffer is read
 		dependencies = { "nvim-lua/plenary.nvim" },
 	}
 }
