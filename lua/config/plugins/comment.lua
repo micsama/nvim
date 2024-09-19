@@ -1,5 +1,11 @@
 return {
 	{
+		"folke/todo-comments.nvim",
+		-- event = "BufRead", -- Lazy load when a buffer is read
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {}
+	},
+	{
 		'numToStr/Comment.nvim',
 		config = function()
 			require('Comment').setup(
@@ -15,10 +21,4 @@ return {
 			)
 		end
 	},
-	{
-		"folke/todo-comments.nvim",
-		lazy = false,
-		--event = "BufRead", -- Lazy load when a buffer is read
-		dependencies = { "nvim-lua/plenary.nvim" },
-	}
 }

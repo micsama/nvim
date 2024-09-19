@@ -6,7 +6,7 @@ return {
 			{ 'kkharji/sqlite.lua', module = 'sqlite' },
 		},
 		keys = {
-			{ "<leader>y", "<CMD>telescope neoclip<CR>", desc = "Open neoclip" }
+			{ "<leader>y", "<CMD>lua require('telescope').extensions.neoclip.default()<CR>", desc = "Open neoclip" }
 		},
 		config = function()
 			require('neoclip').setup({

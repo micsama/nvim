@@ -32,7 +32,7 @@ return {
 			sections = {
 				lualine_a = { 'filename' },
 				lualine_b = { 'branch', 'diff', 'diagnostics' },
-				lualine_c = {},
+				lualine_c = { 'overseer' },
 				lualine_x = { 'pwd' },
 				lualine_y = { 'filesize', 'filetype' },
 				lualine_z = { 'location' }
