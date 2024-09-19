@@ -9,9 +9,7 @@ local function o_temp()
 					cmd = { "python", file_path },
 					name = file_name .. " running", -- 任务的名字
 					cwd = "./",
-					env = {
-						VAR = "FOO",
-					},
+					env = {},
 					components = {
 						{ "on_complete_dispose", { timeout = 1000 } },
 						"default",
@@ -54,6 +52,11 @@ return {
 		},
 		config = function()
 			require('overseer').setup({
+				strategy = {
+					"toggleterm",
+					open_on_start = true,
+					auto_scroll = true,
+				},
 				templates = { "builtin" },
 				task_defaults = {
 					-- 设置默认 shell 为 Fish
@@ -78,6 +81,7 @@ return {
 	{
 		"folke/trouble.nvim",
 		cmd = "Trouble",
+		opts = {}
 	},
 	{
 		-- big file & large file
