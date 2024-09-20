@@ -54,7 +54,7 @@ return {
 			require('overseer').setup({
 				strategy = {
 					"toggleterm",
-					open_on_start = true,
+					open_on_start = false,
 					auto_scroll = true,
 				},
 				templates = { "builtin" },

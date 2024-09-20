@@ -26,15 +26,12 @@ local nmappings = {
 	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 
-
-
-
 	-- file manager & tab manager
 	{ from = "<D-t>",        to = "<CMD>tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
 	{ from = "<D-j>",        to = "<CMD>-tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-k>",        to = "<CMD>+tabnext<CR>",                                       mode = mode_nv },
-	{ from = "<D-h>",        to = "<CMD>-tabmove<CR>", },
-	{ from = "<D-l>",        to = "<CMD>+tabmove<CR>", },
+	{ from = "<D-s-j>",      to = "<CMD>-tabmove<CR>", },
+	{ from = "<D-s-k>",      to = "<CMD>+tabmove<CR>", },
 	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                                mode = mode_it },
 	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                                mode = mode_it },
 	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                     mode = mode_it },

@@ -71,8 +71,5 @@ return {
 				},
 			},
 		})
-
-		-- 设置 Tab 页显示编号
-		-- vim.o.tabline = '%!v:lua.require("dropbar.tabline").setup()'
 	end,
 }

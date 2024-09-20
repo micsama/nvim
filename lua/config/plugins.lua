@@ -54,6 +54,7 @@ require("lazy").setup({
 	require("config.plugins.undo"),
 	require("config.plugins.window-management"),
 	require("config.plugins.fun"),
+	require("config.plugins.llm"),
 
 	-- 语言支持与配置
 	require("config.plugins.language.lspconfig"),
