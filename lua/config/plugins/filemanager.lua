@@ -21,7 +21,7 @@ return {
 					width = 30,
 				},
 				filesystem = {
-					window = { position = "current" },
+					-- window = { position = "current" },
 					follow_current_file = { enable = false }, -- 当切换文件时，自动切换到文件所在的目录
 					hijack_netrw_behavior = "open_default", -- 使用neo-tree替代netrw
 					use_libuv_file_watcher = true,       -- 使用libuv来监听文件变化
