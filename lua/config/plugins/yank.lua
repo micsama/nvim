@@ -5,6 +5,7 @@ return {
 			'nvim-telescope/telescope.nvim',
 			{ 'kkharji/sqlite.lua', module = 'sqlite' },
 		},
+		events = "Verylazy",
 		keys = {
 			{ "<leader>y", "<CMD>lua require('telescope').extensions.neoclip.default()<CR>", desc = "Open neoclip" }
 		},
