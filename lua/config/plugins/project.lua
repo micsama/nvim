@@ -52,11 +52,11 @@ return {
 		},
 		config = function()
 			require('overseer').setup({
-				strategy = {
-					"toggleterm",
-					open_on_start = false,
-					auto_scroll = true,
-				},
+				-- strategy = {
+				-- 	"toggleterm",
+				-- 	open_on_start = false,
+				-- 	auto_scroll = true,
+				-- },
 				templates = { "builtin" },
 				task_defaults = {
 					-- 设置默认 shell 为 Fish
