@@ -22,12 +22,12 @@ return {
 				},
 				filesystem = {
 					-- window = { position = "current" },
-					follow_current_file = { enable = false }, -- 当切换文件时，自动切换到文件所在的目录
+					follow_current_file = { enable = true }, -- 当切换文件时，自动切换到文件所在的目录
 					hijack_netrw_behavior = "open_default", -- 使用neo-tree替代netrw
-					use_libuv_file_watcher = true,       -- 使用libuv来监听文件变化
+					use_libuv_file_watcher = true,      -- 使用libuv来监听文件变化
 					cwd_target = {
-						in_terminal = false,               -- 使用当前终端工作目录
-						from_neotree = false,              -- 使用neo-tree窗口的工作目录
+						in_terminal = false,              -- 使用当前终端工作目录
+						from_neotree = true,              -- 使用neo-tree窗口的工作目录
 					},
 					filtered_items = {
 						hide_dotfiles = true,
