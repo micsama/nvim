@@ -9,7 +9,6 @@
 ## 待办：
 
 1. markdown预览等事项
-2. jupyter。https://github.com/benlubas/molten-nvim
 3. 快捷键记录。
 4. 字体更换（中文的苹方字体）
 5. 拼写检查

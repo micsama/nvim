@@ -20,7 +20,7 @@ return {
 		build = ":UpdateRemotePlugins",
 		init = function()
 			-- these are examples, not defaults. Please see the readme
-			vim.g.molten_image_provider = "wezterm"
+			-- vim.g.molten_image_provider = "wezterm"
 			vim.g.molten_output_win_max_height = 20
 			vim.g.molten_auto_open_output = false
 			vim.g.molten_cover_empty_lines = true
@@ -42,7 +42,7 @@ return {
 			-- 设置输出窗口边框的样式，链接到 FloatBorder
 			vim.api.nvim_set_hl(0, "MoltenOutputBorder", { link = "FloatBorder" })
 			-- 在原有 MoltenCell 样式的基础上添加加粗效果
-			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true, bg = "#3b4b4b" })
+			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true })
 		end,
 
 	},

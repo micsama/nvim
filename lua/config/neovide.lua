@@ -37,6 +37,7 @@ vim.g.neovide_cursor_vfx_mode = "pixiedust"
 
 vim.g.neovide_cursor_animate_in_insert_mode = true
 vim.g.neovide_scroll_animation_far_lines = 1
+vim.g.neovide_cursor_vfx_particle_density = 10.0
 
 -- 自动隐藏鼠标
 vim.g.neovide_hide_mouse_when_typing = true
