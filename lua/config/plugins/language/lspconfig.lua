@@ -145,10 +145,6 @@ return {
 			{ '<leader>rn', function() vim.lsp.buf.rename() end,                 desc = "Rename Symbol" },
 			{ '<leader>,',  function() vim.lsp.buf.code_action() end,            desc = "Code Action" },
 			{ '<leader>t',  '<cmd>Trouble<CR>',                                  desc = "Open Trouble" },
-			-- { '<leader>-',  function() vim.diagnostic.goto_prev({ float = true }) end, desc = "Previous Diagnostic" },
-			-- { '<leader>=',  function() vim.diagnostic.goto_next({ float = true }) end, desc = "Next Diagnostic" },
-			-- { '<leader>=',  function() vim.diagnostic.jump({ float = true }) end,      desc = "Next Diagnostic" },
-			-- 跳转到上一个诊断信息
 			{
 				'<leader>-',
 				function()
@@ -160,7 +156,6 @@ return {
 				end,
 				desc = "Previous Diagnostic"
 			},
-
 			-- 跳转到下一个诊断信息
 			{
 				'<leader>=',
@@ -184,6 +179,7 @@ return {
 			require('mason-lspconfig').setup({
 				ensure_installed = {
 					'vimls',
+					'markdown_oxide',
 					'rust_analyzer',
 					'pyright',
 					'jsonls',
