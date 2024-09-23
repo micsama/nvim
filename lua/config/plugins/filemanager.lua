@@ -7,7 +7,7 @@ return {
 			"MunifTanjim/nui.nvim",
 		},
 		keys = {
-			{ '<D-b>', '<CMD>Neotree reveal toggle <CR> ', desc = 'Toggle NeoTree' }, -- 设置快捷键  为懒加载触发
+			{ '<D-b>', '<CMD>Neotree reveal toggle dir=./<CR> ', desc = 'Toggle NeoTree' }, -- 设置快捷键  为懒加载触发
 		},
 		config = function()
 			require("neo-tree").setup({
@@ -19,6 +19,34 @@ return {
 				},
 				window = {
 					width = 30,
+					mappings = {
+						["O"] = vim.ui.open and {
+							function(state)
+								local path = state.tree:get_node().path
+								local cmd, err = vim.ui.open(path)
+
+								-- 检查是否成功调用 `vim.ui.open`，如果失败则使用 `vim.notify` 显示错误
+								if not cmd then
+									vim.notify("Failed to open file: " .. (err or "Unknown error"), vim.log.levels.ERROR)
+									return
+								end
+
+								-- 同步等待命令执行完成
+								local result = cmd:wait()
+
+								-- 检查命令执行结果，如果 `code` 不为 0 则说明执行失败
+								if result.code ~= 0 then
+									vim.notify(
+										"Failed to open file with exit code " .. result.code ..
+										"\nError output: " .. (result.stderr or "No stderr") ..
+										"\nOutput: " .. (result.stdout or "No stdout"),
+										vim.log.levels.ERROR
+									)
+								end
+							end,
+							desc = "open with system default application",
+						} or nil,
+					}
 				},
 				filesystem = {
 					-- window = { position = "current" },

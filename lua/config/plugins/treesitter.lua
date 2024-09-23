@@ -15,6 +15,8 @@ return {
 				sync_install = false,
 				ensure_installed = {
 					"fish",
+					"html",
+					"markdown_inline",
 					"markdown",
 					"bash",
 					"lua",
