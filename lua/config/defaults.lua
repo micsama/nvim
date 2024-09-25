@@ -58,6 +58,7 @@ vim.o.formatoptions = vim.o.formatoptions:gsub('tc', '') -- 禁用自动换行�
 vim.o.ttyfast = true        -- 提升终端性能
 vim.o.virtualedit = 'block' -- 允许块状选择模式的虚拟编辑
 vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 vim.g.python3_host_prog = 'python'
 
 
