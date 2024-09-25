@@ -24,37 +24,12 @@ local function on_attach(client, bufnr)
 		info = '»',
 	})
 end
-
--- 通用格式化函数，区分手动和自动
-_G.format_buffer = function(is_manual)
-	local format_on_save_filetypes = {
-		python = true,
-		rust = true,
-		lua = true,
-	}
-
-	-- 自动保存时需要检查文件类型
-	if not is_manual and not format_on_save_filetypes[vim.bo.filetype] then
-		return
-	end
-
-	local lineno = vim.api.nvim_win_get_cursor(0)
-	vim.lsp.buf.format({ async = false })
-	pcall(vim.api.nvim_win_set_cursor, 0, lineno)
-end
-
--- 自动格式化保存
-local function format_on_save()
-	vim.api.nvim_create_autocmd("BufWritePre", {
-		pattern = "*",
-		callback = function()
-			_G.format_buffer(false) -- 自动保存时传入 false
-		end,
-	})
-end
-
--- 初始化自动格式化保存功能
-format_on_save()
+-- 设置键映射，直接使用 Lua 闭包函数
+vim.keymap.set('n', '<M-S-f>', function()
+    local lineno = vim.api.nvim_win_get_cursor(0)
+    vim.lsp.buf.format({ async = false })
+    pcall(vim.api.nvim_win_set_cursor, 0, lineno)
+end, { noremap = true, silent = true })
 
 -- LSP 服务器配置
 local lsp_servers = {
@@ -194,9 +169,7 @@ return {
 				require('lspconfig')[server].setup(vim.tbl_extend("force", config, { on_attach = on_attach }))
 			end
 			lsp.setup()
-
 			-- 绑定快捷键进行手动格式化
-			vim.api.nvim_set_keymap('n', '<M-S-f>', ':lua _G.format_buffer(true)<CR>', { noremap = true, silent = true })
 		end,
 	},
 }
