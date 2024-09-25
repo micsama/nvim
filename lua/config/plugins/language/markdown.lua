@@ -28,14 +28,14 @@ return {
 	},
 	{
 		'Kicamon/markdown-table-mode.nvim',
-		ft = "markdown", -- If you decide to lazy-load anyway
+		ft = {"markdown"}, -- If you decide to lazy-load anyway
 		opts = {},
 	},
 	{
 		'ChuufMaster/markdown-toc',
+		ft={"markdown"},
 		opts = {
 			heading_level_to_match = -1,
-
 			-- Set to True display a dropdown to allow you to select the heading level
 			ask_for_heading_level = true,
 			toc_format = '%s- [%s](<%s#%s>)',

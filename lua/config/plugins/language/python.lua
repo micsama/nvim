@@ -2,7 +2,7 @@ return {
 	{
 		"AckslD/swenv.nvim",
 		dependencies = {
-			"VonHeikemen/lsp-zero.nvim",
+			-- "VonHeikemen/lsp-zero.nvim",
 			"nvim-lua/plenary.nvim",
 		},
 		ft = { "python" },
