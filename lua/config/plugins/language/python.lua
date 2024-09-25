@@ -69,6 +69,5 @@ return {
 			-- 在原有 MoltenCell 样式的基础上添加加粗效果
 			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true })
 		end,
-
 	},
 }
