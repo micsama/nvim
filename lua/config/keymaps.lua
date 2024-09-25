@@ -66,6 +66,10 @@ local nmappings = {
 }
 
 
+vim.keymap.del('n', 'grr')
+vim.keymap.del('x', 'gra')
+vim.keymap.del('n', 'gra')
+vim.keymap.del('n', 'grn')
 vim.keymap.set("n", "q", "<nop>", { noremap = true })
 vim.keymap.set("n", ",q", "q", { noremap = true })
 

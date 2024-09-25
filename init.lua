@@ -1,7 +1,7 @@
 require("config.defaults")
+
 -- 获取系统信息
 local uname = vim.uv.os_uname()
-
 -- 检查系统类型
 if uname.sysname == "Linux" then
 	vim.o.shell = "/usr/bin/bash"
