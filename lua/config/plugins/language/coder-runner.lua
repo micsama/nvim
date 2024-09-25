@@ -6,7 +6,7 @@ local function o_temp()
 				local file_path = vim.fn.expand("%:p")
 				local file_name = vim.fn.expand("%:t")
 				return {
-					cmd = { "python", file_path },
+					cmd = { "fish","-c","python "..file_path },
 					name = file_name .. " running", -- 任务的名字
 					cwd = "./",
 					env = {},
