@@ -171,7 +171,8 @@ return {
 			-- Insert mode keymap
 			{ '<c-f>', function() vim.lsp.buf.signature_help() end, mode = 'i', desc = "Signature Help" },
 		},
-		event = { "BufReadPre", "BufNewFile" },
+		-- event = { "BufReadPre", "BufNewFile" },
+		event = "VeryLazy",
 		config = function()
 			local lsp = require('lsp-zero')
 

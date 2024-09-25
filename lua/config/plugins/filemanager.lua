@@ -18,7 +18,7 @@ return {
 					winbar = true,
 				},
 				window = {
-					width = 30,
+					width = 25,
 					mappings = {
 						["O"] = vim.ui.open and {
 							function(state)

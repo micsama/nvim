@@ -33,7 +33,13 @@ return {
 				lualine_a = { 'filename' },
 				lualine_b = { 'branch', 'diff', 'diagnostics' },
 				lualine_c = { 'overseer' },
-				lualine_x = { 'pwd' },
+				lualine_x = { {
+					"swenv",
+					cond = function()
+						return vim.bo.filetype == "python"
+					end,
+					icon = ""
+				} },
 				lualine_y = { 'filesize', 'filetype' },
 				lualine_z = { 'location' }
 			},

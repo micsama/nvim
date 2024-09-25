@@ -40,7 +40,7 @@ vim.g.neovide_scroll_animation_far_lines = 1
 vim.g.neovide_cursor_vfx_particle_density = 10.0
 
 -- 自动隐藏鼠标
-vim.g.neovide_hide_mouse_when_typing = true
+vim.g.neovide_hide_mouse_when_typing = false
 
 -- 触摸板死区
 vim.g.neovide_touch_deadzone = 8.0
