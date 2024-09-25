@@ -36,9 +36,12 @@ return {
 				lualine_x = { {
 					"swenv",
 					cond = function()
-						return vim.bo.filetype == "python"
+						-- 检查文件类型是否为 Python 或 buf 类型是命令行
+						local ft = vim.bo.filetype
+						local buftype = vim.bo.buftype
+						return ft == "python" or buftype == "terminal" or buftype == "prompt"
 					end,
-					icon = ""
+					icon=""
 				} },
 				lualine_y = { 'filesize', 'filetype' },
 				lualine_z = { 'location' }
