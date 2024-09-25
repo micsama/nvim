@@ -87,7 +87,13 @@ end
 
 -- close win below
 vim.keymap.set("n", "<leader>q", function()
-	require("trouble").close()
+	-- Safely require "trouble" and call close if it's loaded
+	local trouble_exists, trouble = pcall(require, "trouble")
+	if trouble_exists then
+		trouble.close()
+	end
+
+	-- Check the number of windows and execute shortcut if there are more than one
 	local wins = vim.api.nvim_tabpage_list_wins(0)
 	if #wins > 1 then
 		run_vim_shortcut([[<C-w>j:q<CR>]])

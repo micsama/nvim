@@ -1,104 +1,40 @@
-local function o_temp()
-	require('overseer').register_template({
-			name = "Python run this file!",
-			builder = function()
-				-- 定义任务的具体行为
-				local file_path = vim.fn.expand("%:p")
-				local file_name = vim.fn.expand("%:t")
-				return {
-					cmd = { "python", file_path },
-					name = file_name .. " running", -- 任务的名字
-					cwd = "./",
-					env = {},
-					components = {
-						{ "on_complete_dispose", { timeout = 1000 } },
-						"default",
-					},
-					metadata = { foo = "bar", },
-				}
-			end,
-			-- 定义任务的描述和标签
-			description = "Run this file in python",
-			tags = { "Run File" },
-			params = {}, -- 如果需要，可以在这里添加任务参数
-		},
-		{
-			name = "Pull & build Neovim!",
-			builder = function()
-				-- 定义任务的具体行为
-				return {
-					cmd = { "bash", "build.sh" },
-					name = " Try to build Neovim", -- 任务的名字
-					cwd = "~/workspace/tools/neovim/",
-					components = {
-						{ "on_complete_dispose", { timeout = 2000 } },
-						"default",
-					},
-				}
-			end,
-			-- 定义任务的描述和标签
-			description = "Try to pull and build the newest Neovim",
-			tags = { "Build", "Neovim" },
-			params = {}, -- 如果需要，可以在这里添加任务参数
-		})
-end
 return {
-	{
-		'stevearc/overseer.nvim',
-		opts = {},
-		keys = {
-			{ "<leader>or", ":OverseerRun<CR>",    desc = "Run Overseer Task" },
-			{ "<leader>oo", ":OverseerToggle<CR>", desc = "Toggle Overseer" },
+	"natecraddock/workspaces.nvim",
+	enent = "VeryLazy",
+	opts = {
+		-- on a unix system this would be ~/.local/share/nvim/workspaces
+		path = vim.fn.stdpath("data") .. "/workspaces",
+		-- controls how the directory is changed. valid options are "global", "local", and "tab"
+		--   "global" changes directory for the neovim process. same as the :cd command
+		--   "local" changes directory for the current window. same as the :lcd command
+		--   "tab" changes directory for the current tab. same as the :tcd command
+		cd_type = "tab",
+
+		-- sort the list of workspaces by name after loading from the workspaces path.
+		sort = true,
+
+		-- sort by recent use rather than by name. requires sort to be true
+		mru_sort = true,
+
+		-- option to automatically activate workspace when opening neovim in a workspace directory
+		auto_open = true,
+
+		-- option to automatically activate workspace when changing directory not via this plugin
+		auto_dir = false,
+
+		-- enable info-level notifications after adding or removing a workspace
+		notify_info = true,
+
+		-- lists of hooks to run after specific actions
+		-- hooks can be a lua function or a vim command (string)
+		-- lua hooks take a name, a path, and an optional state table
+		-- if only one hook is needed, the list may be omitted
+		hooks = {
+			add = {},
+			remove = {},
+			rename = {},
+			open_pre = {},
+			open = { "Telescope find_files" },
 		},
-		config = function()
-			require('overseer').setup({
-				-- strategy = {
-				-- 	"toggleterm",
-				-- 	open_on_start = false,
-				-- 	auto_scroll = true,
-				-- },
-				templates = { "builtin" },
-				task_defaults = {
-					-- 设置默认 shell 为 Fish
-					cmd = { 'fish', '-c' },
-				},
-			})
-			o_temp()
-		end
 	},
-	{
-		'akinsho/toggleterm.nvim',
-		version = "*",
-		keys = {
-			{ "<D-g>", ":ToggleTerm dir=git_dir<CR>",            mode = { "n", "v" }, desc = "Toggle terminal" },
-			{ "<D-g>", "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>", mode = { "i", "t" }, desc = "Toggle terminal" },
-		},
-		opts = {
-			shade_terminals = false,
-			autochdir = true,
-		},
-	},
-	{
-		"folke/trouble.nvim",
-		cmd = "Trouble",
-		opts = {}
-	},
-	{
-		-- big file & large file
-		"LunarVim/bigfile.nvim",
-		lazy = false,
-		opt = {
-			filesize = 4,
-			features = { -- features to disable
-				"indent_blankline",
-				"illuminate",
-				"lsp",
-				"treesitter",
-				-- "syntax",
-				"matchparen",
-				"vimopts",
-				-- "filetype",
-			},
-		},
-	}
 }

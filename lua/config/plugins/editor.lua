@@ -33,8 +33,9 @@ return {
 
 	-- Markdown 和 txt 文件的项目符号插件
 	{
-		"dkarter/bullets.vim",
+		"kaymmm/bullets.nvim",
 		ft = { "markdown", "txt" }, -- 文件类型匹配时加载
+		opts = {}
 	},
 
 	-- 颜色显示插件

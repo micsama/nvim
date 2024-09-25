@@ -63,6 +63,7 @@ require("lazy").setup({
 	require("config.plugins.language.markdown"),
 	require("config.plugins.language.other"),
 	require("config.plugins.language.dap"),
+	require("config.plugins.language.coder-runner"),
 
 	-- 自动补全
 
