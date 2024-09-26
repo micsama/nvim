@@ -6,6 +6,9 @@ return {
 			"nvim-lua/plenary.nvim",
 		},
 		ft = { "python" },
+		keys = {
+			{ "<leader>pp", function() require('swenv.api').pick_venv() end, desc = "Choice the python environment" }
+		},
 		config = function()
 			require('swenv').setup({
 				-- Should return a list of tables with a `name` and a `path` entry each.
@@ -20,6 +23,13 @@ return {
 				post_set_venv = function()
 					vim.cmd.LspRestart()
 				end,
+				-- NOTE:在对应目录下创建.venv文件，来设置目录默认使用的环境
+				vim.api.nvim_create_autocmd("FileType", {
+					pattern = { "python" },
+					callback = function()
+						require('swenv.api').auto_venv()
+					end
+				})
 			})
 		end
 	},
@@ -45,22 +55,11 @@ return {
 		dependencies = { "3rd/image.nvim" },
 		build = ":UpdateRemotePlugins",
 		keys = {
-			{ "<leader>mi", ":MoltenInit<CR>",             desc = "Initialize the plugin",  mode = "n", silent = true },
-			{ "<leader>e",  ":MoltenEvaluateOperator<CR>", desc = "Run operator selection", mode = "n", silent = true },
-			{ "<leader>rl", ":MoltenEvaluateLine<CR>",     desc = "Evaluate line",          mode = "n", silent = true },
-			{ "<leader>rr", ":MoltenReevaluateCell<CR>",   desc = "Re-evaluate cell",       mode = "n", silent = true },
-			{
-				"<leader>r",
-				function()
-					-- 获取内核列表并将 venv 设置为 "0" 如果内核存在
-					local kernels = table.concat(vim.fn.MoLtenRunningKerneLs(true), ", ")
-					local venv = (#kernels > 0 and "") or string.match(os.getenv("VIRTUAL_ENV") or "", "/.+/(.+)") or "python3"
-					vim.cmd(("MoltenEvaluateVisual %s"):format(venv))
-				end,
-				desc = "Evaluate visual selection",
-				mode = "v",
-				silent = true,
-			},
+			{ "<leader>mi", ":MoltenInit<CR>",             desc = "Initialize the plugin",     mode = "n", silent = true },
+			{ "<leader>e",  ":MoltenEvaluateOperator<CR>", desc = "Run operator selection",    mode = "n", silent = true },
+			{ "<leader>rl", ":MoltenEvaluateLine<CR>",     desc = "Evaluate line",             mode = "n", silent = true },
+			{ "<leader>rr", ":MoltenReevaluateCell<CR>",   desc = "Re-evaluate cell",          mode = "n", silent = true },
+			{ "<leader>r",  ":MoltenEvaluateVisual<CR>",   desc = "Evaluate visual selection", mode = "v", silent = true },
 		},
 		config = function()
 			-- 设置插件的全局变量
