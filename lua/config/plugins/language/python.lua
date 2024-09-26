@@ -45,11 +45,22 @@ return {
 		dependencies = { "3rd/image.nvim" },
 		build = ":UpdateRemotePlugins",
 		keys = {
-			{ "<leader>mi", ":MoltenInit<CR>",                  desc = "Initialize the plugin",     mode = "n", silent = true },
-			{ "<leader>e",  ":MoltenEvaluateOperator<CR>",      desc = "Run operator selection",    mode = "n", silent = true },
-			{ "<leader>rl", ":MoltenEvaluateLine<CR>",          desc = "Evaluate line",             mode = "n", silent = true },
-			{ "<leader>rr", ":MoltenReevaluateCell<CR>",        desc = "Re-evaluate cell",          mode = "n", silent = true },
-			{ "<leader>r",  ":<C-u>MoltenEvaluateVisual<CR>gv", desc = "Evaluate visual selection", mode = "v", silent = true },
+			{ "<leader>mi", ":MoltenInit<CR>",             desc = "Initialize the plugin",  mode = "n", silent = true },
+			{ "<leader>e",  ":MoltenEvaluateOperator<CR>", desc = "Run operator selection", mode = "n", silent = true },
+			{ "<leader>rl", ":MoltenEvaluateLine<CR>",     desc = "Evaluate line",          mode = "n", silent = true },
+			{ "<leader>rr", ":MoltenReevaluateCell<CR>",   desc = "Re-evaluate cell",       mode = "n", silent = true },
+			{
+				"<leader>r",
+				function()
+					-- 获取内核列表并将 venv 设置为 "0" 如果内核存在
+					local kernels = table.concat(vim.fn.MoLtenRunningKerneLs(true), ", ")
+					local venv = (#kernels > 0 and "") or string.match(os.getenv("VIRTUAL_ENV") or "", "/.+/(.+)") or "python3"
+					vim.cmd(("MoltenEvaluateVisual %s"):format(venv))
+				end,
+				desc = "Evaluate visual selection",
+				mode = "v",
+				silent = true,
+			},
 		},
 		config = function()
 			-- 设置插件的全局变量
@@ -62,9 +73,27 @@ return {
 			vim.g.molten_output_virt_lines = true
 			vim.g.molten_split_size = 0.3
 
+			local init_env = function()
+				-- 获取当前运行的内核列表，并检查是否为空
+				local kernels = vim.fn.MoLtenRunningKerneLs(true)
+				local kernels_str = table.concat(kernels, ", ")
+
+				-- 如果内核不为空，则执行 MoltenEvaluateVisual
+				if #kernels_str > 0 then
+					vim.cmd("MoltenEvaluateVisual")
+					return
+				end
+				local venv = os.getenv("VIRTUAL_ENV")
+				if venv then
+					local matched_venv = string.match(venv, "/.+/(.+)") or "python3"
+					vim.cmd(("MoltenEvaluateVisual %s"):format(matched_venv))
+				else
+					vim.cmd("MoltenEvaluateVisual python3")
+				end
+			end
 			-- 设置样式
 			vim.api.nvim_set_hl(0, "MoltenOutputBorder", { link = "FloatBorder" })
-			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true,bg="#364646" })
+			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true, bg = "#364646" })
 		end,
 	}
 	,
