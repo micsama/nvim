@@ -60,6 +60,7 @@ vim.o.virtualedit = 'block' -- 允许块状选择模式的虚拟编辑
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.g.python3_host_prog = 'python'
+vim.g.python3_host_prog=vim.fn.expand("/Users/dzmfg/workspace/tools/envs/base/bin/python")
 
 
 
