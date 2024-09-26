@@ -108,6 +108,21 @@ vim.cmd([[
         set undodir=$HOME/.config/nvim/tmp/undo,.
     endif
 ]])
+
+-- 获取系统信息
+local uname = vim.uv.os_uname()
+-- 检查系统类型
+if uname.sysname == "Linux" then
+	vim.o.shell = "/usr/bin/bash"
+elseif uname.sysname == "Darwin" then
+	vim.o.shell = "/opt/homebrew/bin/fish"
+else
+	vim.o.shell = "/usr/bin/bash"
+end
+
+if vim.g.neovide then
+	require("config.neovide")
+end
 -- NOTE:只在第一次加载。很耗时
 -- local function ensure_directory(path)
 -- 	if vim.fn.isdirectory(path) == 0 then
