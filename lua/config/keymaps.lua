@@ -27,14 +27,14 @@ local nmappings = {
 	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 
 	-- file manager & tab manager
-	{ from = "<D-t>",        to = "<CMD>tab new<CR>:Joshuto<CR>",                            mode = mode_nv },
+	{ from = "<D-t>",        to = "<CMD>tab new<CR>:Yazi<CR>",                            mode = mode_nv },
 	{ from = "<D-j>",        to = "<CMD>-tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-k>",        to = "<CMD>+tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-s-j>",      to = "<CMD>-tabmove<CR>", },
 	{ from = "<D-s-k>",      to = "<CMD>+tabmove<CR>", },
 	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                                mode = mode_it },
 	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                                mode = mode_it },
-	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Joshuto<CR>",                     mode = mode_it },
+	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Yazi<CR>",                     mode = mode_it },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = "<CMD>nohlsearch<CR>", },
@@ -51,10 +51,10 @@ local nmappings = {
 	{ from = "<leader>l",    to = "<C-w>l", },
 	{ from = "qf",           to = "<C-w>o", },
 	{ from = "s",            to = "<nop>", },
-	{ from = "sj",           to = "<CMD>set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", },
-	{ from = "sk",           to = "<CMD>set splitbelow<CR>:split<CR>", },
-	{ from = "sl",           to = "<CMD>set nosplitright<CR>:vsplit<CR>:set splitright<CR>", },
-	{ from = "sh",           to = "<CMD>set splitright<CR>:vsplit<CR>", },
+	{ from = "sk",           to = "<CMD>set nosplitbelow<CR>:split<CR>:set splitbelow<CR>", },
+	{ from = "sj",           to = "<CMD>set splitbelow<CR>:split<CR>", },
+	{ from = "sh",           to = "<CMD>set nosplitright<CR>:vsplit<CR>:set splitright<CR>", },
+	{ from = "sl",           to = "<CMD>set splitright<CR>:vsplit<CR>", },
 	{ from = "<up>",         to = "<CMD>res +5<CR>", },
 	{ from = "<down>",       to = "<CMD>res -5<CR>", },
 	{ from = "<left>",       to = "<CMD>vertical resize-5<CR>", },
