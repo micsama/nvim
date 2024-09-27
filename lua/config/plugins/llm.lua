@@ -10,7 +10,7 @@ return {
 			{ "stevearc/dressing.nvim", opts = {} }, -- Optional: Improves the default Neovim UI
 		},
 		keys = {
-			{ "<D-o>", "<CMD>CodeCompanionToggle<CR>", desc = "" }
+			{ "<D-o>", "<CMD>CodeCompanionChat Toggle<CR>", desc = "" }
 		},
 		opts = {
 			strategies = {
