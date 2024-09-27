@@ -94,5 +94,23 @@ return {
 				show_help = '<f1>',
 			},
 		},
+	},
+	{
+		-- big file & large file
+		"LunarVim/bigfile.nvim",
+		lazy = false,
+		opts = {
+			filesize = 4,
+			features = { -- features to disable
+				-- "indent_blankline",
+				"illuminate",
+				"lsp",
+				-- "treesitter",
+				-- "syntax",
+				-- "matchparen",
+				"vimopts",
+				-- "filetype",
+			},
+		},
 	}
 }
