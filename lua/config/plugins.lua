@@ -34,8 +34,21 @@ for _, v in ipairs(lazy_keys) do
 end
 
 vim.keymap.set("n", "<leader>pl", ":Lazy<CR>", { noremap = true })
-require("lazy").setup({
 
+
+local headless_plugin={
+	-- 基础功能与编辑器美化
+	require("config.plugins.colorscheme"),
+	require("config.plugins.statusline"),
+	require("config.plugins.winbar"),
+	require("config.plugins.scrollbar"),
+	require("config.plugins.tabline"),
+	require("config.plugins.indent"), -- 等官方修复bug
+	require("config.plugins.notify"),
+	require("config.plugins.dash"),
+}
+
+local mac_plugin={
 	-- 基础功能与编辑器美化
 	require("config.plugins.colorscheme"),
 	require("config.plugins.statusline"),
@@ -80,4 +93,12 @@ require("lazy").setup({
 
 	-- 其他插件
 	{ "dstein64/vim-startuptime" },
-})
+}
+-- 获取系统信息
+local uname = vim.uv.os_uname()
+-- 检查系统类型
+if uname.sysname == "Darwin" then
+	require("lazy").setup(mac_plugin)
+else
+	require("lazy").setup(headless_plugin)
+end
