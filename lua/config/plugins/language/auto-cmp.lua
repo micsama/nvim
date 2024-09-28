@@ -1,6 +1,3 @@
--- cmp_config.lua
-
---
 local function set_highlights()
 	local xj_font_color = "#1D4E45"
 	local highlight_groups = {
@@ -68,15 +65,8 @@ end
 
 --
 local function setup_cmp(cmp, lspkind)
-	-- snippet
-	require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets" })
 	cmp.setup({
 		preselect = cmp.PreselectMode.None,
-		snippet = {
-			expand = function(args)
-				require("luasnip").lsp_expand(args.body)
-			end
-		},
 		window = {
 			completion = { col_offset = -3, side_padding = 0 },
 			documentation = cmp.config.window.bordered(),
@@ -105,13 +95,13 @@ local function setup_cmp(cmp, lspkind)
 			end,
 		},
 		sources = cmp.config.sources({
-			{ name = 'nvim_lsp', priority = 1000 },                                     --  LSP
-			{ name = 'luasnip',  priority = 2000, option = { show_autosnippets = true } }, --
-			{ name = 'buffer',   priority = 400 },                                      --
+			{ name = 'nvim_lsp', priority = 1000 }, --  LSP
+			{ name = "snippets", max_item_count = 10, },
+			{ name = 'buffer',   priority = 400 }, --
 		}, {
-			{ name = 'path',     priority = 250 },                                      --
-			{ name = 'nvim_lua', priority = 700 },                                      -- Neovim Lua API
-			{ name = 'calc',     priority = 200 },                                      --
+			{ name = 'path',     priority = 250 }, --
+			{ name = 'nvim_lua', priority = 700 }, -- Neovim Lua API
+			{ name = 'calc',     priority = 200 }, --
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<c-g>'] = cmp.mapping(function(fallback)
@@ -131,33 +121,33 @@ local function setup_cmp(cmp, lspkind)
 					end
 				end
 			}),
-			["<Tab>"] = cmp.mapping({
-				i = function(fallback)
-					if cmp.visible() then
-						cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
-					elseif has_words_before() then
-						cmp.complete()
-					else
-						fallback()
-					end
-				end,
-			}),
-			["<S-Tab>"] = cmp.mapping({
-				i = function(fallback)
-					if cmp.visible() then
-						cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
-					else
-						fallback()
-					end
-				end,
-			}),
+			["<Tab>"] = cmp.mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_next_item()
+				elseif vim.snippet.active({ direction = 1 }) then
+					vim.schedule(function()
+						vim.snippet.jump(1)
+					end)
+				elseif has_words_before() then
+					cmp.complete()
+				else
+					fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+				end
+			end, { "i", "s" }),
+			["<S-Tab>"] = cmp.mapping(function()
+				if cmp.visible() then
+					cmp.select_prev_item()
+				elseif vim.snippet.active({ direction = -1 }) then
+					vim.schedule(function()
+						vim.snippet.jump(-1)
+					end)
+				end
+			end, { "i", "s" }),
 		}),
 	})
 end
 
---
 return {
-	--  cmp
 	{
 		'hrsh7th/nvim-cmp',
 		event = { 'InsertEnter' }, --
@@ -168,36 +158,18 @@ return {
 			setup_cmp(cmp, lspkind) --
 		end,
 		dependencies = {
-			{ 'onsails/lspkind.nvim' },                                                        --
-			{ "L3MON4D3/LuaSnip",            version = "v2.x", build = "make install_jsregexp" }, --
-			{ "rafamadriz/friendly-snippets" },                                                --
-			{ 'saadparwaiz1/cmp_luasnip' }                                                     -- LuaSnip
+			{ 'onsails/lspkind.nvim' },      --
+			{ "rafamadriz/friendly-snippets" }, --
 		},
 	},
 
 	--
-	{
-		'hrsh7th/cmp-buffer',    --
-		event = { 'InsertEnter' }, --
-	},
-	{
-		'hrsh7th/cmp-path',      --
-		event = { 'InsertEnter' }, --
-	},
-	{
-		'hrsh7th/cmp-nvim-lsp',  -- LSP
-		event = { 'InsertEnter' }, --
-	},
-	{
-		'hrsh7th/cmp-nvim-lua',  -- Neovim Lua API
-		event = { 'InsertEnter' }, --
-	},
-	{
-		'hrsh7th/cmp-calc',      --
-		event = { 'InsertEnter' }, --
-	},
-
-	-- cmdline
+	{ "garymjr/nvim-snippets", event = { 'InsertEnter' }, opts = {} },
+	{ 'hrsh7th/cmp-buffer',    event = { 'InsertEnter' }, },
+	{ 'hrsh7th/cmp-path',      event = { 'InsertEnter' }, },
+	{ 'hrsh7th/cmp-nvim-lsp',  event = { 'InsertEnter' }, },
+	{ 'hrsh7th/cmp-nvim-lua',  event = { 'InsertEnter' }, },
+	{ 'hrsh7th/cmp-calc',      event = { 'InsertEnter' }, },
 	{
 		'hrsh7th/cmp-cmdline',    --
 		event = { 'CmdlineEnter' }, --
