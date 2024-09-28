@@ -1,0 +1,58 @@
+{
+  "Markdown Link": {
+    "prefix": "link",
+    "body": [
+      "[${1:text}](${2:url})"
+    ],
+    "description": "Snippet for Markdown link."
+  },
+  "Markdown Image": {
+    "prefix": "img",
+    "body": [
+      "![${1:alt text}](${2:image_url})"
+    ],
+    "description": "Snippet for Markdown image."
+  },
+  "Markdown Code Block": {
+    "prefix": "code",
+    "body": [
+      "```${1:language}",
+      "${0}",
+      "```"
+    ],
+    "description": "Snippet for Markdown code block."
+  },
+  "Markdown Header 1": {
+    "prefix": "h1",
+    "body": [
+      "# ${1:Title}"
+    ],
+    "description": "Snippet for Markdown header level 1."
+  },
+  "Markdown Quote": {
+    "prefix": "quote",
+    "body": [
+      "> ${1:quote}"
+    ],
+    "description": "Snippet for Markdown quote."
+  },
+  "Markdown Date": {
+    "prefix": "date",
+    "body": [
+      "Date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}"
+    ],
+    "description": "Snippet for inserting the current date."
+  },
+  "Markdown File Header": {
+    "prefix": "mdheader",
+    "body": [
+      "# ${1:Title}",
+      "**Filename**: ${TM_FILENAME}",
+      "**Date**: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+      "**Description**: ${2:Description}",
+      "",
+      "${0}"
+    ],
+    "description": "Snippet for a Markdown file header."
+  }
+}
