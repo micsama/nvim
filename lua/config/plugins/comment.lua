@@ -13,20 +13,4 @@ return {
 			}
 		}
 	},
-	{
-		'numToStr/Comment.nvim',
-		config = function()
-			require('Comment').setup(
-				{
-					toggler = {
-						line = '<D-/>',
-					},
-					opleader = {
-						---Line-comment keymap
-						line = '<D-/>',
-					},
-				}
-			)
-		end
-	},
 }
