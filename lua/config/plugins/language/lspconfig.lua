@@ -5,6 +5,9 @@ local function on_attach(client, bufnr)
 	if client.server_capabilities.inlayHintProvider then
 		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 	end
+	if client.supports_method("textDocument/inlayHint", { bufnr = bufnr }) then
+		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+	end
 
 	-- 设置诊断配置
 	vim.diagnostic.config({
@@ -26,9 +29,9 @@ local function on_attach(client, bufnr)
 end
 -- 设置键映射，直接使用 Lua 闭包函数
 vim.keymap.set('n', '<M-S-f>', function()
-    local lineno = vim.api.nvim_win_get_cursor(0)
-    vim.lsp.buf.format({ async = false })
-    pcall(vim.api.nvim_win_set_cursor, 0, lineno)
+	local lineno = vim.api.nvim_win_get_cursor(0)
+	vim.lsp.buf.format({ async = false })
+	pcall(vim.api.nvim_win_set_cursor, 0, lineno)
 end, { noremap = true, silent = true })
 
 -- LSP 服务器配置
@@ -44,6 +47,7 @@ local lsp_servers = {
 			}
 		},
 	},
+	-- TODO:检查这几个lsp是否支持hint, codelens
 	pyright = {
 		settings = {
 			python = {

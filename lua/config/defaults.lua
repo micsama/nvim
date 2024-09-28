@@ -28,11 +28,11 @@ vim.o.indentexpr = '' -- 不使用表达式缩进
 vim.o.list = true -- 显示不可见字符
 vim.o.listchars = 'tab:|\\ ,trail:▫' -- 设置不可见字符显示格式
 
--- 折叠相关设置
-vim.o.foldmethod = 'indent' -- 使用缩进作为折叠依据
-vim.o.foldlevel = 99        -- 默认展开所有折叠
-vim.o.foldenable = true     -- 启用折叠
-vim.o.foldlevelstart = 99   -- 打开文件时默认展开所有折叠
+-- 设置 fold 相关的选项
+vim.opt.foldlevel = 99
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.require'utils/fold'.foldexpr()"
+
 
 -- 分割窗口相关设置
 vim.o.splitright = true -- 垂直分割窗口时，新窗口在右边
@@ -57,11 +57,21 @@ vim.o.formatoptions = vim.o.formatoptions:gsub('tc', '') -- 禁用自动换行�
 -- 其他设置
 vim.o.ttyfast = true        -- 提升终端性能
 vim.o.virtualedit = 'block' -- 允许块状选择模式的虚拟编辑
+vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/workspace/tools/envs/base") .. "/bin/python"
-
-
+-- auto change root
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function(ctx)
+    local root = vim.fs.root(ctx.buf, { ".git", ".svn", "Makefile",".venv","Cargo.toml", "mvnw", "package.json" })
+    if root and root ~= "." and root ~= vim.fn.getcwd() then
+      ---@diagnostic disable-next-line: undefined-field
+      vim.cmd.cd(root)
+      vim.notify("Set CWD to " .. root)
+    end
+  end,
+})
 
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, { pattern = "*.md", command = "setlocal spell", })
 vim.api.nvim_create_autocmd("BufEnter", { pattern = "*", command = "silent! lcd %:p:h", })
