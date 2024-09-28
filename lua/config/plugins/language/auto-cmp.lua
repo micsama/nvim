@@ -101,7 +101,6 @@ local function setup_cmp(cmp, lspkind)
 		}, {
 			{ name = 'path',     priority = 250 }, --
 			{ name = 'nvim_lua', priority = 700 }, -- Neovim Lua API
-			{ name = 'calc',     priority = 200 }, --
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<c-g>'] = cmp.mapping(function(fallback)
@@ -169,7 +168,6 @@ return {
 	{ 'hrsh7th/cmp-path',      event = { 'InsertEnter' }, },
 	{ 'hrsh7th/cmp-nvim-lsp',  event = { 'InsertEnter' }, },
 	{ 'hrsh7th/cmp-nvim-lua',  event = { 'InsertEnter' }, },
-	{ 'hrsh7th/cmp-calc',      event = { 'InsertEnter' }, },
 	{
 		'hrsh7th/cmp-cmdline',    --
 		event = { 'CmdlineEnter' }, --

@@ -1,10 +1,5 @@
 return {
 	{
-		"nvim-zh/colorful-winsep.nvim",
-		opts = { smooth = true, },
-		event = { "WinNew" },
-	},
-	{
 		's1n7ax/nvim-window-picker',
 		name = 'window-picker',
 		event = 'VeryLazy',
