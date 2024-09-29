@@ -27,7 +27,6 @@ return {
 
 			-- 加载 fzf 扩展
 			telescope.load_extension('fzf')
-			telescope.load_extension('projects')
 		end,
 		keys = {
 			-- 使用 keys 部分来定义快捷键映射
@@ -35,7 +34,6 @@ return {
 			{ '<leader>fg', function() require('telescope.builtin').live_grep() end,             desc = 'Live Grep' },
 			{ '<leader>fb', function() require('telescope.builtin').buffers() end,               desc = 'Find Buffers' },
 			{ '<leader>fh', function() require('telescope.builtin').help_tags() end,             desc = 'Find Help Tags' },
-			{ '<leader>fp', function() require('telescope').extensions.projects.projects {} end, desc = 'Find Help Tags' },
 		},
 	}
 }

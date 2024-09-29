@@ -13,7 +13,6 @@ if not vim.uv.fs_stat(lazypath) then
 		os.exit(1)
 	end
 end
-
 vim.opt.rtp:prepend(lazypath)
 
 local lazy_cmd = require("lazy.view.config").commands

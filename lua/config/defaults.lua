@@ -12,7 +12,7 @@ vim.o.visualbell = true                -- 使用视觉提示而非声音提示
 vim.o.signcolumn = "yes"
 
 -- 文件和目录相关设置
-vim.o.autochdir = true                        -- 自动切换当前工作目录
+vim.o.autochdir = false                        -- 自动切换当前工作目录
 vim.o.exrc = true                             -- 允许在本地目录使用 .nvimrc 文件
 vim.o.secure = false                          -- 允许执行本地 .nvimrc 中的命令
 vim.o.viewoptions = 'cursor,folds,slash,unix' -- 保存/恢复视图的选项
@@ -55,26 +55,23 @@ vim.o.updatetime = 100                                  -- 设置更新时间为
 vim.o.formatoptions = vim.o.formatoptions:gsub('tc', '') -- 禁用自动换行和文本注释
 
 -- 其他设置
-vim.o.ttyfast = true        -- 提升终端性能
-vim.o.virtualedit = 'block' -- 允许块状选择模式的虚拟编辑
+vim.o.ttyfast = true                                        -- 提升终端性能
+vim.o.virtualedit = 'block'                                 -- 允许块状选择模式的虚拟编辑
 vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/workspace/tools/envs/base") .. "/bin/python"
+
 -- auto change root
 vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function(ctx)
-    local root = vim.fs.root(ctx.buf, { ".git", ".svn", "Makefile",".venv","Cargo.toml", "mvnw", "package.json" })
-    if root and root ~= "." and root ~= vim.fn.getcwd() then
-      ---@diagnostic disable-next-line: undefined-field
-      vim.cmd.cd(root)
-      vim.notify("Set CWD to " .. root)
-    end
-  end,
+	callback = function(ctx)
+		local root = vim.fs.root(ctx.buf, { ".git", ".svn", "Makefile", ".venv", "Cargo.toml", "mvnw", "package.json" })
+		if root and root ~= "." and root ~= vim.fn.getcwd() then
+			vim.cmd.tcd(root)
+			vim.notify("Change CWD to " .. root)
+		end
+	end,
 })
-
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, { pattern = "*.md", command = "setlocal spell", })
-vim.api.nvim_create_autocmd("BufEnter", { pattern = "*", command = "silent! lcd %:p:h", })
 
 vim.cmd([[au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]])
 
@@ -132,28 +129,3 @@ end
 if vim.g.neovide then
 	require("config.neovide")
 end
--- NOTE:只在第一次加载。很耗时
--- local function ensure_directory(path)
--- 	if vim.fn.isdirectory(path) == 0 then
--- 		vim.fn.mkdir(path, "p")
--- 	end
--- end
---
--- -- 创建目录的部分
--- ensure_directory(vim.fn.expand("$HOME/.config/nvim/tmp/backup"))
--- ensure_directory(vim.fn.expand("$HOME/.config/nvim/tmp/undo"))
--- local config_path = vim.fn.stdpath("config")
--- local current_config_path = config_path .. "/lua/config/machine_specific.lua"
---
--- if not vim.loop.fs_stat(current_config_path) then
--- 	local default_config_path = config_path .. "/default_config/_machine_specific_default.lua"
--- 	local default_config_file = io.open(default_config_path, "rb")
--- 	if default_config_file then
--- 		local current_config_file = io.open(current_config_path, "wb")
--- 		if current_config_file then
--- 			current_config_file:write(default_config_file:read("*all"))
--- 			io.close(current_config_file)
--- 		end
--- 		io.close(default_config_file)
--- 	end
--- end
