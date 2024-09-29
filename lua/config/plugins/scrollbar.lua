@@ -5,8 +5,8 @@ return {
 			mode="virtual",
 			excluded_filetypes = { 'nerdtree' },
 			current_only = true,
-			base = 'buffer',
-			column = 100,
+			base = 'right',
+			column = 1,
 			signs_on_startup = { 'all' },
 			diagnostics_severities = { vim.diagnostic.severity.ERROR }
 		}
