@@ -14,6 +14,7 @@ return {
 				auto_install = true,
 				sync_install = false,
 				ensure_installed = {
+					"cmake",
 					"fish",
 					"html",
 					"markdown_inline",
