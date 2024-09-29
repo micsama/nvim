@@ -10,9 +10,6 @@ return {
 						-- action can be a function type
 					},
 					packages = { enable = true }, -- show how many plugins neovim loaded
-					-- limit how many projects list, action when you press key or enter it will run this action.
-					-- action can be a functino type, e.g.
-					-- action = func(path) vim.cmd('Telescope find_files cwd=' .. path) end
 					project = { enable = true, limit = 8, icon = '󱠿', label = '\t近期 ^_^ 目录', action = 'Telescope find_files cwd=' },
 					mru = { limit = 10, icon = '', label = '\t近期 $_$ 文件', cwd_only = false },
 					footer = {}, -- footer
