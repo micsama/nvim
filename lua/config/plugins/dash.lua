@@ -1,20 +1,5 @@
 return {
 	{
-		-- NOTE: vim.lsp.buf_get_clients()
-		"ahmedkhalf/project.nvim",
-		dependencies = { 'nvim-telescope/telescope.nvim' },
-		event = "VeryLazy",
-		keys = {
-			{ '<leader>fp', [[<CMD>Telescope projects<CR>]], desc = 'Find Project' },
-		},
-		config = function()
-			require("project_nvim").setup {
-				patterns = { ".git", "Makefile", "package.json" }
-			}
-			require('telescope').load_extension('projects')
-		end
-	},
-	{
 		'nvimdev/dashboard-nvim',
 		event = 'VimEnter',
 		config = function()

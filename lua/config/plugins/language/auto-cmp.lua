@@ -158,7 +158,6 @@ return {
 		end,
 		dependencies = {
 			{ 'onsails/lspkind.nvim' },      --
-			{ "rafamadriz/friendly-snippets" }, --
 		},
 	},
 
