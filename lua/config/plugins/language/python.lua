@@ -38,7 +38,6 @@ return {
 		"alexpasmantier/pymple.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
 			"stevearc/dressing.nvim",
 			"nvim-tree/nvim-web-devicons",
 		},
@@ -71,25 +70,6 @@ return {
 			vim.g.molten_virt_text_output = true
 			vim.g.molten_output_virt_lines = true
 			vim.g.molten_split_size = 0.3
-
-			local init_env = function()
-				-- 获取当前运行的内核列表，并检查是否为空
-				local kernels = vim.fn.MoLtenRunningKerneLs(true)
-				local kernels_str = table.concat(kernels, ", ")
-
-				-- 如果内核不为空，则执行 MoltenEvaluateVisual
-				if #kernels_str > 0 then
-					vim.cmd("MoltenEvaluateVisual")
-					return
-				end
-				local venv = os.getenv("VIRTUAL_ENV")
-				if venv then
-					local matched_venv = string.match(venv, "/.+/(.+)") or "python3"
-					vim.cmd(("MoltenEvaluateVisual %s"):format(matched_venv))
-				else
-					vim.cmd("MoltenEvaluateVisual python3")
-				end
-			end
 			-- 设置样式
 			vim.api.nvim_set_hl(0, "MoltenOutputBorder", { link = "FloatBorder" })
 			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true, bg = "#364646" })

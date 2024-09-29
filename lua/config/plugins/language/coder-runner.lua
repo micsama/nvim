@@ -6,7 +6,7 @@ local function o_temp()
 				local file_path = vim.fn.expand("%:p")
 				local file_name = vim.fn.expand("%:t")
 				return {
-					cmd = { "fish","-c","python "..file_path },
+					cmd = { "fish", "-c", "python " .. file_path },
 					name = file_name .. " running", -- 任务的名字
 					cwd = "./",
 					env = {},
@@ -66,22 +66,4 @@ return {
 			o_temp()
 		end
 	},
-	{
-		'akinsho/toggleterm.nvim',
-		version = "*",
-		keys = {
-			{ "<D-g>", ":ToggleTerm dir=git_dir<CR>",            mode = { "n", "v" }, desc = "Toggle terminal" },
-			{ "<D-g>", "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>", mode = { "i", "t" }, desc = "Toggle terminal" },
-		},
-		opts = {
-			shade_terminals = false,
-			autochdir = true,
-		},
-	},
-	{
-		"folke/trouble.nvim",
-		cmd = "Trouble",
-		opts = {}
-	},
-	
 }
