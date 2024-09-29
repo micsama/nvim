@@ -6,12 +6,15 @@ local nmappings = {
 	{ from = "<M-s>",        to = "<CMD>up<CR>",                                             mode = mode_nv },
 	{ from = "<S>",          to = "<CMD>up<CR>",                                             mode = mode_nv },
 	{ from = "<D-w>",        to = "<CMD>q<CR>",                                              mode = mode_nv },
-	-- { from = "<D-w>",        to = "<esc>:q<CR>",                                         mode =  },
 
 	-- bind to quick scollor and copy2system clipboard
 	{ from = "J",            to = "5j",                                                      mode = mode_nv },
 	{ from = "K",            to = "5k",                                                      mode = mode_nv },
 	{ from = "Y",            to = "\"+y",                                                    mode = "v" },
+	{ from = "<D-c>",        to = "\"+y",                                                    mode = "v" },
+	{ from = "<D-v>",        to = "\"+P",                                                    mode = mode_nv },
+	{ from = "<D-v>",        to = "<C_R>+",                                                  mode = { "i", "c" } },
+	{ from = "<D-v>",        to = [[<C-\><C-N>"+pa]],                                        mode = "t" },
 
 	-- no shift ^_^
 	{ from = ";",            to = ":",                                                       mode = mode_nv },
@@ -26,15 +29,17 @@ local nmappings = {
 	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 
+
+
 	-- file manager & tab manager
-	{ from = "<D-t>",        to = "<CMD>tab new<CR>:Yazi<CR>",                            mode = mode_nv },
+	{ from = "<D-t>",        to = "<CMD>tab new<CR>:Yazi<CR>",                               mode = mode_nv },
 	{ from = "<D-j>",        to = "<CMD>-tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-k>",        to = "<CMD>+tabnext<CR>",                                       mode = mode_nv },
 	{ from = "<D-s-j>",      to = "<CMD>-tabmove<CR>", },
 	{ from = "<D-s-k>",      to = "<CMD>+tabmove<CR>", },
 	{ from = "<D-j>",        to = "<C-\\><C-n>:-tabnext<CR>",                                mode = mode_it },
 	{ from = "<D-k>",        to = "<C-\\><C-n>:+tabnext<CR>",                                mode = mode_it },
-	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Yazi<CR>",                     mode = mode_it },
+	{ from = "<D-t>",        to = "<C-\\><C-n>:tab new<CR>:Yazi<CR>",                        mode = mode_it },
 
 	-- no_highlight search
 	{ from = "<leader><CR>", to = "<CMD>nohlsearch<CR>", },
@@ -65,6 +70,16 @@ local nmappings = {
 	{ from = "srv",          to = "<C-w>b<C-w>H", },
 }
 
+for i = 1, 9 do
+	vim.keymap.set("n", "<D-" .. i .. ">", function()
+		local tab_count = vim.fn.tabpagenr('$') -- 获取当前标签页总数
+		if i <= tab_count then
+			vim.cmd("tabnext " .. i) -- 切换到第 i 个标签页
+		else
+			vim.notify("现在没有标签页: " .. i, vim.log.levels.WARN) -- 通知用户标签页不存在
+		end
+	end, { desc = "Switch to tab " .. i })
+end
 
 vim.keymap.del('n', 'grr')
 vim.keymap.del('x', 'gra')
