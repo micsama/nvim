@@ -24,12 +24,12 @@ return {
 					vim.cmd.LspRestart()
 				end,
 				-- NOTE:在对应目录下创建.venv文件，来设置目录默认使用的环境
-				vim.api.nvim_create_autocmd("FileType", {
-					pattern = { "python" },
-					callback = function()
-						require('swenv.api').auto_venv()
-					end
-				})
+				-- vim.api.nvim_create_autocmd("FileType", {
+				-- 	pattern = { "python" },
+				-- 	callback = function()
+				-- 		require('swenv.api').auto_venv()
+				-- 	end
+				-- })
 			})
 		end
 	},
