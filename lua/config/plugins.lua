@@ -78,7 +78,6 @@ local mac_plugin = {
 	require("config.plugins.editor"),
 	require("config.plugins.whichkey"),
 	require("config.plugins.telescope"),
-	require("config.plugins.project"), -- 删除了vimrooter
 	require("config.plugins.window-management"),
 
 	-- 语言支持与配置
@@ -98,7 +97,6 @@ local mac_plugin = {
 	require("config.plugins.fun"),
 	require("config.plugins.llm"),
 	require("config.plugins.git"),
-	require("config.plugins.wezterm"),
 	-- require("config.plugins.tex"),
 
 	-- 其他插件

@@ -4,9 +4,6 @@ return {
 		event = "VeryLazy",
 		dependencies = { "echasnovski/mini.icons" },
 		opts = {
-			-- your configuration comes here
-			-- or leave it empty to use the default settings
-			-- refer to the configuration section below
 		},
 		keys = {
 			{
@@ -17,18 +14,5 @@ return {
 				desc = "Buffer Local Keymaps (which-key)",
 			},
 		},
-		config = function()
-			require("which-key").add({
-			})
-		end
 	},
-	-- {
-	-- 	'mrjones2014/legendary.nvim',
-	-- 	-- since legendary.nvim handles all your keymaps/commands,
-	-- 	-- its recommended to load legendary.nvim before other plugins
-	-- 	priority = 10000,
-	-- 	lazy = false,
-	-- 	-- sqlite is only needed if you want to use frecency sorting
-	-- 	-- dependencies = { 'kkharji/sqlite.lua' }
-	-- }
 }
