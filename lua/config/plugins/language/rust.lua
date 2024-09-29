@@ -19,11 +19,6 @@ return {
 		end,
 	},
 	{
-		'mrcjkb/rustaceanvim',
-		version = '^5', -- Recommended
-		lazy = false, -- This plugin is already lazy
-	},
-	{
 		'vxpm/ferris.nvim',
 		opts = {
 			-- your options here
