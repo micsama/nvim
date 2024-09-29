@@ -40,11 +40,11 @@ local headless_plugin = {
 	require("config.plugins.colorscheme"),
 	require("config.plugins.statusline"),
 	require("config.plugins.winbar"),
-	require("config.plugins.scrollbar"),
-	require("config.plugins.tabline"),
+	-- require("config.plugins.scrollbar"),
+	require("config.plugins.bufline"),
 	require("config.plugins.indent"), -- 等官方修复bug
 	require("config.plugins.notify"),
-	require("config.plugins.dash"),
+	require("config.plugins.dashboard"),
 
 	-- 增强编辑效率
 	require("config.plugins.surround"),
@@ -60,10 +60,10 @@ local mac_plugin = {
 	require("config.plugins.statusline"),
 	require("config.plugins.winbar"),
 	require("config.plugins.scrollbar"),
-	require("config.plugins.tabline"),
+	require("config.plugins.bufline"),
 	require("config.plugins.indent"), -- 等官方修复bug
 	require("config.plugins.notify"),
-	require("config.plugins.dash"),
+	require("config.plugins.dashboard"),
 
 
 
@@ -94,7 +94,7 @@ local mac_plugin = {
 	-- 较复杂的功能扩展
 	require("config.plugins.treesitter"),
 	require("config.plugins.wilder"),
-	require("config.plugins.search"), -- 回头再研究
+	-- require("config.plugins.search"), -- 回头再研究
 	require("config.plugins.fun"),
 	require("config.plugins.llm"),
 	require("config.plugins.git"),

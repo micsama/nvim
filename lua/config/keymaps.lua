@@ -13,7 +13,7 @@ local nmappings = {
 	{ from = "Y",            to = "\"+y",                                                    mode = "v" },
 	{ from = "<D-c>",        to = "\"+y",                                                    mode = "v" },
 	{ from = "<D-v>",        to = "\"+P",                                                    mode = mode_nv },
-	{ from = "<D-v>",        to = "<C_R>+",                                                  mode = { "i", "c" } },
+	{ from = "<D-v>",        to = "<C-R>+",                                                  mode = { "i", "c" } },
 	{ from = "<D-v>",        to = [[<C-\><C-N>"+pa]],                                        mode = "t" },
 
 	-- no shift ^_^
