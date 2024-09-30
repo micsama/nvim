@@ -37,6 +37,22 @@ end, { noremap = true, silent = true })
 -- LSP 服务器配置
 local lsp_servers = {
 	vimls = {},
+	rust_analyzer = {
+		settings = {
+			["rust-analyzer"] = {
+				completion = { autoimport = { enable = false } },
+				inlayHints = { typeHints = true },
+				cargo = { allFeatures = true },
+				checkOnSave = { command = "clippy" },
+				hover = {
+					actions = {
+						run = { enable = true },
+						enable = true,
+					}
+				},
+			}
+		},
+	},
 	-- TODO:检查这几个lsp是否支持hint, codelens
 	pyright = {
 		settings = {
@@ -150,6 +166,7 @@ return {
 				ensure_installed = {
 					'vimls',
 					'markdown_oxide',
+					'rust_analyzer',
 					'pyright',
 					'jsonls',
 					'lua_ls',

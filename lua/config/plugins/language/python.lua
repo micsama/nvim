@@ -39,6 +39,7 @@ return {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"stevearc/dressing.nvim",
+			"MunifTanjim/nui.nvim",
 			"nvim-tree/nvim-web-devicons",
 		},
 		ft = { "python" },
@@ -58,7 +59,7 @@ return {
 			{ "<leader>e",  ":MoltenEvaluateOperator<CR>", desc = "Run operator selection",    mode = "n", silent = true },
 			{ "<leader>rl", ":MoltenEvaluateLine<CR>",     desc = "Evaluate line",             mode = "n", silent = true },
 			{ "<leader>rr", ":MoltenReevaluateCell<CR>",   desc = "Re-evaluate cell",          mode = "n", silent = true },
-			{ "<leader>r",  ":MoltenEvaluateVisual<CR>",   desc = "Evaluate visual selection", mode = "v", silent = true },
+			{ "<leader>r",  ":<C-u>MoltenEvaluateVisual<CR>gv",   desc = "Evaluate visual selection", mode = "v", silent = true },
 		},
 		config = function()
 			-- 设置插件的全局变量
