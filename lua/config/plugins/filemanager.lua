@@ -1,6 +1,10 @@
 return {
 	---@type LazySpec
 	{
+
+
+	},
+	{
 		"mikavilpas/yazi.nvim",
 		event = "VeryLazy",
 		keys = {
@@ -31,6 +35,17 @@ return {
 				"vimopts",
 				-- "filetype",
 			},
+		},
+	},
+	{
+		"natecraddock/workspaces.nvim",
+		-- dependencies={"nvim-telescope/telescope.nvim"},
+		opts = {
+			path = vim.fn.stdpath("data") .. "/workspaces",
+			cd_type = "local",
+			hooks = {
+				open = { "Yazi" },
+			}
 		},
 	}
 }

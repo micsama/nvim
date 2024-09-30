@@ -9,6 +9,9 @@ return {
 		config = function()
 			-- 加载 Telescope 和相关扩展
 			local telescope = require('telescope')
+			-- 加载 fzf 扩展
+			telescope.load_extension("workspaces")
+			telescope.load_extension('fzf')
 
 			-- 配置 Telescope 的核心功能和扩展
 			telescope.setup {
@@ -24,16 +27,14 @@ return {
 					}
 				}
 			}
-
-			-- 加载 fzf 扩展
-			telescope.load_extension('fzf')
 		end,
 		keys = {
 			-- 使用 keys 部分来定义快捷键映射
-			{ '<leader>ff', function() require('telescope.builtin').find_files() end,            desc = 'Find Files' },
-			{ '<leader>fg', function() require('telescope.builtin').live_grep() end,             desc = 'Live Grep' },
-			{ '<leader>fb', function() require('telescope.builtin').buffers() end,               desc = 'Find Buffers' },
-			{ '<leader>fh', function() require('telescope.builtin').help_tags() end,             desc = 'Find Help Tags' },
+			{ '<leader>ff', function() require('telescope.builtin').find_files() end, desc = 'Find Files' },
+			{ '<leader>fg', function() require('telescope.builtin').live_grep() end,  desc = 'Live Grep' },
+			{ '<leader>fb', function() require('telescope.builtin').buffers() end,    desc = 'Find Buffers' },
+			{ '<leader>fh', function() require('telescope.builtin').help_tags() end,  desc = 'Find Help Tags' },
+			{ '<leader>fw', "<CMD>Telescope workspaces<CR>",                          desc = 'Find workspaces' },
 		},
 	}
 }
