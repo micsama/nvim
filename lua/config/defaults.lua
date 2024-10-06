@@ -29,6 +29,7 @@ vim.o.list = true -- 显示不可见字符
 vim.o.listchars = 'tab:|\\ ,trail:▫' -- 设置不可见字符显示格式
 
 -- 设置 fold 相关的选项
+-- TODO:修复这里的设置方案
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.require'utils/fold'.foldexpr()"
@@ -57,7 +58,6 @@ vim.o.formatoptions = vim.o.formatoptions:gsub('tc', '') -- 禁用自动换行�
 -- 其他设置
 vim.o.ttyfast = true                                        -- 提升终端性能
 vim.o.virtualedit = 'block'                                 -- 允许块状选择模式的虚拟编辑
-vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/workspace/tools/envs/base") .. "/bin/python"
@@ -65,7 +65,7 @@ vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/workspace/t
 -- auto change root
 vim.api.nvim_create_autocmd("BufEnter", {
 	callback = function(ctx)
-		local root = vim.fs.root(ctx.buf, { ".git", ".svn", "Makefile", ".venv", "Cargo.toml", "mvnw", "package.json" })
+		local root = vim.fs.root(ctx.buf, { ".git", "Makefile", ".venv", "Cargo.toml", "package.json" })
 		if root and root ~= "." and root ~= vim.fn.getcwd() then
 			vim.cmd.tcd(root)
 			vim.notify("Change CWD to " .. root)
@@ -98,7 +98,7 @@ vim.cmd([[autocmd TermOpen term://* startinsert]])
 vim.cmd([[
 augroup NVIMRC
     autocmd!
-    autocmd BufWritePost .vim.lua exec ":so %"
+    autocmd BufWritePost init.lua exec ":so %"
 augroup END
 tnoremap <C-N> <C-\><C-N>
 tnoremap <C-O> <C-\><C-N><C-O>
