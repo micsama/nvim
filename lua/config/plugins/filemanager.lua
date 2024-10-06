@@ -8,12 +8,12 @@ return {
 			"MunifTanjim/nui.nvim",
 		},
 		keys = {
-			{ "<D-b>", "<CMD>Neotree toggle reveal dir=./<CR>" }
+			{ "<D-b>", "<CMD>Neotree toggle reveal=true source=filesystem dir=./<CR>" }
 		},
 		opts = {
 			open_files_do_not_replace_types = { "terminal", "trouble", "qf", "nofile" },
 			window = {
-				width = 25,
+				width = 30,
 				mappings = {
 					["O"] = "system_open",
 				},

@@ -14,6 +14,11 @@ return {
 				auto_install = true,
 				sync_install = false,
 				ensure_installed = {
+					"gitignore",
+					"gitcommit",
+					"git_config",
+					"typst",
+					"vimdoc",
 					"csv",
 					"cmake",
 					"fish",

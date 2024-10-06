@@ -1,5 +1,9 @@
 return {
 	{
+		'fei6409/log-highlight.nvim',
+		opts = {}
+	},
+	{
 		'cameron-wags/rainbow_csv.nvim',
 		config = true,
 		ft = {
