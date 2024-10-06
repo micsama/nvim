@@ -101,6 +101,7 @@ local function setup_cmp(cmp, lspkind)
 		}, {
 			{ name = 'path',     priority = 250 }, --
 			{ name = 'nvim_lua', priority = 700 }, -- Neovim Lua API
+			{ name = 'crates', priority = 700 }, -- Neovim Lua API
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<c-g>'] = cmp.mapping(function(fallback)
