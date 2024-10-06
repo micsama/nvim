@@ -48,7 +48,6 @@ local nmappings = {
 	{ from = "<leader>rc",   to = "<CMD>edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>", },
 
 	-- Window & splits
-	--
 	{ from = "<leader>w",    to = "<CMD>wincmd w<CR>", },
 	{ from = "<leader>k",    to = "<C-w>k", },
 	{ from = "<leader>j",    to = "<C-w>j", },
