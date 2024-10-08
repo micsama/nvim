@@ -121,7 +121,8 @@ local uname = vim.uv.os_uname()
 if uname.sysname == "Linux" then
 	vim.o.shell = "/usr/bin/bash"
 elseif uname.sysname == "Darwin" then
-	vim.o.shell = "/opt/homebrew/bin/fish"
+	-- vim.o.shell = "/opt/homebrew/bin/fish"
+	vim.o.shell = "/opt/homebrew/bin/nu"
 else
 	vim.o.shell = "/usr/bin/bash"
 end
