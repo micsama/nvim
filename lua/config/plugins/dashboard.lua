@@ -19,4 +19,16 @@ return {
 		end,
 		dependencies = { { 'nvim-tree/nvim-web-devicons' } }
 	},
+	{
+		'akinsho/toggleterm.nvim',
+		version = "*",
+		keys = {
+			{ "<D-g>", ":ToggleTerm dir=git_dir<CR>",            mode = { "n", "v" }, desc = "Toggle terminal" },
+			{ "<D-g>", "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>", mode = { "i", "t" }, desc = "Toggle terminal" },
+		},
+		opts = {
+			shade_terminals = false,
+			autochdir = true,
+		},
+	},
 }
