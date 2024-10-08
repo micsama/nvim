@@ -44,9 +44,7 @@ return {
 		},
 		ft = { "python" },
 		build = ":PympleBuild",
-		config = function()
-			require("pymple").setup()
-		end,
+		opts={}
 	},
 	{
 		-- NOTE:查看官方对venv的支持～～
@@ -75,6 +73,5 @@ return {
 			vim.api.nvim_set_hl(0, "MoltenOutputBorder", { link = "FloatBorder" })
 			vim.api.nvim_set_hl(0, "MoltenCell", { bold = true, bg = "#364646" })
 		end,
-	}
-	,
+	},
 }

@@ -1,8 +1,8 @@
 *.swp
 .DS_Store
 sessions/
-tmp/backup/*
-tmp/undo/*
+tmp/backup/*.swp
+tmp/undo/%*
 .netrwhist
 _machine_specific.vim
 .vim-bookmarks
