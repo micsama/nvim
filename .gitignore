@@ -10,3 +10,4 @@ _machine_specific.vim
 lua/config/machine_specific.lua
 lazy-lock.json
 lua/Untitled
+tmp/backup

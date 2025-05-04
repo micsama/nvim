@@ -101,7 +101,7 @@ local function setup_cmp(cmp, lspkind)
 		}, {
 			{ name = 'path',     priority = 250 }, --
 			{ name = 'nvim_lua', priority = 700 }, -- Neovim Lua API
-			{ name = 'crates', priority = 700 }, -- Neovim Lua API
+			{ name = 'crates',   priority = 700 }, -- Neovim Lua API
 		}),
 		mapping = cmp.mapping.preset.insert({
 			['<c-g>'] = cmp.mapping(function(fallback)
@@ -158,16 +158,36 @@ return {
 			setup_cmp(cmp, lspkind) --
 		end,
 		dependencies = {
-			{ 'onsails/lspkind.nvim' },      --
+			{ 'onsails/lspkind.nvim' }, --
 		},
 	},
-
-	--
-	{ "garymjr/nvim-snippets", event = { 'InsertEnter' }, opts = {} },
-	{ 'hrsh7th/cmp-buffer',    event = { 'InsertEnter' }, },
-	{ 'hrsh7th/cmp-path',      event = { 'InsertEnter' }, },
-	{ 'hrsh7th/cmp-nvim-lsp',  event = { 'InsertEnter' }, },
-	{ 'hrsh7th/cmp-nvim-lua',  event = { 'InsertEnter' }, },
+	{
+		"chrisgrieser/nvim-scissors",
+		dependencies = "nvim-telescope/telescope.nvim", -- if using telescope
+		opts = {
+			snippetDir = "~/.config/nvim/snippets",
+		}
+	},
+	-- { "garymjr/nvim-snippets", event = { 'InsertEnter' }, opts = {} },
+	{
+		"echasnovski/mini.completion",
+		config = function()
+			local gen_loader = require('mini.snippets').gen_loader
+			require('mini.snippets').setup({
+				snippets = {
+					-- Load custom file with global snippets first (adjust for Windows)
+					-- gen_loader.from_file('~/.config/nvim/snippets/global.json'),
+					-- Load snippets based on current language by reading files from
+					-- "snippets/" subdirectories from 'runtimepath' directories.
+					gen_loader.from_lang(),
+				},
+			})
+		end
+	},
+	{ 'hrsh7th/cmp-buffer',   event = { 'InsertEnter' }},
+	{ 'hrsh7th/cmp-path',     event = { 'InsertEnter' }},
+	{ 'hrsh7th/cmp-nvim-lsp', event = { 'InsertEnter' }},
+	{ 'hrsh7th/cmp-nvim-lua', event = { 'InsertEnter' }},
 	{
 		'hrsh7th/cmp-cmdline',    --
 		event = { 'CmdlineEnter' }, --

@@ -60,7 +60,7 @@ vim.o.ttyfast = true                                        -- 提升终端性�
 vim.o.virtualedit = 'block'                                 -- 允许块状选择模式的虚拟编辑
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
-vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/workspace/tools/envs/base") .. "/bin/python"
+vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.uv/base") .. "/bin/python"
 
 -- auto change root
 vim.api.nvim_create_autocmd("BufEnter", {
@@ -104,6 +104,7 @@ tnoremap <C-N> <C-\><C-N>
 tnoremap <C-O> <C-\><C-N><C-O>
 ]])
 
+
 vim.cmd([[hi NonText ctermfg=gray guifg=grey10]])
 
 vim.cmd([[
@@ -121,12 +122,13 @@ local uname = vim.uv.os_uname()
 if uname.sysname == "Linux" then
 	vim.o.shell = "/usr/bin/bash"
 elseif uname.sysname == "Darwin" then
-	-- vim.o.shell = "/opt/homebrew/bin/fish"
-	vim.o.shell = "/opt/homebrew/bin/nu"
+	vim.o.shell = "/opt/homebrew/bin/fish"
+	-- vim.o.shell = "/opt/homebrew/bin/nu"
 else
 	vim.o.shell = "/usr/bin/bash"
 end
 
+vim.env.PATH = "/opt/homebrew/bin:"..vim.env.PATH
 if vim.g.neovide then
 	require("config.neovide")
 end

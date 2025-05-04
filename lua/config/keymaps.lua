@@ -26,8 +26,8 @@ local nmappings = {
 	-- 设置插入模式下的cmd+方向键
 	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
 	{ from = "<D-right>",    to = "<C-o>$",                                                  mode = mode_it },
-	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
-	{ from = "<D-left>",     to = "<C-o>0",                                                  mode = mode_it },
+	-- { from = "<D-up>",     to = "<C-o>0",                                                  mode = mode_it },
+	-- { from = "<D-down>",     to = "<C-o>0",                                                  mode = mode_it },
 
 
 
@@ -89,7 +89,6 @@ vim.keymap.set("n", ",q", "q", { noremap = true })
 
 -- 终端模式下启用esc
 -- vim.api.nvim_set_keymap('t', '<Esc><ESC>', [[<C-\><C-n>]], { noremap = true, silent = true })
-
 
 for _, mapping in ipairs(nmappings) do
 	vim.keymap.set(mapping.mode or "n", mapping.from, mapping.to, { noremap = true })

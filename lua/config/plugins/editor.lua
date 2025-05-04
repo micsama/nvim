@@ -4,7 +4,7 @@
 vim.cmd([[
 fun! s:MakePair()
     let line = getline('.')
-    let len = strlen(line)
+		let len = strlen(line)
     if line[len - 1] == ";" || line[len - 1] == ","
         normal! lx$P
     else
@@ -98,8 +98,6 @@ return {
 	-- 		})
 	-- 	end
 	-- },
-	--
-
 	-- 输入法切换插件
 	{
 		"keaising/im-select.nvim",

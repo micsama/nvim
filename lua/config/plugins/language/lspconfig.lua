@@ -28,7 +28,7 @@ local function on_attach(client, bufnr)
 	})
 end
 -- 设置键映射，直接使用 Lua 闭包函数
-vim.keymap.set('n', '<M-S-f>', function()
+vim.keymap.set('n', '<D-S-f>', function()
 	local lineno = vim.api.nvim_win_get_cursor(0)
 	vim.lsp.buf.format({ async = false })
 	pcall(vim.api.nvim_win_set_cursor, 0, lineno)

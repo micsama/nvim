@@ -65,8 +65,6 @@ local mac_plugin = {
 	require("config.plugins.notify"),
 	require("config.plugins.dashboard"),
 
-
-
 	-- 增强编辑效率
 	require("config.plugins.surround"),
 	require("config.plugins.comment"),
