@@ -13,6 +13,7 @@ later(function()
             untracked    = { text = '┆' },
         },
     })
+
     map("nv", "<leader>g-", ":Gitsigns prev_hunk<CR>", "prev_hunk")
     map("nv", "<leader>g=", ":Gitsigns next_hunk<CR>", "next_hunk")
     map("nv", "<leader>gb", ":Gitsigns blame_line<CR>", "blame_line")
@@ -25,5 +26,6 @@ later(function()
     vim.g.lazygit_floating_window_scaling_factor = 1.0
     vim.g.lazygit_floating_window_winblend = 0
     vim.g.lazygit_use_neovim_remote = true
+
     map("nv", "<leader>gg", ":LazyGit<CR>", "Open LazyGit")
 end)

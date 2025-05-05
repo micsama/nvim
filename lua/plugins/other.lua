@@ -1,4 +1,5 @@
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
+
 later(function ()
     add({source="nvim-treesitter/nvim-treesitter",depends={"nushell/tree-sitter-nu"}})
     vim.opt.smartindent = false
