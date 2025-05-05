@@ -43,6 +43,7 @@ vim.o.ttyfast = true                -- 优化终端重绘（现代终端默认�
 -- Python配置
 -- 设置Python3宿主程序路径，优先使用虚拟环境中的Python
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.uv/base") .. "/bin/python"
+-- vim.lsp.client. = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.uv/base") .. "/bin/python"
 
 -- 禁用不需要的语言提供程序
 vim.g.loaded_perl_provider = 0         -- 禁用Perl支持（减少启动开销）
@@ -53,6 +54,7 @@ vim.g.loaded_ruby_provider = 0         -- 禁用Ruby支持（减少启动开销�
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function(ctx)
     local root = vim.fs.root(ctx.buf, { 
+			".luarc.json",-- Lua 项目目录
       ".git",       -- Git仓库根目录
       "Makefile",   -- Makefile所在目录
       ".venv",      -- Python虚拟环境目录
@@ -112,18 +114,18 @@ local terminal_colors = {
   '#FF92D0', -- 亮品红
   '#9AEDFE'  -- 亮青色
 }
-
--- 将homebrew的内容加进来
-vim.env.PATH = "/opt/homebrew/bin:"..vim.env.PATH
-
--- 应用终端颜色配置
 for i, color in ipairs(terminal_colors) do
   vim.g['terminal_color_' .. (i-1)] = color
 end
 
+-- 将homebrew的内容加进来
+vim.env.PATH = "/opt/homebrew/bin:"..vim.env.PATH
+
+
 -- 终端模式下的键位映射
-vim.keymap.set('t', '<C-N>', '<C-\\><C-N>', { desc = "Exit terminal insert mode" })  -- 退出终端插入模式
-vim.keymap.set('t', '<C-O>', '<C-\\><C-N><C-O>', { desc = "Exit terminal insert mode and open fold" })  -- 退出并打开折叠
+local map = require("util.utils").map
+map('t','c-N','<C-\\><C-N>',"Exit terminal insert mode")-- 退出终端插入模式
+map('t','<C-O>','<C-\\><C-N><C-O>',"Exit terminal insert mode and open fold")-- 退出并打开折叠
 
 -- 高亮组配置
 vim.cmd([[hi NonText ctermfg=gray guifg=grey10]])  -- 设置非文本（如行尾）的颜色

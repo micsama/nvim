@@ -24,7 +24,6 @@ require("plugins.other")
 require("plugins.llm")
 require("plugins.git")
 
--- Safely execute later
 -- later(function() require('mini.ai').setup() end)
 -- later(function() require('mini.comment').setup() end)
 -- later(function() require('mini.pick').setup() end)
