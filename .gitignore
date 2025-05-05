@@ -1,12 +1,10 @@
 *.swp
 .DS_Store
 sessions/
-tmp/backup/*.swp
-tmp/undo/%*
 .netrwhist
 _machine_specific.vim
 .vim-bookmarks
-
 lua/config/machine_specific.lua
 lazy-lock.json
 lua/Untitled
+tmp/
