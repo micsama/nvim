@@ -24,8 +24,45 @@ later(function()
 						model = {
 							default = "qwen3:4b",
 						},
-						tempeature = {
-							default = 0.7,
+						temperature = {
+							order = 2,
+							mapping = "parameters",
+							type = "number",
+							optional = true,
+							default = 0.6,
+							desc =
+							"What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. We generally recommend altering this or top_p but not both.",
+							validate = function(n)
+								return n >= 0 and n <= 2, "Must be between 0 and 2"
+							end,
+						},
+            MinP = {
+              order = 5,
+              mapping = "parameters",
+              type = "number",
+              optional = true,
+              default = 0,
+              desc = "A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9)",
+            },
+            top_k = {
+              order = 5,
+              mapping = "parameters",
+              type = "number",
+              optional = true,
+              default = 20,
+              desc = "A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9)",
+            },
+						top_p = {
+							order = 5,
+							mapping = "parameters",
+							type = "number",
+							optional = true,
+							default = 0.95,
+							desc =
+							"A higher value (e.g., 0.95) will lead to more diverse text, while a lower value (e.g., 0.5) will generate more focused and conservative text. (Default: 0.9)",
+							validate = function(n)
+								return n >= 0 and n <= 1, "Must be between 0 and 1"
+							end,
 						},
 						num_ctx = {
 							default = 16384,

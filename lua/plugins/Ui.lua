@@ -46,10 +46,6 @@ now(function()
 end)
 
 
--- now(function() require('mini.tabline').setup() end)
-
-
-
 now(function()
 	add({ source = "nvim-lualine/lualine.nvim", depends = { 'nvim-tree/nvim-web-devicons' } })
 	require('lualine').setup {
