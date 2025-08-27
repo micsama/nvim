@@ -11,8 +11,8 @@ local uname = vim.uv.os_uname()
 -- -- 检查系统类型
 if uname.sysname == "Darwin" then
 	vim.notify("macOS Loading...")
-	vim.o.shell = "/opt/homebrew/bin/fish"
-	-- vim.o.shell = "/opt/homebrew/bin/nu"
+	-- vim.o.shell = "/opt/homebrew/bin/fish"
+	vim.o.shell = "/opt/homebrew/bin/nu"
 else
 	vim.notify("Linux Loading...")
 	vim.o.shell = "/usr/bin/bash"

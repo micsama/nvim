@@ -1,4 +1,4 @@
-vim.o.guifont = "FantasqueSansM Nerd Font Propo,FiraCode Nerd Font,PingFang SC:h17.5"
+vim.o.guifont = "FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h17.5"
 vim.opt.linespace = 0
 
 -- 窗口模糊
