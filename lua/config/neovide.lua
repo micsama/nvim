@@ -1,4 +1,4 @@
-vim.o.guifont = "FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h17.5"
+vim.o.guifont = "FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5"
 vim.opt.linespace = 0
 
 -- 窗口模糊
@@ -47,7 +47,7 @@ vim.g.neovide_scale_factor = 1.0
 
 -- 调整缩放因子
 local function scale(delta)
-    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
+	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
 end
 
 -- 快捷键映射
