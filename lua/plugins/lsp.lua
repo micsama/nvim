@@ -5,6 +5,28 @@ now(function()
 	add({ source = "MeanderingProgrammer/render-markdown.nvim", depends = { 'nvim-treesitter/nvim-treesitter' } })
 end)
 
+-- 设置诊断配置
+vim.diagnostic.config({
+	severity_sort = true,
+	underline = true,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = '✘',
+			[vim.diagnostic.severity.WARN] = '▲',
+			[vim.diagnostic.severity.HINT] = '⚑',
+			[vim.diagnostic.severity.INFO] = '»',
+		},
+		linehl = {
+			[vim.diagnostic.severity.ERROR] = 'ErrorMsg',
+		},
+		numhl = {
+			[vim.diagnostic.severity.WARN] = 'WarningMsg',
+		},
+	},
+	virtual_text = false,
+	update_in_insert = false,
+	float = true,
+})
 
 vim.lsp.config('*', {
 	capabilities = {
