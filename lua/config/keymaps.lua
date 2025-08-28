@@ -3,63 +3,63 @@ local it = { "i", "t" }
 -- TODO: 重写 keymaps
 local nmappings = {
 	-- 文件操作
-	{ "<D-s>", "<CMD>up<CR>", mode = nv },                                                  -- 保存文件
-	{ "<M-s>", "<CMD>up<CR>", mode = nv },                                                  -- 保存文件（替代）
-	{ "<S>", "<CMD>up<CR>", mode = nv },                                                    -- 保存文件（替代）
-	{ "<D-w>", "<CMD>q<CR>", mode = nv },                                                   -- 关闭窗口
+	{ "<D-s>", "<CMD>up<CR>", mode = nv }, -- 保存文件
+	{ "<M-s>", "<CMD>up<CR>", mode = nv }, -- 保存文件（替代）
+	{ "<S>", "<CMD>up<CR>", mode = nv },  -- 保存文件（替代）
+	{ "<D-w>", "<CMD>q<CR>", mode = nv }, -- 关闭窗口
 
 	-- 导航与编辑
-	{ "J", "5j", mode = nv },                                                               -- 向下快速移动5行
-	{ "K", "5k", mode = nv },                                                               -- 向上快速移动5行
-	{ ";", ":", mode = nv },                                                                -- 快速进入命令模式
-	{ "`", "~", mode = nv },                                                                -- 切换大小写
+	{ "J", "5j", mode = nv }, -- 向下快速移动5行
+	{ "K", "5k", mode = nv }, -- 向上快速移动5行
+	{ ";", ":", mode = nv }, -- 快速进入命令模式
+	{ "`", "~", mode = nv }, -- 切换大小写
 
 	-- 剪贴板操作
-	{ "Y", "\"+y", mode = "v" },                                                                      -- 复制到系统剪贴板
-	{ "<D-c>", "\"+y", mode = "v" },                                                                  -- 系统复制
-	{ "<D-v>", "\"+P", mode = nv },                                                                   -- 系统粘贴
-	{ "<D-v>", "<C-R>+", mode = { "i", "c" } },                                                       -- 插入/命令模式下粘贴
-	{ "<D-v>", [[<C-\><C-N>"+pa]], mode = "t" },                                                      -- 终端模式下粘贴
+	{ "Y", "\"+y", mode = "v" },                -- 复制到系统剪贴板
+	{ "<D-c>", "\"+y", mode = "v" },            -- 系统复制
+	{ "<D-v>", "\"+P", mode = nv },             -- 系统粘贴
+	{ "<D-v>", "<C-R>+", mode = { "i", "c" } }, -- 插入/命令模式下粘贴
+	{ "<D-v>", [[<C-\><C-N>"+pa]], mode = "t" }, -- 终端模式下粘贴
 
 	-- 窗口管理
-	{ "<leader>w", "<CMD>wincmd w<CR>" },            -- 切换到下一个窗口
-	{ "<leader>k", "<C-w>k" },                       -- 上方窗口
-	{ "<leader>j", "<C-w>j" },                       -- 下方窗口
-	{ "<leader>h", "<C-w>h" },                       -- 左边窗口
-	{ "<leader>l", "<C-w>l" },                       -- 右边窗口
-	{ "qf", "<C-w>o" },                              -- 关闭除当前外的其他窗口
-	{ "<up>", "<CMD>res +5<CR>" },                   -- 增加窗口高度
-	{ "<down>", "<CMD>res -5<CR>" },                 -- 减小窗口高度
-	{ "<left>", "<CMD>vertical resize-5<CR>" },      -- 减小窗口宽度
-	{ "<right>", "<CMD>vertical resize+5<CR>" },     -- 增加窗口宽度
+	{ "<leader>w", "<CMD>wincmd w<CR>" },       -- 切换到下一个窗口
+	{ "<leader>k", "<C-w>k" },                  -- 上方窗口
+	{ "<leader>j", "<C-w>j" },                  -- 下方窗口
+	{ "<leader>h", "<C-w>h" },                  -- 左边窗口
+	{ "<leader>l", "<C-w>l" },                  -- 右边窗口
+	{ "qf", "<C-w>o" },                         -- 关闭除当前外的其他窗口
+	{ "<up>", "<CMD>res +5<CR>" },              -- 增加窗口高度
+	{ "<down>", "<CMD>res -5<CR>" },            -- 减小窗口高度
+	{ "<left>", "<CMD>vertical resize-5<CR>" }, -- 减小窗口宽度
+	{ "<right>", "<CMD>vertical resize+5<CR>" }, -- 增加窗口宽度
 
 	-- 分屏管理
-	{ "s", "<nop>" },                                                             -- 禁用默认 s
-	{ "sk", "<CMD>set nosplitbelow<CR>:split<CR>:set splitbelow<CR>" },           -- 上方分屏
-	{ "sj", "<CMD>set splitbelow<CR>:split<CR>" },                                -- 下方分屏
-	{ "sh", "<CMD>set nosplitright<CR>:vsplit<CR>:set splitright<CR>" },          -- 左侧分屏
-	{ "sl", "<CMD>set splitright<CR>:vsplit<CR>" },                               -- 右侧分屏
-	{ "sh", "<C-w>t<C-w>K" },                                                     -- 转为水平布局
-	{ "sv", "<C-w>t<C-w>H" },                                                     -- 转为垂直布局
-	{ "srh", "<C-w>b<C-w>K" },                                                    -- 分屏水平旋转
-	{ "srv", "<C-w>b<C-w>H" },                                                    -- 分屏垂直旋转
+	{ "s", "<nop>" },                                                   -- 禁用默认 s
+	{ "sk", "<CMD>set nosplitbelow<CR>:split<CR>:set splitbelow<CR>" }, -- 上方分屏
+	{ "sj", "<CMD>set splitbelow<CR>:split<CR>" },                      -- 下方分屏
+	{ "sh", "<CMD>set nosplitright<CR>:vsplit<CR>:set splitright<CR>" }, -- 左侧分屏
+	{ "sl", "<CMD>set splitright<CR>:vsplit<CR>" },                     -- 右侧分屏
+	{ "sh", "<C-w>t<C-w>K" },                                           -- 转为水平布局
+	{ "sv", "<C-w>t<C-w>H" },                                           -- 转为垂直布局
+	{ "srh", "<C-w>b<C-w>K" },                                          -- 分屏水平旋转
+	{ "srv", "<C-w>b<C-w>H" },                                          -- 分屏垂直旋转
 
 	-- 标签页管理
-	{ "<D-t>", "<CMD>tab new<CR>:Yazi<CR>", mode = nv },                                    -- 新建标签并打开文件管理器
-	{ "<D-j>", "<CMD>-tabnext<CR>", mode = nv },                                            -- 上一个标签页
-	{ "<D-k>", "<CMD>+tabnext<CR>", mode = nv },                                            -- 下一个标签页
-	{ "<D-s-j>", "<CMD>-tabmove<CR>" },                                                     -- 标签左移
-	{ "<D-s-k>", "<CMD>+tabmove<CR>" },                                                     -- 标签右移
-	{ "<D-j>", "<C-\\><C-n>:-tabnext<CR>", mode = it },                                     -- 插入模式：上一个标签页
-	{ "<D-k>", "<C-\\><C-n>:+tabnext<CR>", mode = it },                                     -- 插入模式：下一个标签页
-	{ "<D-t>", "<C-\\><C-n>:tab new<CR>:Yazi<CR>", mode = it },                             -- 插入模式：新建标签并打开 Yazi
+	{ "<D-t>", "<CMD>tab new<CR>:Yazi<CR>", mode = nv },       -- 新建标签并打开文件管理器
+	{ "<D-j>", "<CMD>-tabnext<CR>", mode = nv },               -- 上一个标签页
+	{ "<D-k>", "<CMD>+tabnext<CR>", mode = nv },               -- 下一个标签页
+	{ "<D-s-j>", "<CMD>-tabmove<CR>" },                        -- 标签左移
+	{ "<D-s-k>", "<CMD>+tabmove<CR>" },                        -- 标签右移
+	{ "<D-j>", "<C-\\><C-n>:-tabnext<CR>", mode = it },        -- 插入模式：上一个标签页
+	{ "<D-k>", "<C-\\><C-n>:+tabnext<CR>", mode = it },        -- 插入模式：下一个标签页
+	{ "<D-t>", "<C-\\><C-n>:tab new<CR>:Yazi<CR>", mode = it }, -- 插入模式：新建标签并打开 Yazi
 
 	-- 其他杂项
-	{ "<M-z>", "<CMD>set wrap!<CR>", mode = nv },                                           -- 切换自动换行
-	{ "<D-left>", "<C-o>0", mode = it },                                                    -- 插入模式：移动到行首
-	{ "<D-right>", "<C-o>$", mode = it },                                                   -- 插入模式：移动到行尾
-	{ "<leader><CR>", "<CMD>nohlsearch<CR>" },                                              -- 清除搜索高亮
-	{ "<leader>rc", "<CMD>edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>" },                 -- 打开配置文件
+	{ "<M-z>", "<CMD>set wrap!<CR>", mode = nv },                          -- 切换自动换行
+	{ "<D-left>", "<C-o>0", mode = it },                                   -- 插入模式：移动到行首
+	{ "<D-right>", "<C-o>$", mode = it },                                  -- 插入模式：移动到行尾
+	{ "<leader><CR>", "<CMD>nohlsearch<CR>" },                             -- 清除搜索高亮
+	{ "<leader>rc", "<CMD>edit ~/.config/nvim/init.lua<CR>:chdir ./<CR>" }, -- 打开配置文件
 
 	-- Git 相关终端
 	{ "<D-g>", ":ToggleTerm dir=git_dir<CR>", mode = nv, desc = "打开终端 (Git 目录)" },

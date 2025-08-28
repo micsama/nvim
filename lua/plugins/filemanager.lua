@@ -16,24 +16,24 @@ later(function()
 		},
 		filesystem = {
 			filtered_items = {
-				always_show = {         -- remains visible even if other settings would normally hide it
+				always_show = { -- remains visible even if other settings would normally hide it
 					".gitignore",
 				},
-				always_show_by_pattern = {         -- uses glob style patterns
+				always_show_by_pattern = { -- uses glob style patterns
+					".json",
 					".env*",
-					"doccano*",
 				},
-				never_show = {         -- remains hidden even if visible is toggled to true, this overrides always_show
+				never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
 					".DS_Store",
 					"thumbs.db"
 				},
-				never_show_by_pattern = {         -- uses glob style patterns
+				never_show_by_pattern = { -- uses glob style patterns
 					".null-ls_*",
 				},
 			},
 			follow_current_file = {
-				enabled = true,                  -- This will find and focus the file in the active buffer every time
-				leave_dirs_open = false,         -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+				enabled = true,      -- This will find and focus the file in the active buffer every time
+				leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
 			},
 			group_empty_dirs = true,
 		},
@@ -43,7 +43,9 @@ later(function()
 				local path = node:get_id()
 				-- macOs: open file in default application in the background.
 				vim.fn.jobstart({ "open", "-g", path }, { detach = true })
-				-- Linux: open file in default application
+
+				--NOTE: Linux: open file in default application
+
 				-- vim.fn.jobstart({ "xdg-open", path }, { detach = true })
 			end,
 		},

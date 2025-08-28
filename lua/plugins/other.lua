@@ -11,12 +11,12 @@ later(function ()
             "gitignore",
             "gitcommit",
             "git_config",
-            "typst",
+            -- "typst",
             "vimdoc",
             "csv",
             "cmake",
-            "fish",
-            "html",
+            -- "fish",
+            -- "html",
             "markdown_inline",
             "markdown",
             "bash",
@@ -31,7 +31,6 @@ later(function ()
             enable = true,
             disable = {}, -- list of language that will be disabled
             additional_vim_regex_highlighting = false,
-
         },
         indent = {
             enable = true
