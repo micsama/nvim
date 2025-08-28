@@ -41,7 +41,7 @@ end)
 
 
 now(function()
-	add({ source = "nvim-lualine/lualine.nvim", depends = { 'nvim-tree/nvim-web-devicons' } })
+	add({ source = "nvim-lualine/lualine.nvim" })
 	require('lualine').setup {
 		options = {
 			icons_enabled = true,
