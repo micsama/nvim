@@ -1,15 +1,18 @@
--- 加载mini.nvim
-local path_package = vim.fn.stdpath('data') .. '/site/'
-local mini_path = path_package .. 'pack/deps/start/mini.nvim'
-
+-- Put this at the top of 'init.lua'
+local path_package = vim.fn.stdpath('data') .. '/site'
+local mini_path = path_package .. '/pack/deps/start/mini.nvim'
 if not vim.loop.fs_stat(mini_path) then
 	vim.cmd('echo "Installing `mini.nvim`" | redraw')
-	local clone_cmd = { 'git', 'clone', '--filter=blob:none', 'https://github.com/echasnovski/mini.nvim', mini_path }
+	local clone_cmd = {
+		'git', 'clone', '--filter=blob:none',
+		-- Uncomment next line to use 'stable' branch
+		-- '--branch', 'stable',
+		'https://github.com/nvim-mini/mini.nvim', mini_path
+	}
 	vim.fn.system(clone_cmd)
 	vim.cmd('packadd mini.nvim | helptags ALL')
 	vim.cmd('echo "Installed `mini.nvim`" | redraw')
 end
-
 -- 初始化mini.deps
 require('mini.deps').setup({ path = { package = path_package } })
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
@@ -19,9 +22,29 @@ now(function()
 	require('mini.icons').setup()
 	require('mini.notify').setup()
 	vim.notify = require('mini.notify').make_notify()
-	require('mini.surround').setup();
-	require('mini.diff').setup()
+	local gen_loader = require('mini.snippets').gen_loader
+	require('mini.snippets').setup({
+		snippets = {
+			gen_loader.from_lang(),
+		},
+	})
 end)
+
+later(function()
+	require('mini.completion').setup(
+		{
+			mappings = {
+				force_twostep = '<C-Space>',
+				force_fallback = '<A-Space>',
+				scroll_down = '<C-f>',
+				scroll_up = '<C-b>',
+			},
+		}
+	)
+	require('mini.surround').setup()
+	require('mini.diff').setup()
+end
+)
 
 -- 加载对应的插件
 require("plugins.Ui")
