@@ -1,9 +1,14 @@
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
 local map = require("util.utils").map
 
+
+-- 展示代码缩进
 later(function()
 	add("shellRaining/hlchunk.nvim")
 	require("hlchunk").setup({
+		line_num = {
+			enable = true
+		},
 		chunk = {
 			enable = true
 		},
@@ -13,11 +18,14 @@ later(function()
 	})
 end)
 
-now(function()
-	require('mini.surround').setup()
-end)
 
-
+-- FIX:
+-- TODO:
+-- HACK:
+-- WARN:
+-- PERF:
+-- NOTE:
+-- TEST:
 later(function()
 	add({ source = "folke/todo-comments.nvim", depends = { "nvim-lua/plenary.nvim" } })
 	require("todo-comments").setup(
@@ -33,6 +41,7 @@ later(function()
 end)
 
 
+-- 按 U undo tree
 later(function()
 	add("mbbill/undotree")
 	vim.g.undotree_DiffAutoOpen = 1
@@ -52,7 +61,7 @@ endfunction
 ]])
 end)
 
-
+-- 行内的美观的报错
 later(function()
 	add("rachartier/tiny-inline-diagnostic.nvim")
 	require("tiny-inline-diagnostic").setup()
@@ -60,6 +69,7 @@ later(function()
 end)
 
 
+-- leader+y 可以搜索的 剪贴板历史记录
 later(function()
 	add({ source = "AckslD/nvim-neoclip.lua", depends = { 'nvim-telescope/telescope.nvim', 'kkharji/sqlite.lua' } })
 	require('neoclip').setup({
@@ -82,19 +92,19 @@ later(function()
 end)
 
 
-
+-- 自动配对括号等
 later(function()
 	add("windwp/nvim-autopairs")
 	require("nvim-autopairs").setup({})
 end)
+
 
 later(function()
 	add("folke/trouble.nvim")
 	require("trouble").setup({})
 end)
 
-
-
+-- 自动切换输入法，需要安装 macism
 later(function()
 	add("keaising/im-select.nvim")
 	require("im_select").setup()

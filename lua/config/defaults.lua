@@ -42,7 +42,7 @@ vim.o.ttyfast = true                -- 优化终端重绘（现代终端默认�
 
 -- Python配置
 -- 设置Python3宿主程序路径，优先使用虚拟环境中的Python
-vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.uv/base") .. "/bin/python"
+vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python"
 -- vim.lsp.client. = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.uv/base") .. "/bin/python"
 
 -- 禁用不需要的语言提供程序
@@ -53,7 +53,7 @@ vim.g.loaded_ruby_provider = 0         -- 禁用Ruby支持（减少启动开销�
 -- 自动切换工作目录到项目根目录（当检测到特定文件时）
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function(ctx)
-    local root = vim.fs.root(ctx.buf, { 
+    local root = vim.fs.root(ctx.buf, {
 			".luarc.json",-- Lua 项目目录
       ".git",       -- Git仓库根目录
       "Makefile",   -- Makefile所在目录

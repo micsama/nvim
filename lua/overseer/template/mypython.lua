@@ -1,12 +1,12 @@
 return {
-    desc = "Include a description of your component",
+    desc = "在当前环境下运行当前python文件",
     name = "Python run this file! ^_^",
     builder = function()
         -- 定义任务的具体行为
         local file_path = vim.fn.expand("%:p")
         local file_name = vim.fn.expand("%:t")
         return {
-            cmd = { "fish", "-c", "python " .. file_path },
+            cmd = { "bash", "-c", "python " .. file_path },
             name = file_name .. " running", -- 任务的名字
             cwd = "./",
             env = {},

@@ -1,11 +1,6 @@
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
 local map = require("util.utils").map
 
-now(function()
-	require('mini.notify').setup()
-	vim.notify = require('mini.notify').make_notify()
-end)
-
 -- color主题
 now(function()
 	add("olimorris/onedarkpro.nvim")
@@ -13,7 +8,6 @@ now(function()
 end)
 
 
-now(function() require('mini.icons').setup() end)
 now(function()
 	add("akinsho/bufferline.nvim")
 	require("bufferline").setup({
@@ -31,9 +25,9 @@ now(function()
 				icon = '▎',    -- this should be omitted if indicator style is not 'icon'
 				style = "icon", -- style = 'icon' | 'underline' | 'none',
 			},
-			show_buffer_close_icons = false,
+			show_buffer_close_icons = true,
 			color_icons = true,
-			show_close_icon = false,
+			show_close_icon = true,
 			enforce_regular_tabs = true,
 			show_duplicate_prefix = false,
 			tab_size = 16,

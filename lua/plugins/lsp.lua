@@ -1,4 +1,9 @@
 local map = require("util.utils").map
+local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
+-- markdown
+now(function()
+	add({ source = "MeanderingProgrammer/render-markdown.nvim", depends = { 'nvim-treesitter/nvim-treesitter' } })
+end)
 
 
 vim.lsp.config('*', {
@@ -9,7 +14,7 @@ vim.lsp.config('*', {
 			}
 		}
 	},
-	root_markers = { '.git' },
+	root_markers = { '.git', '.venv', 'Cargo.toml' },
 })
 
 vim.lsp.enable({ 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer' })
