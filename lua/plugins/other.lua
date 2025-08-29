@@ -1,7 +1,7 @@
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
 
 later(function ()
-    add({source="nvim-treesitter/nvim-treesitter",depends={"nushell/tree-sitter-nu"}})
+    add({source="nvim-treesitter/nvim-treesitter"})
     vim.opt.smartindent = false
     require("nvim-treesitter.configs").setup({
         modules = {},
@@ -9,13 +9,14 @@ later(function ()
         sync_install = false,
         ensure_installed = {
             "gitignore",
+						"nu",
             "gitcommit",
             "git_config",
             -- "typst",
             "vimdoc",
             "csv",
             "cmake",
-            -- "fish",
+            "fish",
             -- "html",
             "markdown_inline",
             "markdown",

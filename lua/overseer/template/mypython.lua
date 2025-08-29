@@ -6,7 +6,7 @@ return {
         local file_path = vim.fn.expand("%:p")
         local file_name = vim.fn.expand("%:t")
         return {
-            cmd = { "bash", "-c", "python " .. file_path },
+            cmd = {"python", file_path },
             name = file_name .. " running", -- 任务的名字
             cwd = "./",
             env = {},
