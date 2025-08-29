@@ -11,9 +11,9 @@ now(function()
 			gen_loader.from_lang(),
 		},
 	})
+	MiniSnippets.start_lsp_server()
 end)
 
-MiniSnippets.start_lsp_server()
 local keys = {
 	['cr']        = vim.api.nvim_replace_termcodes('<CR>', true, true, true),
 	['ctrl-y']    = vim.api.nvim_replace_termcodes('<C-y>', true, true, true),
