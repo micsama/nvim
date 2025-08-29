@@ -1,4 +1,4 @@
-local add, later =  MiniDeps.add, MiniDeps.later
+local add, later = MiniDeps.add, MiniDeps.later
 local map = require("util.utils").map
 
 
@@ -17,26 +17,32 @@ later(function()
 			agent = { adapter = "qwen3" },
 		},
 		adapters = {
-			qwen3 = function()
-				return require("codecompanion.adapters").extend("ollama", {
-					name = "qwen3",
-					opts = {
-						vision = true,
-						stream = true,
-					},
-					schema = {
-						model = {
-							default = "qwen3:4b-instruct-2507-q8_0",
+			http = {
+				qwen3 = function()
+					return require("codecompanion.adapters.http").extend("ollama", {
+						name = "qwen3",
+						opts = {
+							vision = true,
+							stream = true,
 						},
-						num_ctx = {
-							default = 16384,
-						},
-						keep_alive = {
-							default = "5m",
-						},
-					},
-				})
-			end,
+						schema = {
+							model = {
+								-- default = "qwen3:4b-instruct-2507-q8_0",
+								default = "qwen3:8b",
+							},
+							think = {
+								default = false,
+							},
+							num_ctx = {
+								default = 16384,
+							},
+							keep_alive = {
+								default = "5m",
+							},
+						}
+					})
+				end,
+			}
 		},
 	})
 

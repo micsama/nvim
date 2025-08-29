@@ -1,7 +1,7 @@
 return {
-    cmd = { 'ruff', 'server' },
-    filetypes = { 'python' },
-    root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
+	cmd = { 'ruff', 'server' },
+	filetypes = { 'python' },
+	root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
 	settings = {
 		logLevel = 'debug',
 		configuration = "~/.config/nvim/ruff.toml",
@@ -11,4 +11,5 @@ return {
 		organizeImports = true,
 		showSyntaxErrors = true,
 	},
-  }
+}
+

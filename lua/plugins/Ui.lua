@@ -184,12 +184,6 @@ later(function()
 	})
 end)
 
-
-now(function()
-	require('mini.completion').setup()
-end)
-
-
 later(function()
 	add("folke/which-key.nvim")
 	require("which-key").setup()
