@@ -10,6 +10,17 @@ if not vim.loop.fs_stat(mini_path) then
 	vim.cmd('packadd mini.nvim | helptags ALL')
 	vim.cmd('echo "Installed `mini.nvim`" | redraw')
 end
+
+
+vim.pack.add {
+	{ src = 'https://github.com/neovim/nvim-lspconfig' },
+	{ src = 'https://github.com/kaymmm/bullets.nvim' }
+}
+require('Bullets').setup({
+	alpha = {
+		len = 3,
+	},
+})
 -- 初始化mini.deps
 require('mini.deps').setup({ path = { package = path_package } })
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
