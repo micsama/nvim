@@ -8,8 +8,12 @@ now(function()
 			jump_prev = '<s-tab>',
 		},
 		snippets = {
-			gen_loader.from_lang(),
-		},
+			gen_loader.from_lang({
+				lang_patterns = {
+					markdown_inline = { 'markdown.json' },
+				}
+			}),
+		}
 	})
 	MiniSnippets.start_lsp_server()
 end)
