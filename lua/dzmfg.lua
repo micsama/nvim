@@ -14,13 +14,12 @@ end
 
 vim.pack.add {
 	{ src = 'https://github.com/neovim/nvim-lspconfig' },
-	{ src = 'https://github.com/kaymmm/bullets.nvim' }
+	{ src = 'https://github.com/kaymmm/bullets.nvim' },
+	{ src = 'https://github.com/olimorris/onedarkpro.nvim' }
 }
-require('Bullets').setup({
-	alpha = {
-		len = 3,
-	},
-})
+
+vim.cmd.colorscheme('onedark')
+require('Bullets').setup({})
 -- 初始化mini.deps
 require('mini.deps').setup({ path = { package = path_package } })
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
@@ -56,7 +55,7 @@ require("plugins.cmp")
 require("plugins.other")
 require("plugins.llm")
 require("plugins.git")
-
+-- vim.pack.update()
 -- later(function() require('mini.ai').setup() end)
 -- later(function() require('mini.comment').setup() end)
 -- later(function() require('mini.pick').setup() end)
