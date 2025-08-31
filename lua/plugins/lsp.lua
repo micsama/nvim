@@ -4,6 +4,7 @@ local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
 now(function()
 	add({ source = "MeanderingProgrammer/render-markdown.nvim", depends = { 'nvim-treesitter/nvim-treesitter' } })
 end)
+
 --TODO:设置切换环境
 -- later(
 -- 	function ()
@@ -45,7 +46,7 @@ vim.lsp.config('*', {
 	root_markers = { '.git', '.venv', 'Cargo.toml' },
 })
 
-vim.lsp.enable({ 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer' })
+vim.lsp.enable({ 'tombi','luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer' })
 
 -- 设置键映射，直接使用 Lua 闭包函数
 map('n', '<D-S-f>', function()
