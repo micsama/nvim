@@ -13,7 +13,6 @@ end
 
 
 vim.pack.add {
-	{ src = 'https://github.com/neovim/nvim-lspconfig' },
 	{ src = 'https://github.com/kaymmm/bullets.nvim' },
 	{ src = 'https://github.com/olimorris/onedarkpro.nvim' }
 }
