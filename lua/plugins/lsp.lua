@@ -46,7 +46,7 @@ vim.lsp.config('*', {
 	root_markers = { '.git', '.venv', 'Cargo.toml' },
 })
 
-vim.lsp.enable({ 'tombi','luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer' })
+vim.lsp.enable({ 'tombi','luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer','nushell' })
 
 -- 设置键映射，直接使用 Lua 闭包函数
 map('n', '<D-S-f>', function()

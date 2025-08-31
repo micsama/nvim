@@ -1,13 +1,6 @@
 local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
 local map = require("util.utils").map
 
--- color主题
-now(function()
-	add("olimorris/onedarkpro.nvim")
-	vim.cmd.colorscheme('onedark')
-end)
-
-
 now(function()
 	add("akinsho/bufferline.nvim")
 	require("bufferline").setup({
