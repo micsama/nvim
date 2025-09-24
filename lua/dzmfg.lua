@@ -47,7 +47,6 @@ require("plugins.lsp")
 require("plugins.editor")
 require("plugins.filemanager")
 require("plugins.dap")
-require("plugins.coderunner")
 
 -- TODO: mini.cmp
 require("plugins.cmp")

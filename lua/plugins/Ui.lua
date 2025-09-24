@@ -57,7 +57,6 @@ now(function()
 		sections = {
 			lualine_a = { 'filename' },
 			lualine_b = { 'branch', 'diff', 'diagnostics' },
-			lualine_c = { 'overseer' },
 			lualine_x = { {
 				"swenv",
 				cond = function()
