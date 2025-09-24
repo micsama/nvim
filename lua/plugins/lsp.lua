@@ -5,6 +5,10 @@ now(function()
 	add({ source = "MeanderingProgrammer/render-markdown.nvim", depends = { 'nvim-treesitter/nvim-treesitter' } })
 end)
 
+later(function ()
+	add("AckslD/swenv.nvim")
+end)
+
 --TODO:设置切换环境
 -- later(
 -- 	function ()
