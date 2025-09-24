@@ -10,6 +10,6 @@ return {
 		fixAll = true,
 		organizeImports = true,
 		showSyntaxErrors = true,
-	},
+	}
 }
 
