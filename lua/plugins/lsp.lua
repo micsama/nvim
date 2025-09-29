@@ -1,21 +1,5 @@
 local map = require("util.utils").map
-local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
--- markdown
-now(function()
-	add({ source = "MeanderingProgrammer/render-markdown.nvim", depends = { 'nvim-treesitter/nvim-treesitter' } })
-end)
 
-later(function ()
-	add("AckslD/swenv.nvim")
-end)
-
---TODO:设置切换环境
--- later(
--- 	function ()
--- 	add("linux-cultist/venv-selector.nvim")
--- 	require("venv-selector").setup()
--- 	end
--- )
 -- 设置诊断配置
 vim.diagnostic.config({
 	severity_sort = true,

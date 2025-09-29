@@ -1,4 +1,3 @@
-local now, add, later = MiniDeps.now, MiniDeps.add, MiniDeps.later
 local map = require("util.utils").map
 
 
@@ -46,45 +45,32 @@ local function set_dap_ui_listeners(dap, dapui)
 	dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
 end
 
-later(function()
-	add("mfussenegger/nvim-dap")
-	add("mfussenegger/nvim-dap-python")
-	add("jay-babu/mason-nvim-dap.nvim")
-	add("williamboman/mason.nvim")
-	add("theHamsta/nvim-dap-virtual-text")
-	add({
-		source = "rcarriga/nvim-dap-ui",
-		depends = {
-			"nvim-telescope/telescope-dap.nvim",
-			"nvim-neotest/nvim-nio" }
-	})
-	local dap = require("dap")
-	local dapui = require("dapui")
+local dap = require("dap")
+local dapui = require("dapui")
 
-	-- 设置 DAP UI
-	require("mason").setup()
-	require("nvim-dap-virtual-text").setup()
-	require("mason-nvim-dap").setup({ ensure_installed = { "python" } })
-	require("dap-python").setup("python")
-	dapui.setup()
+-- 设置 DAP UI
+require("mason").setup()
+require("nvim-dap-virtual-text").setup()
+require("mason-nvim-dap").setup({ ensure_installed = { "python" } })
+require("dap-python").setup("python")
+dapui.setup()
 
-	-- 设置 DAP UI 监听器
-	set_dap_ui_listeners(dap, dapui)
-	set_dap_keys()
-	-- 设置 DAP 图标和高亮
-	set_dap_signs_and_highlights()
+-- 设置 DAP UI 监听器
+set_dap_ui_listeners(dap, dapui)
+set_dap_keys()
+-- 设置 DAP 图标和高亮
+set_dap_signs_and_highlights()
 
-	-- DAP 配置
-	dap.configurations.python = {
-		{
-			type = "python",
-			request = "launch",
-			name = "Launch File",
-			program = "${file}",
-			args = {}
-		}
+-- DAP 配置
+dap.configurations.python = {
+	{
+		type = "python",
+		request = "launch",
+		name = "Launch File",
+		program = "${file}",
+		args = {}
 	}
+}
 
-	-- 加载 Telescope 的 DAP 扩展
-	require('telescope').load_extension('dap')
-end)
+-- 加载 Telescope 的 DAP 扩展
+require('telescope').load_extension('dap')

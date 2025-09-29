@@ -12,3 +12,19 @@ if not vim.loop.fs_stat(mini_path) then
 end
 
 require('mini.deps').setup({ path = { package = path_package } })
+
+local later = MiniDeps.later
+require('mini.notify').setup()
+vim.notify = require('mini.notify').make_notify()
+require('mini.icons').setup({
+	style = 'glyph',
+})
+
+later(function()
+	require('mini.surround').setup()
+	require('mini.diff').setup()
+end
+)
+
+MiniIcons.mock_nvim_web_devicons()
+later(MiniIcons.tweak_lsp_kind, "prepend")
