@@ -13,10 +13,18 @@ end
 
 
 vim.pack.add {
-	{ src = 'https://github.com/kaymmm/bullets.nvim' },
-	{ src = 'https://github.com/olimorris/onedarkpro.nvim' }
+	'https://github.com/kaymmm/bullets.nvim',				-- markdown使用
+	'https://github.com/olimorris/onedarkpro.nvim'	-- 主题色
 }
 
+require("onedarkpro").setup({
+	colors = {
+		cursorline = "#303442" -- This is optional. The default cursorline color is based on the background
+	},
+	options = {
+		cursorline = true
+	}
+})
 vim.cmd.colorscheme('onedark')
 require('Bullets').setup({})
 -- 初始化mini.deps

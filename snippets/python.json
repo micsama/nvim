@@ -20,7 +20,7 @@
     "body": [
       "#!/usr/bin/env python3",
       "# -*- coding: utf-8 -*-",
-      "# Author: Xing J",
+      "# Author: Xing Ji",
       "# Date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE} ${CURRENT_HOUR}:${CURRENT_MINUTE}",
       "# Filename: ${TM_FILENAME}",
       "# Description: ${1:Description}",

@@ -15,7 +15,7 @@ now(function()
 				return " " .. icon .. count
 			end,
 			indicator = {
-				icon = '▎ ',    -- this should be omitted if indicator style is not 'icon'
+				icon = '▎ ', -- this should be omitted if indicator style is not 'icon'
 				style = "icon", -- style = 'icon' | 'underline' | 'none',
 			},
 			show_buffer_close_icons = true,
@@ -193,14 +193,7 @@ now(function()
 
 	local telescope = require('telescope')
 	telescope.setup({
-		extensions = {
-			-- fzf = {
-			--     fuzzy = true,               -- false will only do exact matching
-			--     override_generic_sorter = true, -- override the generic sorter
-			--     override_file_sorter = true, -- override the file sorter
-			--     case_mode = "smart_case",   -- or "ignore_case" or "respect_case"
-			-- }
-		}
+		extensions = {}
 	})
 
 	-- TODO:
@@ -223,12 +216,11 @@ now(function()
 			shortcut = {
 				-- action can be a function type
 			},
-			packages = { enable = true },       -- show how many plugins neovim loaded
+			packages = { enable = true }, -- show how many plugins neovim loaded
 			project = { enable = true, limit = 8, icon = '󱠿', label = '\t近期 ^_^ 目录', action = 'Telescope find_files cwd=' },
 			mru = { limit = 10, icon = '', label = '\t近期 $_$ 文件', cwd_only = false },
-			footer = {},       -- footer
+			footer = {}, -- footer
 		}
 
 	}
 end)
-
