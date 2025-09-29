@@ -20,12 +20,3 @@ later(function()
     map("nv", "<leader>gr", ":Gitsigns reset_hunk<CR>", "reset_hunk")
     map("nv", "H", ":Gitsigns preview_hunk<CR>", "preview_hunk")
 end)
-
-later(function()
-    add("kdheepak/lazygit.nvim")
-    vim.g.lazygit_floating_window_scaling_factor = 1.0
-    vim.g.lazygit_floating_window_winblend = 0
-    vim.g.lazygit_use_neovim_remote = true
-
-    map("nv", "<leader>gg", ":LazyGit<CR>", "Open LazyGit")
-end)
