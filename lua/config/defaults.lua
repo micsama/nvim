@@ -5,7 +5,7 @@ vim.o.relativenumber = true            -- 显示相对行号（与其他行的�
 vim.o.cursorline = true                -- 高亮光标所在行，便于定位
 vim.o.colorcolumn = '100'              -- 在第100列显示标尺线，帮助保持代码宽度
 vim.o.showmode = false                 -- 隐藏模式提示（如INSERT/NORMAL等）
-vim.o.scrolloff = 4                    -- 光标距离窗口顶部/底部保留4行缓冲
+vim.o.scrolloff = 5                    -- 光标距离窗口顶部/底部保留4行缓冲
 vim.o.signcolumn = "yes"               -- 始终显示标记列（用于git/diagnostic等标记）
 vim.o.exrc = true                      -- 允许加载项目本地.nvimrc配置文件
 vim.o.secure = false                   -- 允许本地.nvimrc执行命令（有安全风险，请确保信任项目）
@@ -29,16 +29,16 @@ vim.o.formatoptions = vim.o.formatoptions:gsub('tc', '') -- 禁用自动换行(t
 vim.o.virtualedit = 'block'            -- 允许在块选择模式下移动到空位置
 
 -- 与默认值相同的设置（可以安全移除）
-vim.o.autochdir = false             -- 不自动切换工作目录（默认关闭）
-vim.o.expandtab = false             -- 不将Tab转换为空格（默认使用真实Tab）
-vim.o.smarttab = true               -- 在行首按Tab使用shiftwidth（默认开启）
-vim.o.autoindent = true             -- 新行自动保持与前一行相同的缩进（默认开启）
-vim.o.indentexpr = ''               -- 不使用表达式缩进（默认空字符串）
-vim.o.visualbell = true             -- 使用视觉铃声而非声音提示（默认开启）
-vim.o.wrap = true                   -- 自动换行（默认开启）
-vim.o.ttimeoutlen = 0               -- 键码超时时间（默认0毫秒）
-vim.o.timeout = false               -- 不启用键入超时（默认关闭）
-vim.o.ttyfast = true                -- 优化终端重绘（现代终端默认开启）
+-- vim.o.autochdir = false             -- 不自动切换工作目录（默认关闭）
+-- vim.o.expandtab = false             -- 不将Tab转换为空格（默认使用真实Tab）
+-- vim.o.smarttab = true               -- 在行首按Tab使用shiftwidth（默认开启）
+-- vim.o.autoindent = true             -- 新行自动保持与前一行相同的缩进（默认开启）
+-- vim.o.indentexpr = ''               -- 不使用表达式缩进（默认空字符串）
+-- vim.o.visualbell = true             -- 使用视觉铃声而非声音提示（默认开启）
+-- vim.o.wrap = true                   -- 自动换行（默认开启）
+-- vim.o.ttimeoutlen = 0               -- 键码超时时间（默认0毫秒）
+-- vim.o.timeout = false               -- 不启用键入超时（默认关闭）
+-- vim.o.ttyfast = true                -- 优化终端重绘（现代终端默认开启）
 
 -- Python配置
 -- 设置Python3宿主程序路径，优先使用虚拟环境中的Python
