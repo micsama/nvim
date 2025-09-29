@@ -199,7 +199,7 @@ now(function()
 	-- TODO:
 	-- telescope.load_extension("workspaces")
 	-- telescope.load_extension('fzf')
-
+	require("telescope").load_extension("lazygit")
 
 	map("nv", '<leader>ff', function() require('telescope.builtin').find_files() end, 'Find Files')
 	map("nv", '<leader>fg', function() require('telescope.builtin').live_grep() end, 'Live Grep')

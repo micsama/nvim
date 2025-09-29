@@ -28,19 +28,8 @@ vim.g.neovide_hide_mouse_when_typing = false
 -- 触摸板死区
 vim.g.neovide_touch_deadzone = 8.0
 
-
-
 -- 其他画面设置
 vim.g.neovide_underline_stroke_scale = 1.0
-
--- 刷新率 有vsync所以不需要
--- vim.g.neovide_refresh_rate = 60
--- vim.g.neovide_refresh_rate_idle = 5
-
--- 绑定 D-1 到 D-9 用于切换到对应的标签页
-
-
-
 
 -- 动态窗口比例设置
 vim.g.neovide_scale_factor = 1.0
