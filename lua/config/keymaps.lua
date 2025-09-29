@@ -121,5 +121,5 @@ vim.keymap.del('n', 'gra')
 vim.keymap.del('n', 'grn')
 
 -- 使用 `map` 禁用默认的 'q'
-map("n", "q", "<nop>", "禁用默认q")
-map("n", ",q", "q", "使用,q来退出")
+-- map("n", "q", "<nop>", "禁用默认q")
+-- map("n", ",q", "q", "使用,q来退出")

@@ -9,6 +9,7 @@ vim.o.scrolloff = 5 -- 光标距离窗口顶部/底部保留4行缓冲
 vim.o.signcolumn = "yes" -- 始终显示标记列（用于git/diagnostic等标记）
 vim.o.exrc = true -- 允许加载项目本地.nvimrc配置文件
 vim.o.secure = false -- 允许本地.nvimrc执行命令（有安全风险，请确保信任项目）
+vim.o.smartindent = false --智能缩进
 vim.o.viewoptions = 'cursor,folds,slash,unix' -- 保存/恢复视图时记住光标位置、折叠状态等
 vim.o.tabstop = 2 -- 每个Tab显示为2个空格宽度
 vim.o.shiftwidth = 2 -- 自动缩进使用2个空格

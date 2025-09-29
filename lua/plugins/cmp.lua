@@ -1,22 +1,19 @@
-local now = MiniDeps.now
-now(function()
-	require('mini.completion').setup()
-	local gen_loader = require('mini.snippets').gen_loader
-	require('mini.snippets').setup({
-		mappings = {
-			jump_next = '<tab>',
-			jump_prev = '<s-tab>',
-		},
-		snippets = {
-			gen_loader.from_lang({
-				lang_patterns = {
-					markdown_inline = { 'markdown.json' },
-				}
-			}),
-		}
-	})
-	MiniSnippets.start_lsp_server()
-end)
+require('mini.completion').setup()
+local gen_loader = require('mini.snippets').gen_loader
+require('mini.snippets').setup({
+	mappings = {
+		jump_next = '<tab>',
+		jump_prev = '<s-tab>',
+	},
+	snippets = {
+		gen_loader.from_lang({
+			lang_patterns = {
+				markdown_inline = { 'markdown.json' },
+			}
+		}),
+	}
+})
+MiniSnippets.start_lsp_server()
 
 local keys = {
 	['cr']        = vim.api.nvim_replace_termcodes('<CR>', true, true, true),
