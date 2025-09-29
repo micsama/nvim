@@ -1,72 +1,61 @@
-vim.o.guifont = "FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5"
-vim.opt.linespace = 0
+-- ===============================
+-- Neovide GUI 客户端设置
+-- ===============================
 
--- 窗口模糊
-vim.g.neovide_window_blurred = true
-vim.g.neovide_floating_blur_amount_x = 2.0
-vim.g.neovide_floating_blur_amount_y = 2.0
+-- 基础 UI / 字体配置
+vim.o.guifont = "FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5" -- 设置 Neovide 字体及大小
+vim.opt.linespace = 0                                                       -- 消除行间距，使行高更紧凑
 
--- 窗口阴影
-vim.g.neovide_confirm_quit = true
+-- 窗口效果与行为
+vim.g.neovide_window_blurred = true        -- 启用窗口模糊效果
+vim.g.neovide_floating_blur_amount_x = 2.0 -- 浮动窗口 X 轴模糊量
+vim.g.neovide_floating_blur_amount_y = 2.0 -- 浮动窗口 Y 轴模糊量
+vim.g.neovide_confirm_quit = true          -- 退出时要求确认
 
--- 输入的option键绑定
-vim.g.neovide_input_macos_option_key_is_meta = 'only_left'
+-- 输入、鼠标与触控板
+vim.g.neovide_input_macos_option_key_is_meta = 'only_left' -- 仅将左 Option 键映射为 Meta
+vim.g.neovide_hide_mouse_when_typing = false               -- 禁用打字时自动隐藏鼠标
+vim.g.neovide_touch_deadzone = 8.0                         -- 设置触摸板死区，防止意外滚动
 
--- 动画
-vim.g.neovide_scroll_animation_length = 0.3
-vim.g.neovide_position_animation_length = 0.15
-vim.g.neovide_cursor_animation_length = 0.07
-vim.g.neovide_cursor_vfx_mode = "pixiedust"
+-- 动画与光标视觉特效 (VFX)
+vim.g.neovide_scroll_animation_length = 0.3        -- 滚动动画时长 (秒)
+vim.g.neovide_position_animation_length = 0.15     -- 光标位置移动动画时长
+vim.g.neovide_cursor_animation_length = 0.07       -- 光标闪烁动画时长
+vim.g.neovide_cursor_vfx_mode = "pixiedust"        -- 光标视觉特效模式
+vim.g.neovide_cursor_animate_in_insert_mode = true -- 插入模式下也启用光标动画
+vim.g.neovide_scroll_animation_far_lines = 1       -- 启用快速滚动时的平滑动画
+vim.g.neovide_cursor_vfx_particle_density = 10.0   -- 光标特效粒子密度
+vim.g.neovide_underline_stroke_scale = 1.0         -- 下划线笔触缩放比例
 
-vim.g.neovide_cursor_animate_in_insert_mode = true
-vim.g.neovide_scroll_animation_far_lines = 1
-vim.g.neovide_cursor_vfx_particle_density = 10.0
-
--- 自动隐藏鼠标
-vim.g.neovide_hide_mouse_when_typing = false
-
--- 触摸板死区
-vim.g.neovide_touch_deadzone = 8.0
-
--- 其他画面设置
-vim.g.neovide_underline_stroke_scale = 1.0
-
--- 动态窗口比例设置
-vim.g.neovide_scale_factor = 1.0
-
--- 调整缩放因子
+-- 动态缩放功能与快捷键
+vim.g.neovide_scale_factor = 1.0 -- 默认缩放因子
 local function scale(delta)
 	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
 end
-
--- 快捷键映射
-vim.keymap.set("n", "<D-=>", function() scale(1.1) end)
-vim.keymap.set("n", "<D-->", function() scale(1 / 1.1) end)
+vim.keymap.set("n", "<D-=>", function() scale(1.1) end, { desc = "放大 Neovide 字体/UI" })
+vim.keymap.set("n", "<D-->", function() scale(1 / 1.1) end, { desc = "缩小 Neovide 字体/UI" })
 
 
-
-
---  TODO: 后续看看需不需要替代im-select
-
+-- TODO: 后续看看需不需要替代im-select
+-- 禁用 IME 自动命令 (保持注释原样)
 -- local function set_ime(args)
---     if args.event:match("Enter$") then
---         vim.g.neovide_input_ime = true
---     else
---         vim.g.neovide_input_ime = false
---     end
+-- 	if args.event:match("Enter$") then
+-- 		vim.g.neovide_input_ime = true
+-- 	else
+-- 		vim.g.neovide_input_ime = false
+-- 	end
 -- end
---
+
 -- local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
---
+
 -- vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
---     group = ime_input,
---     pattern = "*",
---     callback = set_ime
+-- 	group = ime_input,
+-- 	pattern = "*",
+-- 	callback = set_ime
 -- })
---
+
 -- vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
---     group = ime_input,
---     pattern = "[/\\?]",
---     callback = set_ime
+-- 	group = ime_input,
+-- 	pattern = "[/\\?]",
+-- 	callback = set_ime
 -- })
---
