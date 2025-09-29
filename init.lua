@@ -2,10 +2,10 @@ vim.g.mapleader = " "       -- 将<Leader>键设置为空格键
 vim.g.maplocalleader = "\\" -- 将本地<Leader>键设置为反斜杠
 require("config.defaults")  -- 设置默认的一些配置
 require("config.keymaps")   -- 设置快捷键
--- if vim.g.neovide then
--- 	require("config.neovide")
--- end
--- require("dzmfg") -- 基础mini设置配置
+if vim.g.neovide then
+	require("config.neovide")
+end
+require("dzmfg") -- 基础mini设置配置
 
 local path_package = vim.fn.stdpath('data') .. '/site'
 local mini_path = path_package .. '/pack/deps/start/mini.nvim'
