@@ -27,13 +27,13 @@ vim.o.formatoptions = vim.o.formatoptions:gsub('tc', '') -- 禁用自动换行(t
 vim.opt.list = true                   -- 显示不可见字符（如Tab/空格等）。
 vim.opt.listchars = { tab = '|\\ ', trail = '▫' } -- 设置不可见字符的显示样式: Tab为|和空格，行尾空格为▫。
 vim.opt.exrc = true                   -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。
-vim.opt.undofile = true               -- 启用撤销历史持久化，即使关闭文件也能恢复。
-local config_dir = vim.fn.stdpath('config') .. '/tmp'
-vim.fn.mkdir(config_dir, 'p')         -- 确保临时目录存在。
-vim.o.backupdir = config_dir .. '/backup,.'  -- 备份文件保存位置。
-vim.o.directory = config_dir .. '/swap,.'    -- 交换文件保存位置。
-vim.o.undodir = config_dir .. '/undo,.'      -- 撤销历史文件保存位置。
 
+-- 文件和备份配置
+local config_dir = vim.fn.stdpath('config') .. '/tmp'  -- 获取配置目录下的tmp子目录
+vim.o.backupdir = config_dir .. '/backup,.'  -- 备份文件保存位置
+vim.o.directory = config_dir .. '/backup,.'  -- 交换文件保存位置
+vim.o.undofile = true                       -- 启用撤销历史持久化
+vim.o.undodir = config_dir .. '/undo,.'     -- 撤销历史文件保存位置
 -- =============================== 环境与全局变量 ================================
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python" -- 优先使用虚拟环境中的 Python。
 
