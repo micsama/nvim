@@ -48,7 +48,7 @@ vim.pack.add({
 	'https://github.com/shellRaining/hlchunk.nvim',              -- 高亮当前代码块/缩进块
 	'https://github.com/folke/todo-comments.nvim',               -- 高亮代码中的 TODO/FIXME 等注释
 	'https://github.com/mbbill/undotree',                        -- 可视化撤销树
-	'https://github.com/tiny-inline-diagnostic.nvim',            -- 行内诊断信息简洁显示
+	'https://github.com/rachartier/tiny-inline-diagnostic.nvim',            -- 行内诊断信息简洁显示
 	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
 	'https://github.com/windwp/nvim-autopairs',                  -- 自动配对括号/引号
 	'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
