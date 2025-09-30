@@ -9,12 +9,9 @@ require("nvim-treesitter.configs").setup({
 		"nu",
 		"gitcommit",
 		"git_config",
-		-- "typst",
 		"vimdoc",
 		"csv",
-		"cmake",
 		"fish",
-		-- "html",
 		"markdown_inline",
 		"markdown",
 		"bash",
@@ -22,7 +19,8 @@ require("nvim-treesitter.configs").setup({
 		"yaml",
 		"python",
 		"toml",
-		"rust"
+		"rust",
+		"cmake",
 	},
 	ignore_install = { "all" },
 	highlight = {

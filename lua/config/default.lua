@@ -30,9 +30,9 @@ vim.opt.exrc = true                   -- 允许加载项目本地.nvimrc配置�
 vim.opt.undofile = true               -- 启用撤销历史持久化，即使关闭文件也能恢复。
 local config_dir = vim.fn.stdpath('config') .. '/tmp'
 vim.fn.mkdir(config_dir, 'p')         -- 确保临时目录存在。
-vim.opt.backupdir = config_dir .. '/backup,.'  -- 备份文件保存位置。
-vim.opt.directory = config_dir .. '/swap,.'    -- 交换文件保存位置。
-vim.opt.undodir = config_dir .. '/undo,.'      -- 撤销历史文件保存位置。
+vim.o.backupdir = config_dir .. '/backup,.'  -- 备份文件保存位置。
+vim.o.directory = config_dir .. '/swap,.'    -- 交换文件保存位置。
+vim.o.undodir = config_dir .. '/undo,.'      -- 撤销历史文件保存位置。
 
 -- =============================== 环境与全局变量 ================================
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python" -- 优先使用虚拟环境中的 Python。
