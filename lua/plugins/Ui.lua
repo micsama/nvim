@@ -29,20 +29,16 @@ require("bufferline").setup({
 	}
 })
 require('lualine').setup {
+	options = {
+		ignore_focus = {'neo-tree'},
+		globalstatus = true,
+	},
 	sections = {
 		lualine_a = { 'filename' },
-		lualine_b = { 'branch', 'diff', 'diagnostics'},
+		lualine_b = { 'branch', 'diff', 'diagnostics' },
 		lualine_x = {  },
 		lualine_y = { 'filesize', 'filetype' },
 		lualine_z = { 'location' }
-	},
-	inactive_sections = {
-		lualine_a = {},
-		lualine_b = {},
-		lualine_c = { 'filename' },
-		lualine_x = { 'location' },
-		lualine_y = {},
-		lualine_z = {}
 	},
 	tabline = {},
 	winbar = {},
@@ -52,7 +48,6 @@ require('lualine').setup {
 require("toggleterm").setup({
 	shade_terminals = false,
 	autochdir = true,
-
 })
 
 require("scrollview").setup({
@@ -65,70 +60,70 @@ require("scrollview").setup({
 	diagnostics_severities = { vim.diagnostic.severity.ERROR }
 })
 
-local api = require("dropbar.api")
-
--- Confirm function to handle Enter and interaction with menu
-local confirm = function()
-	local menu = api.get_current_dropbar_menu()
-	if not menu then
-		return
-	end
-	local cursor = vim.api.nvim_win_get_cursor(menu.win)
-	local component = menu.entries[cursor[1]]:first_clickable(cursor[2])
-	if component then
-		menu:click_on(component)
-	end
-end
-
--- Function to quit the current menu
-local quit_curr = function()
-	local menu = api.get_current_dropbar_menu()
-	if menu then
-		menu:close()
-	end
-end
-
-require("dropbar").setup({
-	menu = {
-		quick_navigation = true, -- 自动快速导航
-		keymaps = {
-			['<LeftMouse>'] = function()
-				local menu = api.get_current_dropbar_menu()
-				if not menu then
-					return
-				end
-				local mouse = vim.fn.getmousepos()
-				if mouse.winid ~= menu.win then
-					local parent_menu = api.get_dropbar_menu(mouse.winid)
-					if parent_menu and parent_menu.sub_menu then
-						parent_menu.sub_menu:close()
-					end
-					if vim.api.nvim_win_is_valid(mouse.winid) then
-						vim.api.nvim_set_current_win(mouse.winid)
-					end
-					return
-				end
-				menu:click_at({ mouse.line, mouse.column }, nil, 1, 'l')
-			end,
-			['<CR>'] = confirm,
-			['i'] = confirm,
-			['<esc>'] = quit_curr,
-			['q'] = quit_curr,
-			['n'] = quit_curr,
-			['<MouseMove>'] = function()
-				local menu = api.get_current_dropbar_menu()
-				if not menu then
-					return
-				end
-				local mouse = vim.fn.getmousepos()
-				if mouse.winid ~= menu.win then
-					return
-				end
-				menu:update_hover_hl({ mouse.line, mouse.column - 1 })
-			end,
-		},
-	},
-})
+-- local api = require("dropbar.api")
+--
+-- -- Confirm function to handle Enter and interaction with menu
+-- local confirm = function()
+-- 	local menu = api.get_current_dropbar_menu()
+-- 	if not menu then
+-- 		return
+-- 	end
+-- 	local cursor = vim.api.nvim_win_get_cursor(menu.win)
+-- 	local component = menu.entries[cursor[1]]:first_clickable(cursor[2])
+-- 	if component then
+-- 		menu:click_on(component)
+-- 	end
+-- end
+--
+-- -- Function to quit the current menu
+-- local quit_curr = function()
+-- 	local menu = api.get_current_dropbar_menu()
+-- 	if menu then
+-- 		menu:close()
+-- 	end
+-- end
+--
+-- require("dropbar").setup({
+-- 	menu = {
+-- 		quick_navigation = true, -- 自动快速导航
+-- 		keymaps = {
+-- 			['<LeftMouse>'] = function()
+-- 				local menu = api.get_current_dropbar_menu()
+-- 				if not menu then
+-- 					return
+-- 				end
+-- 				local mouse = vim.fn.getmousepos()
+-- 				if mouse.winid ~= menu.win then
+-- 					local parent_menu = api.get_dropbar_menu(mouse.winid)
+-- 					if parent_menu and parent_menu.sub_menu then
+-- 						parent_menu.sub_menu:close()
+-- 					end
+-- 					if vim.api.nvim_win_is_valid(mouse.winid) then
+-- 						vim.api.nvim_set_current_win(mouse.winid)
+-- 					end
+-- 					return
+-- 				end
+-- 				menu:click_at({ mouse.line, mouse.column }, nil, 1, 'l')
+-- 			end,
+-- 			['<CR>'] = confirm,
+-- 			['i'] = confirm,
+-- 			['<esc>'] = quit_curr,
+-- 			['q'] = quit_curr,
+-- 			['n'] = quit_curr,
+-- 			['<MouseMove>'] = function()
+-- 				local menu = api.get_current_dropbar_menu()
+-- 				if not menu then
+-- 					return
+-- 				end
+-- 				local mouse = vim.fn.getmousepos()
+-- 				if mouse.winid ~= menu.win then
+-- 					return
+-- 				end
+-- 				menu:update_hover_hl({ mouse.line, mouse.column - 1 })
+-- 			end,
+-- 		},
+-- 	},
+-- })
 require("which-key").setup()
 
 local telescope = require('telescope')
