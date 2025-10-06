@@ -8,12 +8,12 @@ vim.g.maplocalleader = "\\" -- 本地<Leader>键设置为反斜杠。
 -- 定义一个包含所有快捷键映射的表格
 local mappings = {
 	-- 核心操作 (Core Operations)
-	{ "n", "<D-s>", "<CMD>up<CR>", "保存当前文件 (Save file)" },
-	{ "n", "<D-w>", "<CMD>q<CR>", "关闭当前窗口 (Quit window)" },
-	{ "n", ";", ":", "快速进入命令行模式 (Command mode)" },
-	{ "n", "`", "~", "切换光标下字符大小写 (Toggle case)" },
-	{ "n", "J", "5j", "向下快速移动5行" },
-	{ "n", "K", "5k", "向上快速移动5行" },
+	{ "nvi", "<D-s>", "<CMD>up<CR>", "保存当前文件 (Save file)" },
+	{ "nv", "<D-w>", "<CMD>q<CR>", "关闭当前窗口 (Quit window)" },
+	{ "nv", ";", ":", "快速进入命令行模式 (Command mode)" },
+	{ "nv", "`", "~", "切换光标下字符大小写 (Toggle case)" },
+	{ "nv", "J", "5j", "向下快速移动5行" },
+	{ "nv", "K", "5k", "向上快速移动5行" },
 
 	-- 剪贴板 (Clipboard)
 	{ "v", "Y", '"+y', "复制到系统剪贴板" },
@@ -24,10 +24,10 @@ local mappings = {
 
 	-- 窗口、分屏与标签页管理 (Window & Tab Management)
 	{ "n", "<leader>w", "<CMD>wincmd w<CR>", "切换到下一个窗口" },
-	{ "n", "<leader>k", "<C-w>k", "切换到上方窗口" },
-	{ "n", "<leader>j", "<C-w>j", "切换到下方窗口" },
-	{ "n", "<leader>h", "<C-w>h", "切换到左方窗口 (与LSP悬浮提示冲突，已保留)" },
-	{ "n", "<leader>l", "<C-w>l", "切换到右方窗口" },
+	-- { "n", "<leader>k", "<C-w>k", "切换到上方窗口" },
+	-- { "n", "<leader>j", "<C-w>j", "切换到下方窗口" },
+	-- { "n", "<leader>h", "<C-w>h", "切换到左方窗口" },
+	-- { "n", "<leader>l", "<C-w>l", "切换到右方窗口" },
 
 	-- 窗口大小调整
 	{ "n", "<up>", "<CMD>res +5<CR>", "增加窗口高度" },
@@ -37,10 +37,9 @@ local mappings = {
 
 	-- 分屏操作 (命令为默认行为)
 	{ "n", "s", "<nop>", "禁用默认s，作为分屏前缀" },
-	{ "n", "sk", "<CMD>split<CR>", "上方水平分屏 (实际默认下方)" },
-	{ "n", "sj", "<CMD>split<CR>", "下方水平分屏" },
-	{ "n", "sh", "<CMD>vsplit<CR>", "左侧垂直分屏 (实际默认右方)" },
-	{ "n", "sl", "<CMD>vsplit<CR>", "右侧垂直分屏" },
+	-- { "n", "sk", "<CMD>split<CR>", "上方水平分屏 (实际默认下方)" },
+	{ "n", "sj", "<CMD>split<CR>", "上下分屏" },
+	{ "n", "sv", "<CMD>vsplit<CR>", "左右垂直分屏" },
 	{ "n", "sq", "<C-w>o", "关闭除当前外的其他窗口" },
 
 	-- 标签页操作
@@ -54,7 +53,7 @@ local mappings = {
 	{ "it", "<D-t>", "<C-\\><C-n>:tab new<CR>:Yazi<CR>", "插入模式：新建标签并打开 Yazi" },
 
 	-- LSP (Language Server Protocol)
-	{ "n", "<leader>h", function() vim.lsp.buf.hover() end, "悬浮提示 (与窗口切换冲突，已保留)" },
+	{ "n", "<leader>h", function() vim.lsp.buf.hover() end, "悬浮提示" },
 	{ "n", "gd", function() vim.lsp.buf.definition() end, "跳转到定义" },
 	{ "n", "gD", function() vim.cmd('tab split | lua vim.lsp.buf.definition()') end, "在新标签中打开定义" },
 	{ "n", "gi", function() vim.lsp.buf.implementation() end, "跳转到实现" },
@@ -67,7 +66,7 @@ local mappings = {
 	{ "i", '<c-f>', function() vim.lsp.buf.signature_help() end, "函数签名帮助 (插入模式)" },
 
 	-- 插件与杂项 (Plugins & Utilities)
-	{ "nv", "<M-z>", "<CMD>set wrap!<CR>", "切换自动换行 (VSCode 风格)" },
+	{ "nv", "<M-z>", "<CMD>set wrap!<CR>", "切换自动换行" },
 	{ "it", "<D-left>", "<C-o>0", "插入模式：移动到行首" },
 	{ "it", "<D-right>", "<C-o>$", "插入模式：移动到行尾" },
 	{ "n", "<leader><CR>", "<CMD>nohlsearch<CR>", "清除搜索高亮" },
@@ -80,6 +79,7 @@ local mappings = {
 	{ "n", "<D-y>", "<cmd>Yazi<cr>", "在当前文件位置打开Yazi" },
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
 	{ "n", "<leader>gg", '<cmd>LazyGit<CR>', "打开 Lazygit" },
+	-- { "t", "<Esc><Esc>", [[<C-\><C-n>]], "退出终端模式 (Exit terminal mode)" }
 }
 
 -- 应用所有表格中的快捷键映射
@@ -106,9 +106,6 @@ for i = 1, 9 do
 		end
 	end, "切换到标签页 " .. i)
 end
-
--- 终端模式退出
-map('t', '<Esc><Esc>', [[<C-\><C-n>]], "退出终端模式 (Exit terminal mode)")
 
 -- 清理未使用的或冲突的默认映射
 vim.keymap.del('n', 'grr')
