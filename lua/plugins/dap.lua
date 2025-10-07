@@ -1,4 +1,4 @@
-local map = require("util.utils").map
+local map = require('util.utils').map
 
 
 -- 设置 DAP 相关的图标和高亮颜色
@@ -19,22 +19,22 @@ local function set_dap_signs_and_highlights()
 end
 
 local function set_dap_keys()
-	map("nv", "<f5>", ":up<CR>:Telescope dap configurations<CR>", "start debug")
-	map("nv", "<F10>", function() require('dap').step_over() end, "DAP Step Over")
-	map("nv", "<F11>", function() require('dap').step_into() end, "DAP Step Into")
-	map("nv", "<F12>", function() require('dap').step_out() end, "DAP Step Out")
-	map("nv", "<Leader>b", function() require('dap').toggle_breakpoint() end, "DAP Toggle Breakpoint")
-	map("nv", "<Leader>B", function() require('dap').set_breakpoint() end, "DAP Set Breakpoint")
-	map("nv", "<Leader>lp", function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end,
-		"DAP Set Log Point")
-	map("nv", "<Leader>dr", function() require('dap').repl.open() end, "DAP Open REPL")
-	map("nv", "<Leader>dl", function() require('dap').run_last() end, "DAP Run Last")
-	map("nv", "<Leader>dh", function() require('dap.ui.widgets').hover() end, "DAP Hover")
-	map("nv", "<Leader>dp", function() require('dap.ui.widgets').preview() end, "DAP Preview")
-	map("nv", "<Leader>df", function() require('dap.ui.widgets').centered_float(require('dap.ui.widgets').frames) end,
-		"DAP Frames")
-	map("nv", "<Leader>ds", function() require('dap.ui.widgets').centered_float(require('dap.ui.widgets').scopes) end,
-		"DAP Scopes")
+	map('nv', '<f5>', ':up<CR>:Telescope dap configurations<CR>', 'start debug')
+	map('nv', '<F10>', function() require('dap').step_over() end, 'DAP Step Over')
+	map('nv', '<F11>', function() require('dap').step_into() end, 'DAP Step Into')
+	map('nv', '<F12>', function() require('dap').step_out() end, 'DAP Step Out')
+	map('nv', '<Leader>b', function() require('dap').toggle_breakpoint() end, 'DAP Toggle Breakpoint')
+	map('nv', '<Leader>B', function() require('dap').set_breakpoint() end, 'DAP Set Breakpoint')
+	map('nv', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end,
+		'DAP Set Log Point')
+	map('nv', '<Leader>dr', function() require('dap').repl.open() end, 'DAP Open REPL')
+	map('nv', '<Leader>dl', function() require('dap').run_last() end, 'DAP Run Last')
+	map('nv', '<Leader>dh', function() require('dap.ui.widgets').hover() end, 'DAP Hover')
+	map('nv', '<Leader>dp', function() require('dap.ui.widgets').preview() end, 'DAP Preview')
+	map('nv', '<Leader>df', function() require('dap.ui.widgets').centered_float(require('dap.ui.widgets').frames) end,
+		'DAP Frames')
+	map('nv', '<Leader>ds', function() require('dap.ui.widgets').centered_float(require('dap.ui.widgets').scopes) end,
+		'DAP Scopes')
 end
 
 -- 设置 DAP UI 的监听器
@@ -45,14 +45,14 @@ local function set_dap_ui_listeners(dap, dapui)
 	dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
 end
 
-local dap = require("dap")
-local dapui = require("dapui")
+local dap = require('dap')
+local dapui = require('dapui')
 
 -- 设置 DAP UI
-require("mason").setup()
-require("nvim-dap-virtual-text").setup()
-require("mason-nvim-dap").setup({ ensure_installed = { "python" } })
-require("dap-python").setup("python")
+require('mason').setup()
+require('nvim-dap-virtual-text').setup()
+require('mason-nvim-dap').setup({ ensure_installed = { 'python' } })
+require('dap-python').setup('python')
 dapui.setup()
 
 -- 设置 DAP UI 监听器
@@ -64,10 +64,10 @@ set_dap_signs_and_highlights()
 -- DAP 配置
 dap.configurations.python = {
 	{
-		type = "python",
-		request = "launch",
-		name = "Launch File",
-		program = "${file}",
+		type = 'python',
+		request = 'launch',
+		name = 'Launch File',
+		program = '${file}',
 		args = {}
 	}
 }

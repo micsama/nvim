@@ -1,20 +1,20 @@
-local map = require("util.utils").map
+local map = require('util.utils').map
 
 
-require("bufferline").setup({
+require('bufferline').setup({
 	options = {
-		mode = "tabs",
+		mode = 'tabs',
 		numbers = function(opts)
-			return string.format('%s%s', opts.ordinal, opts.raise(opts.id)) -- 格式为 "2. ¹3"
+			return string.format('%s%s', opts.ordinal, opts.raise(opts.id)) -- 格式为 '2. ¹3'
 		end,
-		diagnostics = "nvim_lsp",
+		diagnostics = 'nvim_lsp',
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
-			local icon = level:match("error") and " " or " "
-			return " " .. icon .. count
+			local icon = level:match('error') and ' ' or ' '
+			return ' ' .. icon .. count
 		end,
 		indicator = {
 			icon = '▎ ', -- this should be omitted if indicator style is not 'icon'
-			style = "icon", -- style = 'icon' | 'underline' | 'none',
+			style = 'icon', -- style = 'icon' | 'underline' | 'none',
 		},
 		show_buffer_close_icons = true,
 		color_icons = true,
@@ -23,7 +23,7 @@ require("bufferline").setup({
 		show_duplicate_prefix = false,
 		tab_size = 16,
 		padding = 0,
-		separator_style = "thick",
+		separator_style = 'thick',
 		left_trunc_marker = ' ',
 		right_trunc_marker = ' ',
 	}
@@ -45,13 +45,13 @@ require('lualine').setup {
 	inactive_winbar = {},
 	extensions = {}
 }
-require("toggleterm").setup({
+require('toggleterm').setup({
 	shade_terminals = false,
 	autochdir = true,
 })
 
-require("scrollview").setup({
-	mode = "virtual",
+require('scrollview').setup({
+	mode = 'virtual',
 	excluded_filetypes = { 'nerdtree' },
 	current_only = true,
 	base = 'right',
@@ -60,8 +60,8 @@ require("scrollview").setup({
 	diagnostics_severities = { vim.diagnostic.severity.ERROR }
 })
 
--- local api = require("dropbar.api")
---
+-- TODO:处理一下dropbar的快捷键之类
+-- local api = require('dropbar.api')
 -- -- Confirm function to handle Enter and interaction with menu
 -- local confirm = function()
 -- 	local menu = api.get_current_dropbar_menu()
@@ -83,7 +83,7 @@ require("scrollview").setup({
 -- 	end
 -- end
 --
--- require("dropbar").setup({
+-- require('dropbar').setup({
 -- 	menu = {
 -- 		quick_navigation = true, -- 自动快速导航
 -- 		keymaps = {
@@ -124,7 +124,7 @@ require("scrollview").setup({
 -- 		},
 -- 	},
 -- })
-require("which-key").setup()
+require('which-key').setup()
 
 local telescope = require('telescope')
 telescope.setup({
@@ -132,19 +132,19 @@ telescope.setup({
 })
 
 -- TODO:
--- telescope.load_extension("workspaces")
+-- telescope.load_extension('workspaces')
 -- telescope.load_extension('fzf')
-require("telescope").load_extension("lazygit")
+require('telescope').load_extension('lazygit')
 
 -- TODO:放到keymaps里
-map("nv", '<leader>ff', function() require('telescope.builtin').find_files() end, 'Find Files')
-map("nv", '<leader>fg', function() require('telescope.builtin').live_grep() end, 'Live Grep')
-map("nv", '<leader>fb', function() require('telescope.builtin').buffers() end, 'Find Buffers')
-map("nv", '<leader>fh', function() require('telescope.builtin').help_tags() end, 'Find Help Tags')
-map("nv", '<leader>fw', "<CMD>Telescope workspaces<CR>", 'Find workspaces')
+map('nv', '<leader>ff', function() require('telescope.builtin').find_files() end, 'Find Files')
+map('nv', '<leader>fg', function() require('telescope.builtin').live_grep() end, 'Live Grep')
+map('nv', '<leader>fb', function() require('telescope.builtin').buffers() end, 'Find Buffers')
+map('nv', '<leader>fh', function() require('telescope.builtin').help_tags() end, 'Find Help Tags')
+map('nv', '<leader>fw', '<CMD>Telescope workspaces<CR>', 'Find workspaces')
 
 require('dashboard').setup {
-	theme = "hyper",
+	theme = 'hyper',
 	config = {
 		shortcut = {
 			-- action can be a function type

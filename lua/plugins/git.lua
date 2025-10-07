@@ -1,4 +1,4 @@
-local map = require("util.utils").map
+local map = require('util.utils').map
 
 require('gitsigns').setup({
 	signs = {
@@ -11,11 +11,11 @@ require('gitsigns').setup({
 	},
 })
 
-map("nv", "<leader>g-", ":Gitsigns prev_hunk<CR>", "prev_hunk")
-map("nv", "<leader>g=", ":Gitsigns next_hunk<CR>", "next_hunk")
-map("nv", "<leader>gb", ":Gitsigns blame_line<CR>", "blame_line")
-map("nv", "<leader>gr", ":Gitsigns reset_hunk<CR>", "reset_hunk")
-map("nv", "H", ":Gitsigns preview_hunk<CR>", "preview_hunk")
+map('nv', '<leader>g-', ':Gitsigns prev_hunk<CR>', 'prev_hunk')
+map('nv', '<leader>g=', ':Gitsigns next_hunk<CR>', 'next_hunk')
+map('nv', '<leader>gb', ':Gitsigns blame_line<CR>', 'blame_line')
+map('nv', '<leader>gr', ':Gitsigns reset_hunk<CR>', 'reset_hunk')
+map('nv', 'H', ':Gitsigns preview_hunk<CR>', 'preview_hunk')
 
 vim.g.lazygit_floating_window_scaling_factor = 1.0
 vim.g.lazygit_floating_window_winblend = 0
