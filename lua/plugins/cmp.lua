@@ -29,5 +29,5 @@ _G.cr_action = function()
 	end
 end
 vim.api.nvim_set_keymap('i', '<CR>', 'v:lua._G.cr_action()', { noremap = true, expr = true })
-vim.api.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
-vim.api.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
+vim.api.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? '\<C-n>' : '\<Tab>']], { noremap = true, expr = true })
+vim.api.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? '\<C-p>' : '\<S-Tab>']], { noremap = true, expr = true })

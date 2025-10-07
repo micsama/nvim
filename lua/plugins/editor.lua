@@ -1,9 +1,9 @@
-require("nvim-autopairs").setup({})
-require("trouble").setup({})
-require("im_select").setup()
+require('nvim-autopairs').setup({})
+require('trouble').setup({})
+require('im_select').setup()
 
 -- 展示代码缩进
-require("hlchunk").setup({
+require('hlchunk').setup({
 	line_num = {
 		enable = true
 	},
@@ -23,13 +23,13 @@ require("hlchunk").setup({
 -- PERF:
 -- NOTE:
 -- TEST:
-require("todo-comments").setup(
+require('todo-comments').setup(
 	{
 		keywords = {
 			MODIFIED = {
-				icon = " ",
-				color = "hint",
-				alt = { "CHANGED", "UPDATED", "MOD" }
+				icon = ' ',
+				color = 'hint',
+				alt = { 'CHANGED', 'UPDATED', 'MOD' }
 			},
 		}
 	})
@@ -50,7 +50,7 @@ function! g:Undotree_CustomMap()
 endfunction
 ]])
 
-require("tiny-inline-diagnostic").setup()
+require('tiny-inline-diagnostic').setup()
 vim.diagnostic.config({ virtual_text = false })
 
 require('Bullets').setup({})

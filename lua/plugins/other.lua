@@ -1,28 +1,28 @@
 vim.opt.smartindent = false
-require("nvim-treesitter.configs").setup({
+require('nvim-treesitter.configs').setup({
 	modules = {},
 	auto_install = true,
 	sync_install = false,
 	ensure_installed = {
-		"gitignore",
-		"json",
-		"nu",
-		"gitcommit",
-		"git_config",
-		"vimdoc",
-		"csv",
-		"fish",
-		"markdown_inline",
-		"markdown",
-		"bash",
-		"lua",
-		"yaml",
-		"python",
-		"toml",
-		"rust",
-		"cmake",
+		'gitignore',
+		'json',
+		'nu',
+		'gitcommit',
+		'git_config',
+		'vimdoc',
+		'csv',
+		'fish',
+		'markdown_inline',
+		'markdown',
+		'bash',
+		'lua',
+		'yaml',
+		'python',
+		'toml',
+		'rust',
+		'cmake',
 	},
-	ignore_install = { "all" },
+	ignore_install = { 'all' },
 	highlight = {
 		enable = true,
 		disable = {}, -- list of language that will be disabled
@@ -34,10 +34,10 @@ require("nvim-treesitter.configs").setup({
 	incremental_selection = {
 		enable = true,
 		keymaps = {
-			init_selection    = "<CR>",
-			node_incremental  = "<CR>",
-			node_decremental  = "<s-CR>",
-			scope_incremental = "<c-l>",
+			init_selection    = '<CR>',
+			node_incremental  = '<CR>',
+			node_decremental  = '<s-CR>',
+			scope_incremental = '<c-l>',
 		},
 	}
 })
@@ -58,6 +58,6 @@ tscontext.setup {
 	zindex = 20,     -- The Z-index of the context window
 	on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
 }
-vim.keymap.set("n", "[c", function()
+vim.keymap.set('n', '[c', function()
 	tscontext.go_to_context()
 end, { silent = true })

@@ -1,26 +1,26 @@
-require("neo-tree").setup({
-	open_files_do_not_replace_types = { "terminal", "trouble", "qf", "nofile" },
+require('neo-tree').setup({
+	open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf', 'nofile' },
 	window = {
 		width = 30,
 		mappings = {
-			["O"] = "system_open",
+			['O'] = 'system_open',
 		},
 	},
 	filesystem = {
 		filtered_items = {
 			always_show = { -- remains visible even if other settings would normally hide it
-				".gitignore",
+				'.gitignore',
 			},
 			always_show_by_pattern = { -- uses glob style patterns
-				".json",
-				".env*",
+				'.json',
+				'.env*',
 			},
 			never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
-				".DS_Store",
-				"thumbs.db"
+				'.DS_Store',
+				'thumbs.db'
 			},
 			never_show_by_pattern = { -- uses glob style patterns
-				".null-ls_*",
+				'.null-ls_*',
 			},
 		},
 		follow_current_file = {
@@ -34,19 +34,19 @@ require("neo-tree").setup({
 			local node = state.tree:get_node()
 			local path = node:get_id()
 			-- macOs: open file in default application in the background.
-			vim.fn.jobstart({ "open", "-g", path }, { detach = true })
+			vim.fn.jobstart({ 'open', '-g', path }, { detach = true })
 
 			--NOTE: Linux: open file in default application
-			-- vim.fn.jobstart({ "xdg-open", path }, { detach = true })
+			-- vim.fn.jobstart({ 'xdg-open', path }, { detach = true })
 		end,
 	},
 })
 
-require("yazi").setup()
-require("workspaces").setup({
-	path = vim.fn.stdpath("data") .. "/workspaces",
-	cd_type = "local",
+require('yazi').setup()
+require('workspaces').setup({
+	path = vim.fn.stdpath('data') .. '/workspaces',
+	cd_type = 'local',
 	hooks = {
-		open = { "Yazi" },
+		open = { 'Yazi' },
 	}
 })

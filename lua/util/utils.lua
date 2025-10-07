@@ -14,15 +14,15 @@ function M.map(mode, lhs, rhs, opts_or_desc)
 	}
 
 	if opts_or_desc then
-		if type(opts_or_desc) == "string" then
+		if type(opts_or_desc) == 'string' then
 			opts.desc = opts_or_desc
-		elseif type(opts_or_desc) == "table" then
-			opts = vim.tbl_extend("force", opts, opts_or_desc)
+		elseif type(opts_or_desc) == 'table' then
+			opts = vim.tbl_extend('force', opts, opts_or_desc)
 		end
 	end
 
 	local modes = mode
-	if type(mode) == "string" and #mode > 1 then
+	if type(mode) == 'string' and #mode > 1 then
 		-- 如果 mode 是多字符字符串，将其拆分成表格
 		modes = vim.split(mode, '')
 	end
