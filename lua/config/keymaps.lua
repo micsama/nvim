@@ -24,10 +24,6 @@ local mappings = {
 
 	-- 窗口、分屏与标签页管理 (Window & Tab Management)
 	{ "n", "<leader>w", "<CMD>wincmd w<CR>", "切换到下一个窗口" },
-	-- { "n", "<leader>k", "<C-w>k", "切换到上方窗口" },
-	-- { "n", "<leader>j", "<C-w>j", "切换到下方窗口" },
-	-- { "n", "<leader>h", "<C-w>h", "切换到左方窗口" },
-	-- { "n", "<leader>l", "<C-w>l", "切换到右方窗口" },
 
 	-- 窗口大小调整
 	{ "n", "<up>", "<CMD>res +5<CR>", "增加窗口高度" },
@@ -37,7 +33,6 @@ local mappings = {
 
 	-- 分屏操作 (命令为默认行为)
 	{ "n", "s", "<nop>", "禁用默认s，作为分屏前缀" },
-	-- { "n", "sk", "<CMD>split<CR>", "上方水平分屏 (实际默认下方)" },
 	{ "n", "sj", "<CMD>split<CR>", "上下分屏" },
 	{ "n", "sv", "<CMD>vsplit<CR>", "左右垂直分屏" },
 	{ "n", "sq", "<C-w>o", "关闭除当前外的其他窗口" },
@@ -79,6 +74,7 @@ local mappings = {
 	{ "n", "<D-y>", "<cmd>Yazi<cr>", "在当前文件位置打开Yazi" },
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
 	{ "n", "<leader>gg", '<cmd>LazyGit<CR>', "打开 Lazygit" },
+	{"nv","tt","<cmd>Translate zh<CR>","翻译光标下内容为中文"}
 	-- { "t", "<Esc><Esc>", [[<C-\><C-n>]], "退出终端模式 (Exit terminal mode)" }
 }
 

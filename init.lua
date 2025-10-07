@@ -6,19 +6,18 @@
 vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 
 -- 1. 加载核心配置
-require("config.default") -- 加载基础 Vim/Neovim 选项配置
-require("config.keymaps") -- 加载全局键盘快捷键映射
+require('config.default') -- 加载基础 Vim/Neovim 选项配置
+require('config.keymaps') -- 加载全局键盘快捷键映射
 
 -- 2. GUI 客户端特定配置
 if vim.g.neovide then
-	require("config.neovide") -- 仅在 Neovide 环境下加载 GUI 特有配置
+	require('config.neovide') -- 仅在 Neovide 环境下加载 GUI 特有配置
 end
 
 -- 3. 插件管理：使用 vim.pack.add 定义所有插件列表
--- 这些插件将通过 'packadd' 机制在启动时加载
 vim.pack.add({
-	{ src = 'https://github.com/nvim-telescope/telescope.nvim',   branch = "0.1.x" },
-	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter', branch = "master", build = ":TSUpdate" },
+	{ src = 'https://github.com/nvim-telescope/telescope.nvim',   branch = '0.1.x' },
+	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter', branch = 'master', build = ':TSUpdate' },
 
 	-- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
 	'https://github.com/nvim-lua/plenary.nvim',                   -- Lua 基础工具库，许多插件依赖
@@ -33,7 +32,7 @@ vim.pack.add({
 	'https://github.com/dstein64/nvim-scrollview', -- 可视化滚动条
 	'https://github.com/Bekaboo/dropbar.nvim',     -- 文件路径/上下文导航栏
 	'https://github.com/nvimdev/dashboard-nvim',   -- 启动欢迎界面
-	'https://github.com/folke/which-key.nvim',     -- 快捷键提示系统 (重复项已删除一个)
+	'https://github.com/folke/which-key.nvim',     -- 快捷键提示系统
 
 	-- C. Mini.nvim 组件 (Mini.nvim Modules)
 	'https://github.com/nvim-mini/mini.completion', -- 迷你补全
@@ -48,11 +47,12 @@ vim.pack.add({
 	'https://github.com/shellRaining/hlchunk.nvim',              -- 高亮当前代码块/缩进块
 	'https://github.com/folke/todo-comments.nvim',               -- 高亮代码中的 TODO/FIXME 等注释
 	'https://github.com/mbbill/undotree',                        -- 可视化撤销树
-	'https://github.com/rachartier/tiny-inline-diagnostic.nvim',            -- 行内诊断信息简洁显示
+	'https://github.com/rachartier/tiny-inline-diagnostic.nvim', -- 行内诊断信息简洁显示
 	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
 	'https://github.com/windwp/nvim-autopairs',                  -- 自动配对括号/引号
 	'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
 	'https://github.com/keaising/im-select.nvim',                -- 输入法自动切换
+	'https://github.com/uga-rosa/translate.nvim',
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
 	'https://github.com/nvim-neo-tree/neo-tree.nvim', -- 文件资源管理器
@@ -83,4 +83,4 @@ vim.pack.add({
 
 })
 
-require("config.dzmfg")
+require('config.dzmfg')
