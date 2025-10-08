@@ -23,6 +23,7 @@ vim.pack.add({
 	'https://github.com/kkharji/sqlite.lua',                      -- SQLite 数据库支持 (如 Neoclip 依赖)
 	'https://github.com/MunifTanjim/nui.nvim',                    -- 强大的 Neovim UI 组件库
 	'https://github.com/nvim-telescope/telescope-fzf-native.nvim', -- Telescope FZF 性能优化
+	'https://github.com/neovim/nvim-lspconfig', -- lsp
 
 	-- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
 	'https://github.com/olimorris/onedarkpro.nvim', -- 主题色 (Colorscheme)
@@ -55,13 +56,11 @@ vim.pack.add({
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
 	'https://github.com/nvim-neo-tree/neo-tree.nvim', -- 文件资源管理器
-	'https://github.com/mikavilpas/yazi.nvim',        -- Yazi 文件管理器集成
-	'https://github.com/pteroctopus/faster.nvim',     -- 大型文件优化处理
-	'https://github.com/natecraddock/workspaces.nvim', -- 工作区/会话管理
+	'https://github.com/mikavilpas/yazi.nvim',       -- Yazi 文件管理器集成
+	'https://github.com/pteroctopus/faster.nvim',    -- 大型文件优化处理
 
 	-- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
-	-- 'https://github.com/akinsho/toggleterm.nvim',     -- 集成终端
-	'https://github.com/ingur/floatty.nvim',
+	'https://github.com/ingur/floatty.nvim',          -- 集成终端，并支持lazygit等工作
 	'https://github.com/lewis6991/gitsigns.nvim',     -- Git 状态标记
 	'https://github.com/olimorris/codecompanion.nvim', -- LLM/AI 代码伴侣工具
 
@@ -78,10 +77,7 @@ vim.pack.add({
 	-- H. 文件类型特定 / 娱乐 (Filetype Specific / Fun)
 	'https://github.com/kaymmm/bullets.nvim',                      -- Markdown 列表增强
 	'https://github.com/MeanderingProgrammer/render-markdown.nvim', -- Markdown 实时渲染/预览
-	'https://github.com/seandewar/actually-doom.nvim',             -- 娱乐插件
-
 })
 
 -- initialize config
-
 require('config.dzmfg')

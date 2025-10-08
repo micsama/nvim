@@ -1,13 +1,19 @@
 local map = require('util.utils').map
 
-local term = require("floatty").setup({})
-map('ntv','<D-g>',function() term.toggle() end,"切换终端")
+local term = require("floatty").setup({
+	id = vim.fn.getcwd,   -- Use the current working directory as the float's ID
+})
+map('ntv', '<D-g>', function() term.toggle() end, "切换终端")
 
 local lazygit = require("floatty").setup({
-    cmd = "lazygit",
-    id = vim.fn.getcwd, -- Use the current working directory as the float's ID
+	window ={
+		width = 0.95,
+		height = 0.95,
+	},
+	cmd = "lazygit",
+	id = vim.fn.getcwd,   -- Use the current working directory as the float's ID
 })
-map('nt','<leader>gg',function() lazygit.toggle() end,"打开lazygit")
+map('nt', '<leader>gg', function() lazygit.toggle() end, "打开lazygit")
 
 require('bufferline').setup({
 	options = {
@@ -38,13 +44,13 @@ require('bufferline').setup({
 })
 require('lualine').setup {
 	options = {
-		ignore_focus = {'neo-tree'},
+		ignore_focus = { 'neo-tree' },
 		globalstatus = true,
 	},
 	sections = {
 		lualine_a = { 'filename' },
 		lualine_b = { 'branch', 'diff', 'diagnostics' },
-		lualine_x = {  },
+		lualine_x = {},
 		lualine_y = { 'filesize', 'filetype' },
 		lualine_z = { 'location' }
 	},
@@ -64,70 +70,6 @@ require('scrollview').setup({
 	diagnostics_severities = { vim.diagnostic.severity.ERROR }
 })
 
--- TODO:处理一下dropbar的快捷键之类
--- local api = require('dropbar.api')
--- -- Confirm function to handle Enter and interaction with menu
--- local confirm = function()
--- 	local menu = api.get_current_dropbar_menu()
--- 	if not menu then
--- 		return
--- 	end
--- 	local cursor = vim.api.nvim_win_get_cursor(menu.win)
--- 	local component = menu.entries[cursor[1]]:first_clickable(cursor[2])
--- 	if component then
--- 		menu:click_on(component)
--- 	end
--- end
---
--- -- Function to quit the current menu
--- local quit_curr = function()
--- 	local menu = api.get_current_dropbar_menu()
--- 	if menu then
--- 		menu:close()
--- 	end
--- end
---
--- require('dropbar').setup({
--- 	menu = {
--- 		quick_navigation = true, -- 自动快速导航
--- 		keymaps = {
--- 			['<LeftMouse>'] = function()
--- 				local menu = api.get_current_dropbar_menu()
--- 				if not menu then
--- 					return
--- 				end
--- 				local mouse = vim.fn.getmousepos()
--- 				if mouse.winid ~= menu.win then
--- 					local parent_menu = api.get_dropbar_menu(mouse.winid)
--- 					if parent_menu and parent_menu.sub_menu then
--- 						parent_menu.sub_menu:close()
--- 					end
--- 					if vim.api.nvim_win_is_valid(mouse.winid) then
--- 						vim.api.nvim_set_current_win(mouse.winid)
--- 					end
--- 					return
--- 				end
--- 				menu:click_at({ mouse.line, mouse.column }, nil, 1, 'l')
--- 			end,
--- 			['<CR>'] = confirm,
--- 			['i'] = confirm,
--- 			['<esc>'] = quit_curr,
--- 			['q'] = quit_curr,
--- 			['n'] = quit_curr,
--- 			['<MouseMove>'] = function()
--- 				local menu = api.get_current_dropbar_menu()
--- 				if not menu then
--- 					return
--- 				end
--- 				local mouse = vim.fn.getmousepos()
--- 				if mouse.winid ~= menu.win then
--- 					return
--- 				end
--- 				menu:update_hover_hl({ mouse.line, mouse.column - 1 })
--- 			end,
--- 		},
--- 	},
--- })
 require('which-key').setup()
 
 local telescope = require('telescope')
@@ -145,7 +87,6 @@ map('nv', '<leader>ff', function() require('telescope.builtin').find_files() end
 map('nv', '<leader>fg', function() require('telescope.builtin').live_grep() end, 'Live Grep')
 map('nv', '<leader>fb', function() require('telescope.builtin').buffers() end, 'Find Buffers')
 map('nv', '<leader>fh', function() require('telescope.builtin').help_tags() end, 'Find Help Tags')
-map('nv', '<leader>fw', '<CMD>Telescope workspaces<CR>', 'Find workspaces')
 
 require('dashboard').setup {
 	theme = 'hyper',

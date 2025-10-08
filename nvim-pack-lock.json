@@ -1,6 +1,5 @@
 {
   "plugins": {
-    "actually-doom.nvim": [],
     "bufferline.nvim": [],
     "bullets.nvim": {
       "rev": "0163fac"
@@ -60,6 +59,10 @@
     },
     "nvim-dap-ui": [],
     "nvim-dap-virtual-text": [],
+    "nvim-lspconfig": {
+      "rev": "e688b48",
+      "src": "https://github.com/neovim/nvim-lspconfig"
+    },
     "nvim-neoclip.lua": [],
     "nvim-nio": [],
     "nvim-scrollview": {
@@ -91,7 +94,6 @@
       "rev": "0f1c981"
     },
     "which-key.nvim": [],
-    "workspaces.nvim": [],
     "yazi.nvim": {
       "rev": "5127a44"
     }
