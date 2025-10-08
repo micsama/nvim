@@ -2,54 +2,98 @@
   "plugins": {
     "actually-doom.nvim": [],
     "bufferline.nvim": [],
-    "bullets.nvim": [],
-    "codecompanion.nvim": [],
+    "bullets.nvim": {
+      "rev": "0163fac"
+    },
+    "codecompanion.nvim": {
+      "rev": "946e186"
+    },
     "dashboard-nvim": [],
-    "dropbar.nvim": [],
+    "dropbar.nvim": {
+      "rev": "ce20224"
+    },
     "faster.nvim": [],
-    "gitsigns.nvim": [],
-    "hlchunk.nvim": [],
+    "floatty.nvim": {
+      "rev": "e82ae3b",
+      "src": "https://github.com/ingur/floatty.nvim"
+    },
+    "gitsigns.nvim": {
+      "rev": "1ee5c1f"
+    },
+    "hlchunk.nvim": {
+      "rev": "9371351"
+    },
     "im-select.nvim": [],
-    "lazygit.nvim": [],
     "lualine.nvim": [],
     "mason-nvim-dap.nvim": [],
-    "mason.nvim": [],
-    "mini.completion": [],
-    "mini.diff": [],
-    "mini.icons": [],
-    "mini.notify": [],
-    "mini.snippets": [],
-    "mini.surround": [],
-    "neo-tree.nvim": [],
+    "mason.nvim": {
+      "rev": "ad7146a"
+    },
+    "mini.completion": {
+      "rev": "27483b0"
+    },
+    "mini.diff": {
+      "rev": "a2df2a9"
+    },
+    "mini.icons": {
+      "rev": "2847986"
+    },
+    "mini.notify": {
+      "rev": "7f3c4f0"
+    },
+    "mini.snippets": {
+      "rev": "7610dc3"
+    },
+    "mini.surround": {
+      "rev": "fc6fbc3"
+    },
+    "neo-tree.nvim": {
+      "rev": "0c29e37"
+    },
     "nui.nvim": [],
     "nvim-autopairs": [],
-    "nvim-dap": [],
-    "nvim-dap-python": [],
+    "nvim-dap": {
+      "rev": "881f7dc"
+    },
+    "nvim-dap-python": {
+      "rev": "64652d1"
+    },
     "nvim-dap-ui": [],
     "nvim-dap-virtual-text": [],
     "nvim-neoclip.lua": [],
     "nvim-nio": [],
-    "nvim-scrollview": [],
+    "nvim-scrollview": {
+      "rev": "316c37c"
+    },
     "nvim-treesitter": [],
     "nvim-treesitter-context": [],
-    "onedarkpro.nvim": [],
+    "onedarkpro.nvim": {
+      "rev": "eeac884"
+    },
     "plenary.nvim": [],
-    "render-markdown.nvim": [],
+    "render-markdown.nvim": {
+      "rev": "f3321d0"
+    },
     "sqlite.lua": [],
     "telescope-dap.nvim": [],
     "telescope-fzf-native.nvim": [],
     "telescope.nvim": [],
-    "tiny-inline-diagnostic.nvim": [],
+    "tiny-inline-diagnostic.nvim": {
+      "rev": "6d8dc61"
+    },
     "todo-comments.nvim": [],
-    "toggleterm.nvim": [],
     "translate.nvim": {
       "rev": "1a841e5",
       "src": "https://github.com/uga-rosa/translate.nvim"
     },
     "trouble.nvim": [],
-    "undotree": [],
+    "undotree": {
+      "rev": "0f1c981"
+    },
     "which-key.nvim": [],
     "workspaces.nvim": [],
-    "yazi.nvim": []
+    "yazi.nvim": {
+      "rev": "5127a44"
+    }
   }
 }

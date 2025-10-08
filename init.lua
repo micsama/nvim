@@ -2,7 +2,6 @@
 -- Neovim 主配置文件 (init.lua)
 -- 负责加载 LuaJIT 模块、基础配置、快捷键以及所有插件
 -- ===========================================================================
-
 vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 
 -- 1. 加载核心配置
@@ -61,9 +60,9 @@ vim.pack.add({
 	'https://github.com/natecraddock/workspaces.nvim', -- 工作区/会话管理
 
 	-- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
-	'https://github.com/akinsho/toggleterm.nvim',     -- 集成终端
+	-- 'https://github.com/akinsho/toggleterm.nvim',     -- 集成终端
+	'https://github.com/ingur/floatty.nvim',
 	'https://github.com/lewis6991/gitsigns.nvim',     -- Git 状态标记
-	'https://github.com/kdheepak/lazygit.nvim',       -- Lazygit TUI 客户端集成
 	'https://github.com/olimorris/codecompanion.nvim', -- LLM/AI 代码伴侣工具
 
 	-- G. 调试 (DAP) 及其依赖
@@ -82,5 +81,7 @@ vim.pack.add({
 	'https://github.com/seandewar/actually-doom.nvim',             -- 娱乐插件
 
 })
+
+-- initialize config
 
 require('config.dzmfg')

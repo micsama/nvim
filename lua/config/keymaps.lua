@@ -66,16 +66,13 @@ local mappings = {
 	{ "it", "<D-right>", "<C-o>$", "插入模式：移动到行尾" },
 	{ "n", "<leader><CR>", "<CMD>nohlsearch<CR>", "清除搜索高亮" },
 	{ "n", "<leader>rc", "<CMD>edit ~/.config/nvim/init.lua<CR>", "打开配置文件" },
-	{ "nv", "<D-g>", ":ToggleTerm dir=git_dir<CR>", "打开Git目录终端" },
-	{ "it", "<D-g>", "<C-\\><C-n>:ToggleTerm dir=git_dir<CR>", "插入模式：打开Git目录终端" },
+	-- { "nvt", "<D-g>", function() term.toggle() end, "打开Git目录终端" },
 	{ "nv", 'U', ':UndotreeToggle<CR>', "打开撤销树" },
 	{ "nv", "<leader>y", "<CMD>lua require('telescope').extensions.neoclip.default()<CR>", "打开剪贴板历史" },
 	{ "n", "<D-b>", "<CMD>Neotree toggle reveal=true source=filesystem dir=./<CR>", "打开文件树" },
 	{ "n", "<D-y>", "<cmd>Yazi<cr>", "在当前文件位置打开Yazi" },
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
-	{ "n", "<leader>gg", '<cmd>LazyGit<CR>', "打开 Lazygit" },
-	{"nv","tt","<cmd>Translate zh<CR>","翻译光标下内容为中文"}
-	-- { "t", "<Esc><Esc>", [[<C-\><C-n>]], "退出终端模式 (Exit terminal mode)" }
+	{ "nv", "tt", "<cmd>Translate zh<CR>", "翻译光标下内容为中文" }
 }
 
 -- 应用所有表格中的快捷键映射
