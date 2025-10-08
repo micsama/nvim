@@ -8,10 +8,9 @@ require('onedarkpro').setup({
 })
 vim.cmd.colorscheme('onedark') -- 应用 onedark 主题
 
--- 主题和核心插件初始化 (Theming and Core Plugin Setup)
-require('plugins.mini') -- 配置 mini家族的 核心插件
 
 -- 加载功能模块配置 (Loading Functional Plugin Configurations)
+require('plugins.mini')        -- 配置 mini家族的 核心插件
 require('plugins.Ui')          -- 用户界面和外观
 require('plugins.lsp')         -- 语言服务器协议 (LSP)
 require('plugins.editor')      -- 编辑器增强功能
