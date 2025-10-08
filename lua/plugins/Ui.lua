@@ -1,5 +1,13 @@
 local map = require('util.utils').map
 
+local term = require("floatty").setup({})
+map('ntv','<D-g>',function() term.toggle() end,"切换终端")
+
+local lazygit = require("floatty").setup({
+    cmd = "lazygit",
+    id = vim.fn.getcwd, -- Use the current working directory as the float's ID
+})
+map('nt','<leader>gg',function() lazygit.toggle() end,"打开lazygit")
 
 require('bufferline').setup({
 	options = {
@@ -45,10 +53,6 @@ require('lualine').setup {
 	inactive_winbar = {},
 	extensions = {}
 }
-require('toggleterm').setup({
-	shade_terminals = false,
-	autochdir = true,
-})
 
 require('scrollview').setup({
 	mode = 'virtual',
@@ -134,7 +138,7 @@ telescope.setup({
 -- TODO:
 -- telescope.load_extension('workspaces')
 -- telescope.load_extension('fzf')
-require('telescope').load_extension('lazygit')
+-- require('telescope').load_extension('lazygit')
 
 -- TODO:放到keymaps里
 map('nv', '<leader>ff', function() require('telescope.builtin').find_files() end, 'Find Files')
