@@ -43,10 +43,3 @@ require('neo-tree').setup({
 })
 
 require('yazi').setup()
-require('workspaces').setup({
-	path = vim.fn.stdpath('data') .. '/workspaces',
-	cd_type = 'local',
-	hooks = {
-		open = { 'Yazi' },
-	}
-})
