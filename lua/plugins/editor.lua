@@ -1,42 +1,34 @@
-require('trouble').setup({})
+-- ============================================================================
+-- 插件配置
+-- ============================================================================
 
--- 展示代码缩进
+-- ## Undotree
+-- 统一使用 Lua 变量来配置 Undotree 的全局选项
 vim.g.undotree_DiffAutoOpen = 1
 vim.g.undotree_SetFocusWhenToggle = 1
 vim.g.undotree_ShortIndicators = 1
-vim.g.undotree_WindowLayout = 2
+vim.g.undotree_WindowLayout = 2 -- 布局：1=左侧，2=右侧
 vim.g.undotree_DiffpanelHeight = 8
 vim.g.undotree_SplitWidth = 24
 
-vim.cmd([[
-function! g:Undotree_CustomMap()
-    nmap <buffer> k <plug>UndotreeNextState
-    nmap <buffer> j <plug>UndotreePreviousState
-    nmap <buffer> K 5<plug>UndotreeNextState
-    nmap <buffer> J 5<plug>UndotreePreviousState
-endfunction
-]])
+-- 使用 Lua 的 autocmd 来创建 Buffer 级的快捷键映射，替换 Vimscript 函数
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "undotree",
+	callback = function()
+		vim.keymap.set('n', 'k', '<plug>UndotreeNextState', { buffer = true, silent = true })
+		vim.keymap.set('n', 'j', '<plug>UndotreePreviousState', { buffer = true, silent = true })
+		vim.keymap.set('n', 'K', '5<plug>UndotreeNextState', { buffer = true, silent = true })
+		vim.keymap.set('n', 'J', '5<plug>UndotreePreviousState', { buffer = true, silent = true })
+	end,
+	desc = "Undotree 自定义快捷键"
+})
 
-require('tiny-inline-diagnostic').setup()
-vim.diagnostic.config({ virtual_text = false })
+-- ## 其他插件配置
+
+require('yazi').setup()
 
 require('Bullets').setup({})
 
--- leader+y 可以搜索的 剪贴板历史记录
-require('neoclip').setup({
-	history = 1000,
-	enable_persistent_history = true,
-	keys = {
-		telescope = {
-			i = {
-				select = '<c-y>',
-				paste = '<cr>',
-				paste_behind = '<c-g>',
-				replay = '<c-q>', -- replay a macro
-				delete = '<c-d>', -- delete an entry
-				edit = '<c-k>', -- edit an entry
-				custom = {},
-			},
-		},
-	},
-})
+require('tiny-inline-diagnostic').setup()
+
+require('neoclip').setup({ enable_persistent_history = true })
