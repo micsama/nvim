@@ -13,7 +13,7 @@ local lazygit = require("floatty").setup({
 	cmd = "lazygit",
 	id = vim.fn.getcwd,   -- Use the current working directory as the float's ID
 })
-map('nt', '<leader>gg', function() lazygit.toggle() end, "打开lazygit")
+map('n', '<leader>gg', function() lazygit.toggle() end, "打开lazygit")
 
 require('bufferline').setup({
 	options = {
@@ -88,15 +88,36 @@ map('nv', '<leader>fg', function() require('telescope.builtin').live_grep() end,
 map('nv', '<leader>fb', function() require('telescope.builtin').buffers() end, 'Find Buffers')
 map('nv', '<leader>fh', function() require('telescope.builtin').help_tags() end, 'Find Help Tags')
 
-require('dashboard').setup {
-	theme = 'hyper',
-	config = {
-		shortcut = {
-			-- action can be a function type
-		},
-		packages = { enable = true }, -- show how many plugins neovim loaded
-		project = { enable = true, limit = 8, icon = '󱠿', label = '\t近期 ^_^ 目录', action = 'Telescope find_files cwd=' },
-		mru = { limit = 10, icon = '', label = '\t近期 $_$ 文件', cwd_only = false },
-		footer = {}, -- footer
-	}
-}
+-- require('dashboard').setup {
+-- 	theme = 'hyper',
+-- 	config = {
+-- 		shortcut = {
+-- 			-- action can be a function type
+-- 		},
+-- 		packages = { enable = true }, -- show how many plugins neovim loaded
+-- 		project = { enable = true, limit = 8, icon = '󱠿', label = '\t近期 ^_^ 目录', action = 'Telescope find_files cwd=' },
+-- 		mru = { limit = 10, icon = '', label = '\t近期 $_$ 文件', cwd_only = false },
+-- 		footer = {}, -- footer
+-- 	}
+-- }
+
+
+
+-- require("noice").setup({
+--   lsp = {
+--     -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+--     override = {
+--       ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+--       ["vim.lsp.util.stylize_markdown"] = true,
+--       ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+--     },
+--   },
+--   -- you can enable a preset for easier configuration
+--   presets = {
+--     bottom_search = true, -- use a classic bottom cmdline for search
+--     command_palette = true, -- position the cmdline and popupmenu together
+--     long_message_to_split = true, -- long messages will be sent to a split
+--     inc_rename = false, -- enables an input dialog for inc-rename.nvim
+--     lsp_doc_border = false, -- add a border to hover docs and signature help
+--   },
+-- })

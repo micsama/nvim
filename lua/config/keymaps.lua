@@ -69,7 +69,7 @@ local mappings = {
 	-- { "nvt", "<D-g>", function() term.toggle() end, "打开Git目录终端" },
 	{ "nv", 'U', ':UndotreeToggle<CR>', "打开撤销树" },
 	{ "nv", "<leader>y", "<CMD>lua require('telescope').extensions.neoclip.default()<CR>", "打开剪贴板历史" },
-	{ "n", "<D-b>", "<CMD>Neotree toggle reveal=true source=filesystem dir=./<CR>", "打开文件树" },
+	{ "n", "<D-b>", function() MiniFiles.open() end , "打开文件树" },
 	{ "n", "<D-y>", "<cmd>Yazi<cr>", "在当前文件位置打开Yazi" },
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
 	{ "nv", "tt", "<cmd>Translate zh<CR>", "翻译光标下内容为中文" }

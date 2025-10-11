@@ -1,6 +1,4 @@
-require('nvim-autopairs').setup({})
 require('trouble').setup({})
-require('im_select').setup()
 
 -- 展示代码缩进
 require('hlchunk').setup({

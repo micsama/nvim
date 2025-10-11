@@ -9,3 +9,4 @@ lua/config/machine_specific.lua
 lazy-lock.json
 lua/Untitled
 tmp/
+tmp/backup
