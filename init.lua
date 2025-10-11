@@ -51,7 +51,6 @@ vim.pack.add({
 	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
 	'https://github.com/windwp/nvim-autopairs',                  -- 自动配对括号/引号
 	'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
-	'https://github.com/keaising/im-select.nvim',                -- 输入法自动切换
 	'https://github.com/uga-rosa/translate.nvim',                -- 翻译功能
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
