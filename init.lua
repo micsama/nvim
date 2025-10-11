@@ -30,9 +30,10 @@ vim.pack.add({
 	'https://github.com/olimorris/onedarkpro.nvim', -- 主题色 (Colorscheme)
 	'https://github.com/nvim-lualine/lualine.nvim', -- 状态行 (Statusline)
 	'https://github.com/akinsho/bufferline.nvim',  -- 标签页/缓冲区行 (Tab/Buffer Line)
-	'https://github.com/dstein64/nvim-scrollview', -- 可视化滚动条
+	-- 'https://github.com/dstein64/nvim-scrollview', -- 可视化滚动条
 	'https://github.com/Bekaboo/dropbar.nvim',     -- 文件路径/上下文导航栏
 	'https://github.com/folke/which-key.nvim',     -- 快捷键提示系统
+
 	-- 'https://github.com/folke/noice.nvim',         -- 好通知
 	-- 'https://github.com/rcarriga/nvim-notify',     -- 通知系统
 
@@ -43,13 +44,13 @@ vim.pack.add({
 	'https://github.com/mbbill/undotree',                        -- 可视化撤销树
 	'https://github.com/rachartier/tiny-inline-diagnostic.nvim', -- 行内诊断信息简洁显示
 	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
-	'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
+	-- 'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
 	'https://github.com/keaising/im-select.nvim',                -- 输入法自动切换
-	'https://github.com/uga-rosa/translate.nvim',                -- 翻译功能 
+	'https://github.com/uga-rosa/translate.nvim',                -- 翻译功能
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
-	'https://github.com/mikavilpas/yazi.nvim',       -- Yazi 文件管理器集成
-	'https://github.com/pteroctopus/faster.nvim',    -- 大型文件优化处理
+	'https://github.com/mikavilpas/yazi.nvim',   -- Yazi 文件管理器集成
+	'https://github.com/pteroctopus/faster.nvim', -- 大型文件优化处理
 
 	-- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
 	'https://github.com/ingur/floatty.nvim',          -- 集成终端，并支持lazygit等工作
@@ -71,4 +72,6 @@ vim.pack.add({
 })
 
 -- initialize config
+
+require('plugins.mini') -- 配置 mini家族的 核心插件
 require('config.dzmfg')

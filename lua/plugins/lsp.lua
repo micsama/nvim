@@ -1,6 +1,11 @@
+-- ============================================================================
+-- 模块引入与实用工具
+-- ============================================================================
 local map = require('util.utils').map
 
--- 设置诊断配置
+-- ============================================================================
+-- LSP 和诊断配置 (vim.diagnostic, vim.lsp)
+-- ============================================================================
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = true,
@@ -11,11 +16,9 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.HINT] = '⚑',
 			[vim.diagnostic.severity.INFO] = '»',
 		},
+		-- 仅保留 error 的行高亮，移除 numhl 以保持简洁
 		linehl = {
 			[vim.diagnostic.severity.ERROR] = 'ErrorMsg',
-		},
-		numhl = {
-			[vim.diagnostic.severity.WARN] = 'WarningMsg',
 		},
 	},
 	virtual_text = false,
@@ -23,7 +26,10 @@ vim.diagnostic.config({
 	float = true,
 })
 
+-- 启用 Inlay Hints
 vim.lsp.inlay_hint.enable(true)
+
+-- 全局 LSP 配置
 vim.lsp.config('*', {
 	capabilities = {
 		textDocument = {
@@ -32,13 +38,57 @@ vim.lsp.config('*', {
 			}
 		}
 	},
+	-- 添加了 rust 的 Cargo.toml 到 root_markers
 	root_markers = { '.git', '.venv', 'Cargo.toml' },
 })
+
+-- 启用的 Language Servers
 vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide' })
--- 设置键映射，直接使用 Lua 闭包函数
+
+-- 格式化整个文件并保留光标位置
 map('n', '<D-S-f>', function()
 	vim.notify('Formatting...')
-	local lineno = vim.api.nvim_win_get_cursor(0)
+	local cursor = vim.api.nvim_win_get_cursor(0)
 	vim.lsp.buf.format({ async = false })
-	pcall(vim.api.nvim_win_set_cursor, 0, lineno)
-end, 'format full file')
+	-- pcall 防止在格式化失败时报错
+	pcall(vim.api.nvim_win_set_cursor, 0, cursor)
+end, '格式化文件')
+
+
+-- ============================================================================
+-- Treesitter 及其他辅助插件
+-- ============================================================================
+
+-- Treesitter 要求禁用 smartindent
+vim.opt.smartindent = false
+
+-- Treesitter 配置
+require('nvim-treesitter.configs').setup({
+	auto_install = true,
+	sync_install = false,
+	-- 保持常用的语言列表
+	ensure_installed = {
+		'gitignore', 'json', 'nu', 'gitcommit', 'git_config', 'vimdoc', 'csv',
+		'fish', 'markdown_inline', 'markdown', 'bash', 'lua', 'yaml', 'python',
+		'toml', 'rust', 'cmake',
+	},
+	-- 核心功能启用
+	highlight = { enable = true, additional_vim_regex_highlighting = false },
+	indent = { enable = true },
+	incremental_selection = {
+		enable = true,
+		keymaps = {
+			init_selection = '<CR>',
+			node_incremental = '<CR>',
+			node_decremental = '<s-CR>',
+			scope_incremental = '<c-l>',
+		},
+	},
+})
+
+-- Treesitter 辅助插件
+require('treesitter-context').setup()
+require('faster').setup({})
+require('render-markdown').setup({
+	completions = { lsp = { enabled = true } },
+})

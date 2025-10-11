@@ -1,25 +1,39 @@
+-- ============================================================================
+-- 模块引入与实用工具
+-- ============================================================================
 local map = require('util.utils').map
+local telescope_builtin = require('telescope.builtin')
 
-local term = require("floatty").setup({
-	id = vim.fn.getcwd,   -- Use the current working directory as the float's ID
-})
-map('ntv', '<D-g>', function() term.toggle() end, "切换终端")
+-- Floatty 配置基础（使用当前工作目录作为 ID）
+local floatty_opts = { id = vim.fn.getcwd }
 
-local lazygit = require("floatty").setup({
-	window ={
-		width = 0.95,
-		height = 0.95,
-	},
-	cmd = "lazygit",
-	id = vim.fn.getcwd,   -- Use the current working directory as the float's ID
-})
-map('n', '<leader>gg', function() lazygit.toggle() end, "打开lazygit")
+-- ============================================================================
+-- 核心工具 (Floatty / Lazygit / Which-Key)
+-- ============================================================================
 
+-- 1. 普通浮动终端 (term)
+local term = require("floatty").setup(floatty_opts)
+map('ntv', '<D-g>', term.toggle, "切换终端")
+
+-- 2. Lazygit 浮动窗口
+local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
+	cmd = "lazygit", window = { width = 0.95, height = 0.95, } }))
+map('n', '<leader>gg', lazygit.toggle, "打开lazygit")
+
+-- 3. Which-Key 基础配置
+require('which-key').setup()
+
+-- ============================================================================
+-- 界面和状态栏 (Bufferline / Lualine)
+-- ============================================================================
+
+-- 1. Bufferline (顶部标签页)
 require('bufferline').setup({
 	options = {
 		mode = 'tabs',
+		-- 格式为 '2. ¹3'
 		numbers = function(opts)
-			return string.format('%s%s', opts.ordinal, opts.raise(opts.id)) -- 格式为 '2. ¹3'
+			return string.format('%s%s', opts.ordinal, opts.raise(opts.id))
 		end,
 		diagnostics = 'nvim_lsp',
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
@@ -27,8 +41,8 @@ require('bufferline').setup({
 			return ' ' .. icon .. count
 		end,
 		indicator = {
-			icon = '▎ ', -- this should be omitted if indicator style is not 'icon'
-			style = 'icon', -- style = 'icon' | 'underline' | 'none',
+			icon = '▎ ',
+			style = 'icon',
 		},
 		show_buffer_close_icons = true,
 		color_icons = true,
@@ -42,11 +56,13 @@ require('bufferline').setup({
 		right_trunc_marker = ' ',
 	}
 })
+
+-- 2. Lualine (底部状态栏)
 require('lualine').setup {
 	sections = {
 		lualine_a = { 'filename' },
 		lualine_b = { 'branch', 'diff', 'diagnostics' },
-		lualine_x = {},
+		lualine_x = { 'progress' },
 		lualine_y = { 'filesize', 'filetype' },
 		lualine_z = { 'location' }
 	},
@@ -56,64 +72,19 @@ require('lualine').setup {
 	extensions = {}
 }
 
-require('scrollview').setup({
-	mode = 'virtual',
-	excluded_filetypes = { 'nerdtree' },
-	current_only = true,
-	base = 'right',
-	column = 1,
-	signs_on_startup = { 'all' },
-	diagnostics_severities = { vim.diagnostic.severity.ERROR }
-})
+-- ============================================================================
+-- 模糊查找 (Telescope) 及快捷键
+-- ============================================================================
 
-require('which-key').setup()
-
-local telescope = require('telescope')
-telescope.setup({
+require('telescope').setup({
 	extensions = {}
 })
 
--- TODO:
--- telescope.load_extension('workspaces')
--- telescope.load_extension('fzf')
--- require('telescope').load_extension('lazygit')
+-- -- TODO: 如果需要，取消注释启用 fzf 扩展
+-- -- require('telescope').load_extension('fzf')
 
--- TODO:放到keymaps里
-map('nv', '<leader>ff', function() require('telescope.builtin').find_files() end, 'Find Files')
-map('nv', '<leader>fg', function() require('telescope.builtin').live_grep() end, 'Live Grep')
-map('nv', '<leader>fb', function() require('telescope.builtin').buffers() end, 'Find Buffers')
-map('nv', '<leader>fh', function() require('telescope.builtin').help_tags() end, 'Find Help Tags')
-
--- require('dashboard').setup {
--- 	theme = 'hyper',
--- 	config = {
--- 		shortcut = {
--- 			-- action can be a function type
--- 		},
--- 		packages = { enable = true }, -- show how many plugins neovim loaded
--- 		project = { enable = true, limit = 8, icon = '󱠿', label = '\t近期 ^_^ 目录', action = 'Telescope find_files cwd=' },
--- 		mru = { limit = 10, icon = '', label = '\t近期 $_$ 文件', cwd_only = false },
--- 		footer = {}, -- footer
--- 	}
--- }
-
-
-
--- require("noice").setup({
---   lsp = {
---     -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
---     override = {
---       ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
---       ["vim.lsp.util.stylize_markdown"] = true,
---       ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
---     },
---   },
---   -- you can enable a preset for easier configuration
---   presets = {
---     bottom_search = true, -- use a classic bottom cmdline for search
---     command_palette = true, -- position the cmdline and popupmenu together
---     long_message_to_split = true, -- long messages will be sent to a split
---     inc_rename = false, -- enables an input dialog for inc-rename.nvim
---     lsp_doc_border = false, -- add a border to hover docs and signature help
---   },
--- })
+-- Telescope 快捷键映射
+map('nv', '<leader>ff', telescope_builtin.find_files, 'Find Files')
+map('nv', '<leader>fg', telescope_builtin.live_grep, 'Live Grep')
+map('nv', '<leader>fb', telescope_builtin.buffers, 'Find Buffers')
+map('nv', '<leader>fh', telescope_builtin.help_tags, 'Find Help Tags')
