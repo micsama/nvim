@@ -63,3 +63,6 @@ end, { silent = true })
 
 
 require('faster').setup({})
+require('render-markdown').setup({
+    completions = { lsp = { enabled = true } },
+})
