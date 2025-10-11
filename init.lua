@@ -17,6 +17,7 @@ end
 vim.pack.add({
 	{ src = 'https://github.com/nvim-telescope/telescope.nvim',   branch = '0.1.x' },
 	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter', branch = 'master', build = ':TSUpdate' },
+	'https://github.com/nvim-mini/mini.nvim', -- mini.nvim(具体配置见mini.lua)
 
 	-- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
 	'https://github.com/nvim-lua/plenary.nvim',                   -- Lua 基础工具库，许多插件依赖
@@ -31,16 +32,10 @@ vim.pack.add({
 	'https://github.com/akinsho/bufferline.nvim',  -- 标签页/缓冲区行 (Tab/Buffer Line)
 	'https://github.com/dstein64/nvim-scrollview', -- 可视化滚动条
 	'https://github.com/Bekaboo/dropbar.nvim',     -- 文件路径/上下文导航栏
-	'https://github.com/nvimdev/dashboard-nvim',   -- 启动欢迎界面
 	'https://github.com/folke/which-key.nvim',     -- 快捷键提示系统
+	-- 'https://github.com/folke/noice.nvim',         -- 好通知
+	-- 'https://github.com/rcarriga/nvim-notify',     -- 通知系统
 
-	-- C. Mini.nvim 组件 (Mini.nvim Modules)
-	'https://github.com/nvim-mini/mini.completion', -- 迷你补全
-	'https://github.com/nvim-mini/mini.snippets',  -- 迷你代码片段
-	'https://github.com/nvim-mini/mini.diff',      -- 迷你 Git Diff 差异显示
-	'https://github.com/nvim-mini/mini.notify',    -- 迷你通知系统
-	'https://github.com/nvim-mini/mini.icons',     -- 迷你图标库
-	'https://github.com/nvim-mini/mini.surround',  -- 迷你括号/引号环绕操作
 
 	-- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
 	'https://github.com/nvim-treesitter/nvim-treesitter-context', -- Treesitter 上下文显示
@@ -49,19 +44,16 @@ vim.pack.add({
 	'https://github.com/mbbill/undotree',                        -- 可视化撤销树
 	'https://github.com/rachartier/tiny-inline-diagnostic.nvim', -- 行内诊断信息简洁显示
 	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
-	'https://github.com/windwp/nvim-autopairs',                  -- 自动配对括号/引号
 	'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
 	'https://github.com/keaising/im-select.nvim',                -- 输入法自动切换
 	'https://github.com/uga-rosa/translate.nvim',                -- 翻译功能
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
-	'https://github.com/nvim-neo-tree/neo-tree.nvim', -- 文件资源管理器
 	'https://github.com/mikavilpas/yazi.nvim',       -- Yazi 文件管理器集成
 	'https://github.com/pteroctopus/faster.nvim',    -- 大型文件优化处理
 
 	-- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
 	'https://github.com/ingur/floatty.nvim',          -- 集成终端，并支持lazygit等工作
-	'https://github.com/lewis6991/gitsigns.nvim',     -- Git 状态标记
 	'https://github.com/olimorris/codecompanion.nvim', -- LLM/AI 代码伴侣工具
 
 	-- G. 调试 (DAP) 及其依赖

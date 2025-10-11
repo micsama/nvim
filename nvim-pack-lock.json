@@ -37,17 +37,38 @@
     "mini.icons": {
       "rev": "2847986"
     },
+    "mini.keymap": {
+      "rev": "8849b59",
+      "src": "https://github.com/nvim-mini/mini.keymap"
+    },
     "mini.notify": {
-      "rev": "7f3c4f0"
+      "rev": "7f3c4f0",
+      "src": "https://github.com/nvim-mini/mini.notify"
+    },
+    "mini.nvim": {
+      "rev": "57c1611",
+      "src": "https://github.com/nvim-mini/mini.nvim"
+    },
+    "mini.pairs": {
+      "rev": "b9aada8",
+      "src": "https://github.com/nvim-mini/mini.pairs"
     },
     "mini.snippets": {
       "rev": "7610dc3"
+    },
+    "mini.starter": {
+      "rev": "b43df0b",
+      "src": "https://github.com/nvim-mini/mini.starter"
     },
     "mini.surround": {
       "rev": "fc6fbc3"
     },
     "neo-tree.nvim": {
       "rev": "0c29e37"
+    },
+    "noice.nvim": {
+      "rev": "38c702b",
+      "src": "https://github.com/folke/noice.nvim"
     },
     "nui.nvim": [],
     "nvim-autopairs": [],
@@ -65,6 +86,10 @@
     },
     "nvim-neoclip.lua": [],
     "nvim-nio": [],
+    "nvim-notify": {
+      "rev": "8701bec",
+      "src": "https://github.com/rcarriga/nvim-notify"
+    },
     "nvim-scrollview": {
       "rev": "316c37c"
     },

@@ -35,6 +35,7 @@ return {
 	settings = {
 		python = {
 			analysis = {
+				typeCheckingMode = "off",
 				autoSearchPaths = true,
 				useLibraryCodeForTypes = true,
 				diagnosticMode = 'openFilesOnly',
@@ -42,15 +43,15 @@ return {
 		},
 	},
 	on_attach = function(client, bufnr)
-    vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightOrganizeImports', function()
-      local params = {
-        command = 'pyright.organizeimports',
-        arguments = { vim.uri_from_bufnr(bufnr) },
-      }
-      client.request('workspace/executeCommand', params, nil, bufnr)
-    end, {
-      desc = 'Organize Imports',
-    })
+		vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightOrganizeImports', function()
+			local params = {
+				command = 'pyright.organizeimports',
+				arguments = { vim.uri_from_bufnr(bufnr) },
+			}
+			client.request('workspace/executeCommand', params, nil, bufnr)
+		end, {
+			desc = 'Organize Imports',
+		})
 
 		-- 新增命令: 使用当前目录下的虚拟环境
 		vim.api.nvim_buf_create_user_command(bufnr, 'LspUseVenv', function()
