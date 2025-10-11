@@ -43,10 +43,6 @@ require('bufferline').setup({
 	}
 })
 require('lualine').setup {
-	options = {
-		ignore_focus = { 'neo-tree' },
-		globalstatus = true,
-	},
 	sections = {
 		lualine_a = { 'filename' },
 		lualine_b = { 'branch', 'diff', 'diagnostics' },

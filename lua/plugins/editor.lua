@@ -1,37 +1,6 @@
 require('trouble').setup({})
 
 -- 展示代码缩进
-require('hlchunk').setup({
-	line_num = {
-		enable = true
-	},
-	chunk = {
-		enable = true
-	},
-	indent = {
-		enable = true
-	}
-})
-
-
--- FIX:
--- TODO:
--- HACK:
--- WARN:
--- PERF:
--- NOTE:
--- TEST:
-require('todo-comments').setup(
-	{
-		keywords = {
-			MODIFIED = {
-				icon = ' ',
-				color = 'hint',
-				alt = { 'CHANGED', 'UPDATED', 'MOD' }
-			},
-		}
-	})
-
 vim.g.undotree_DiffAutoOpen = 1
 vim.g.undotree_SetFocusWhenToggle = 1
 vim.g.undotree_ShortIndicators = 1

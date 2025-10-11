@@ -41,8 +41,8 @@ local mappings = {
 	{ "nv", "<D-t>", "<CMD>tab new<CR>:Yazi<CR>", "新建标签页并打开Yazi" },
 	{ "nv", "<D-k>", "<CMD>tabnext<CR>", "下一个标签页" },
 	{ "nv", "<D-j>", "<CMD>tabprevious<CR>", "上一个标签页" },
-	{ "n", "<D-s-j>", "<CMD>tabmove -1<CR>", "标签页左移" },
-	{ "n", "<D-s-k>", "<CMD>tabmove +1<CR>", "标签页右移" },
+	-- { "n", "<D-s-j>", "<CMD>tabmove -1<CR>", "标签页左移" },
+	-- { "n", "<D-s-k>", "<CMD>tabmove +1<CR>", "标签页右移" },
 	{ "it", "<D-j>", "<C-\\><C-n>:-tabnext<CR>", "插入模式：上一个标签页" },
 	{ "it", "<D-k>", "<C-\\><C-n>:+tabnext<CR>", "插入模式：下一个标签页" },
 	{ "it", "<D-t>", "<C-\\><C-n>:tab new<CR>:Yazi<CR>", "插入模式：新建标签并打开 Yazi" },
@@ -66,13 +66,13 @@ local mappings = {
 	{ "it", "<D-right>", "<C-o>$", "插入模式：移动到行尾" },
 	{ "n", "<leader><CR>", "<CMD>nohlsearch<CR>", "清除搜索高亮" },
 	{ "n", "<leader>rc", "<CMD>edit ~/.config/nvim/init.lua<CR>", "打开配置文件" },
-	-- { "nvt", "<D-g>", function() term.toggle() end, "打开Git目录终端" },
 	{ "nv", 'U', ':UndotreeToggle<CR>', "打开撤销树" },
 	{ "nv", "<leader>y", "<CMD>lua require('telescope').extensions.neoclip.default()<CR>", "打开剪贴板历史" },
-	{ "n", "<D-b>", function() MiniFiles.open() end , "打开文件树" },
 	{ "n", "<D-y>", "<cmd>Yazi<cr>", "在当前文件位置打开Yazi" },
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
-	{ "nv", "tt", "<cmd>Translate zh<CR>", "翻译光标下内容为中文" }
+	{ "nv", "tt", "<cmd>Translate zh<CR>", "翻译光标下内容为中文" },
+	{ "n", "<D-b>", function() MiniFiles.open() end, "打开文件树" },
+	{ "n", 'H', function() MiniDiff.toggle_overlay() end, "切换Hunk预览" }
 }
 
 -- 应用所有表格中的快捷键映射

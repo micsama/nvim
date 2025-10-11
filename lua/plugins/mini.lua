@@ -1,10 +1,25 @@
+-- ============================================================================
+-- Neovim 配置: Mini.nvim 插件集合
 --
--- editor
---
+-- 专注于格式、代码组合、易读性优化。
+-- 不改变原代码的功能逻辑。
+-- ============================================================================
+
+-- 获取通用工具函数（如：map）
+local map = require('util.utils').map
+local hipatterns = require('mini.hipatterns')
+local gen_loader = require('mini.snippets').gen_loader
+local map_multistep = require('mini.keymap').map_multistep
+
+-- ----------------------------------------------------------------------------
+-- 1. 编辑器核心功能增强 (mini.pairs, mini.surround, mini.completion, mini.snippets)
+-- ----------------------------------------------------------------------------
+
 require('mini.completion').setup()
 require('mini.pairs').setup()
 require('mini.surround').setup()
-local gen_loader = require('mini.snippets').gen_loader
+
+-- mini.snippets 配置
 require('mini.snippets').setup({
 	mappings = {
 		jump_next = '<tab>',
@@ -19,26 +34,77 @@ require('mini.snippets').setup({
 	}
 })
 
-local map_multistep = require('mini.keymap').map_multistep
-map_multistep('i', '<Tab>', { 'pmenu_next' })
-map_multistep('i', '<S-Tab>', { 'pmenu_prev' })
-map_multistep('i', '<CR>', { 'pmenu_accept', 'minipairs_cr' })
-map_multistep('i', '<BS>', { 'minipairs_bs' })
+-- keymap 多步映射 (与 mini.snippets/completion 配合)
+-- 统一处理 <Tab>, <S-Tab>, <CR>, <BS> 在插入模式下的行为
+map_multistep('i', '<Tab>', { 'pmenu_next' })                  -- 补全菜单：下一个
+map_multistep('i', '<S-Tab>', { 'pmenu_prev' })                -- 补全菜单：上一个
+map_multistep('i', '<CR>', { 'pmenu_accept', 'minipairs_cr' }) -- 接受补全或 mini.pairs 回车
+map_multistep('i', '<BS>', { 'minipairs_bs' })                 -- mini.pairs 退格
 
---
--- workflow
---
+-- ----------------------------------------------------------------------------
+-- 2. 工作流与版本控制工具 (mini.diff, mini.files, mini.git)
+-- ----------------------------------------------------------------------------
 
--- 这个插件功能很复杂 慢慢看
--- require('mini.extra').setup()
-require('mini.diff').setup()
+-- require('mini.extra').setup() -- 暂时注释，功能复杂，后续处理
+require('mini.diff').setup({
+	view = {
+		style = 'sign',
+		signs = { add = '▎', change = '░', delete = '▒' },
+	},
+})
+
 require('mini.files').setup()
+require('mini.git').setup()
 
-
+-- ----------------------------------------------------------------------------
+-- 3. UI/美化/显示 (mini.icons, mini.notify, mini.starter, mini.cursorword)
+-- ----------------------------------------------------------------------------
 
 require('mini.icons').setup({ style = 'glyph' })
+-- 兼容/调整图标显示
 MiniIcons.mock_nvim_web_devicons()
 MiniIcons.tweak_lsp_kind()
-MiniSnippets.start_lsp_server()
+
 require('mini.notify').setup()
-require('mini.git').setup()
+require('mini.starter').setup()
+require('mini.cursorword').setup()
+-- require('mini.base16').setup({}) -- 颜色主题，保持原样注释
+
+-- mini.snippets LSP Server 启动 (方便与其他LSP集成)
+MiniSnippets.start_lsp_server()
+
+-- ----------------------------------------------------------------------------
+-- 4. 代码高亮与辅助 (mini.hipatterns, hlchunk, mini.misc)
+-- ----------------------------------------------------------------------------
+
+-- mini.hipatterns 配置
+hipatterns.setup({
+	highlighters = {
+		-- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
+		fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
+		hack = { pattern = '%f[%w]()HACK()%f[%W]', group = 'MiniHipatternsHack' },
+		todo = { pattern = '%f[%w]()TODO()%f[%W]', group = 'MiniHipatternsTodo' },
+		note = { pattern = '%f[%w]()NOTE()%f[%W]', group = 'MiniHipatternsNote' },
+		-- Highlight hex color codes
+		hex_color = hipatterns.gen_highlighter.hex_color(),
+	},
+})
+
+-- hlchunk 代替 mini.indentscope (按原逻辑)
+-- require('mini.indentscope').setup() -- 已替换，保持注释或移除
+require("hlchunk").setup({
+	chunk = {
+		enable = true,
+	}
+})
+
+-- mini.misc 配置及映射
+require('mini.misc').setup()
+-- 映射：放大当前窗口
+map('n', '<D-f>', function() require('mini.misc').zoom() end, "放大当前窗口")
+-- 启用终端背景色同步功能
+require('mini.misc').setup_termbg_sync()
+-- 暴露全局函数 (put/put_text)
+require('mini.misc').setup({
+	make_global = { 'put', 'put_text' },
+})

@@ -73,7 +73,7 @@ end
 vim.api.nvim_create_augroup('CustomSetupGroup', { clear = true })
 local custom_group = 'CustomSetupGroup'
 
--- 自动切换工作目录到项目根目录 (使用 vim.fs.root 现代 API)
+-- -- 自动切换工作目录到项目根目录 (使用 vim.fs.root 现代 API)
 vim.api.nvim_create_autocmd('BufEnter', {
 	group = custom_group,
 	callback = function(ctx)
@@ -89,8 +89,8 @@ vim.api.nvim_create_autocmd('BufEnter', {
 	end,
 	desc = 'Auto change working directory to project root'
 })
-
--- 恢复上次打开文件时的光标位置
+--
+-- -- 恢复上次打开文件时的光标位置
 vim.api.nvim_create_autocmd('BufReadPost', {
 	group = custom_group,
 	pattern = '*',
