@@ -40,13 +40,12 @@ vim.pack.add({
 	-- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
 	'https://github.com/nvim-treesitter/nvim-treesitter-context', -- Treesitter 上下文显示
 	'https://github.com/shellRaining/hlchunk.nvim',              -- 高亮当前代码块/缩进块
-	'https://github.com/folke/todo-comments.nvim',               -- 高亮代码中的 TODO/FIXME 等注释
 	'https://github.com/mbbill/undotree',                        -- 可视化撤销树
 	'https://github.com/rachartier/tiny-inline-diagnostic.nvim', -- 行内诊断信息简洁显示
 	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
 	'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
 	'https://github.com/keaising/im-select.nvim',                -- 输入法自动切换
-	'https://github.com/uga-rosa/translate.nvim',                -- 翻译功能
+	'https://github.com/uga-rosa/translate.nvim',                -- 翻译功能 
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
 	'https://github.com/mikavilpas/yazi.nvim',       -- Yazi 文件管理器集成
