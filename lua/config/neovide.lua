@@ -9,9 +9,15 @@ if IS_MACOS then
 	vim.o.guifont = 'FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5' -- 设置 Neovide 字体及大小
 else
 	vim.o.guifont = 'FiraCode Nerd Font:h13.5'                                 -- 设置 Neovide 字体及大小
+	vim.g.neovide_title_background_color = string.format(
+		"%x",
+		vim.api.nvim_get_hl(0, { id = vim.api.nvim_get_hl_id_by_name("Normal") }).bg
+	)
+
+	vim.g.neovide_title_text_color = "pink"
 end
 
-vim.opt.linespace = 0                                                        -- 消除行间距，使行高更紧凑
+vim.opt.linespace = 0 -- 消除行间距，使行高更紧凑
 
 -- 窗口效果与行为
 vim.g.neovide_window_blurred = true        -- 启用窗口模糊效果
@@ -43,26 +49,24 @@ vim.keymap.set('n', '<D-=>', function() scale(1.1) end, { desc = '放大 Neovide
 vim.keymap.set('n', '<D-->', function() scale(1 / 1.1) end, { desc = '缩小 Neovide 字体/UI' })
 
 
--- TODO: 后续看看需不需要替代im-select
--- 禁用 IME 自动命令 (保持注释原样)
--- local function set_ime(args)
--- 	if args.event:match('Enter$') then
--- 		vim.g.neovide_input_ime = true
--- 	else
--- 		vim.g.neovide_input_ime = false
--- 	end
--- end
+local function set_ime(args)
+    if args.event:match("Enter$") then
+        vim.g.neovide_input_ime = true
+    else
+        vim.g.neovide_input_ime = false
+    end
+end
 
--- local ime_input = vim.api.nvim_create_augroup('ime_input', { clear = true })
+local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
 
--- vim.api.nvim_create_autocmd({ 'InsertEnter', 'InsertLeave' }, {
--- 	group = ime_input,
--- 	pattern = '*',
--- 	callback = set_ime
--- })
+vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
+    group = ime_input,
+    pattern = "*",
+    callback = set_ime
+})
 
--- vim.api.nvim_create_autocmd({ 'CmdlineEnter', 'CmdlineLeave' }, {
--- 	group = ime_input,
--- 	pattern = '[/\\?]',
--- 	callback = set_ime
--- })
+vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
+    group = ime_input,
+    pattern = "[/\\?]",
+    callback = set_ime
+})
