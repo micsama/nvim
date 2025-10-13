@@ -8,7 +8,7 @@ local IS_MACOS = vim.uv.os_uname().sysname == 'Darwin'
 if IS_MACOS then
 	vim.o.guifont = 'FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5' -- 设置 Neovide 字体及大小
 else
-	vim.o.guifont = 'FiraCode Nerd Font:h13.5'                                 -- 设置 Neovide 字体及大小
+	vim.o.guifont = 'FiraCode Nerd Font:h12.5'                                 -- 设置 Neovide 字体及大小
 	vim.g.neovide_title_background_color = string.format(
 		"%x",
 		vim.api.nvim_get_hl(0, { id = vim.api.nvim_get_hl_id_by_name("Normal") }).bg
@@ -56,14 +56,6 @@ local function set_ime(args)
     end
 end
 
-local function set_ime(args)
-    if args.event:match("Enter$") then
-        vim.g.neovide_input_ime = true
-    else
-        vim.g.neovide_input_ime = false
-    end
-end
-
 local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
 
 vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
@@ -71,6 +63,7 @@ vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
     pattern = "*",
     callback = set_ime
 })
+
 
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
     group = ime_input,
