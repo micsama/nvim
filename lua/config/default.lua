@@ -4,8 +4,8 @@ vim.opt.colorcolumn = '100'   -- 在第100列显示辅助标尺线，帮助控�
 vim.opt.scrolloff = 5         -- 光标距离窗口顶部/底部保留5行缓冲。
 vim.opt.showmode = false      -- 隐藏模式提示（如INSERT/NORMAL等），通常由状态栏插件处理。
 vim.opt.virtualedit = 'block' -- 允许在块选择模式下移动到空位置。
--- vim.opt.splitright = true             -- 垂直分割时新窗口出现在右侧。
--- vim.opt.splitbelow = true             -- 水平分割时新窗口出现在下方。
+vim.opt.splitright = true             -- 垂直分割时新窗口出现在右侧。
+vim.opt.splitbelow = true             -- 水平分割时新窗口出现在下方。
 vim.cmd([[hi NonText ctermfg=gray guifg=grey10]]) -- 设置非文本元素（如文件末尾的~）的颜色。
 vim.opt.number = true -- 显示文件的绝对行号。
 vim.opt.relativenumber = true -- 显示相对于光标的相对行号，启用混合行号。
@@ -42,17 +42,16 @@ vim.g.python3_host_prog = (os.getenv('VIRTUAL_ENV') or '/Users/dzmfg/.venvs/base
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
--- 环境变量配置（macOS 优化）。
-vim.env.PATH = '/opt/homebrew/bin:' .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
-
 -- 根据系统设置默认终端 Shell。
 local uname = vim.uv.os_uname()
 if uname.sysname == 'Darwin' then
 	vim.notify('macOS Loading...')
 	vim.opt.shell = '/opt/homebrew/bin/nu' -- 优先使用 nu shell。
+	vim.env.PATH = '/opt/homebrew/bin:' .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 else
 	vim.notify('Linux Loading...')
 	vim.opt.shell = '/usr/bin/bash'
+	vim.env.PATH =  '/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin' .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
 -- 终端颜色配置 (Dracula 近似值)

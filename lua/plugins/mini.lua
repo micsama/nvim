@@ -53,7 +53,7 @@ require('mini.diff').setup({
 	},
 })
 
-require('mini.files').setup()
+require('mini.files').setup({ mappings = { go_in_plus = "<CR>" } })
 require('mini.git').setup()
 
 -- ----------------------------------------------------------------------------
