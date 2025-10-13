@@ -6,26 +6,6 @@ local map = require('util.utils').map
 -- ============================================================================
 -- LSP 和诊断配置 (vim.diagnostic, vim.lsp)
 -- ============================================================================
-vim.diagnostic.config({
-	severity_sort = true,
-	underline = true,
-	signs = {
-		text = {
-			[vim.diagnostic.severity.ERROR] = '✘',
-			[vim.diagnostic.severity.WARN] = '▲',
-			[vim.diagnostic.severity.HINT] = '⚑',
-			[vim.diagnostic.severity.INFO] = '»',
-		},
-		-- 仅保留 error 的行高亮，移除 numhl 以保持简洁
-		linehl = {
-			[vim.diagnostic.severity.ERROR] = 'ErrorMsg',
-		},
-	},
-	virtual_text = false,
-	update_in_insert = false,
-	float = true,
-})
-
 -- 启用 Inlay Hints
 vim.lsp.inlay_hint.enable(true)
 
@@ -41,6 +21,27 @@ vim.lsp.config('*', {
 	-- 添加了 rust 的 Cargo.toml 到 root_markers
 	root_markers = { '.git', '.venv', 'Cargo.toml' },
 })
+
+-- 设置图标
+vim.diagnostic.config({
+	severity_sort = true,
+	underline = true,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = '✘',
+			[vim.diagnostic.severity.WARN] = '▲',
+			[vim.diagnostic.severity.HINT] = '⚑',
+			[vim.diagnostic.severity.INFO] = '»',
+		},
+		linehl = {
+			[vim.diagnostic.severity.ERROR] = 'ErrorMsg',
+		},
+	},
+	virtual_text = false,
+	update_in_insert = false,
+	float = true,
+})
+
 
 -- 启用的 Language Servers
 vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide' })
@@ -88,7 +89,5 @@ require('nvim-treesitter.configs').setup({
 
 -- Treesitter 辅助插件
 require('treesitter-context').setup()
-require('faster').setup({})
-require('render-markdown').setup({
-	completions = { lsp = { enabled = true } },
-})
+require('faster').setup()
+require('render-markdown').setup({ completions = { lsp = { enabled = true } } })

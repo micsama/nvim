@@ -14,7 +14,7 @@ vim.g.neovide_confirm_quit = true          -- 退出时要求确认
 
 -- 输入、鼠标与触控板
 vim.g.neovide_input_macos_option_key_is_meta = 'only_left' -- 仅将左 Option 键映射为 Meta
-vim.g.neovide_hide_mouse_when_typing = false               -- 禁用打字时自动隐藏鼠标
+vim.g.neovide_hide_mouse_when_typing = true               -- 打字时自动隐藏鼠标
 vim.g.neovide_touch_deadzone = 8.0                         -- 设置触摸板死区，防止意外滚动
 
 -- 动画与光标视觉特效 (VFX)
@@ -24,7 +24,7 @@ vim.g.neovide_cursor_animation_length = 0.07       -- 光标闪烁动画时长
 vim.g.neovide_cursor_vfx_mode = 'pixiedust'        -- 光标视觉特效模式
 vim.g.neovide_cursor_animate_in_insert_mode = true -- 插入模式下也启用光标动画
 vim.g.neovide_scroll_animation_far_lines = 1       -- 启用快速滚动时的平滑动画
-vim.g.neovide_cursor_vfx_particle_density = 10.0   -- 光标特效粒子密度
+vim.g.neovide_cursor_vfx_particle_density = 12.0   -- 光标特效粒子密度
 vim.g.neovide_underline_stroke_scale = 1.0         -- 下划线笔触缩放比例
 
 -- 动态缩放功能与快捷键
@@ -35,27 +35,25 @@ end
 vim.keymap.set('n', '<D-=>', function() scale(1.1) end, { desc = '放大 Neovide 字体/UI' })
 vim.keymap.set('n', '<D-->', function() scale(1 / 1.1) end, { desc = '缩小 Neovide 字体/UI' })
 
+local function set_ime(args)
+    if args.event:match("Enter$") then
+        vim.g.neovide_input_ime = true
+    else
+        vim.g.neovide_input_ime = false
+    end
+end
 
--- TODO: 后续看看需不需要替代im-select
--- 禁用 IME 自动命令 (保持注释原样)
--- local function set_ime(args)
--- 	if args.event:match('Enter$') then
--- 		vim.g.neovide_input_ime = true
--- 	else
--- 		vim.g.neovide_input_ime = false
--- 	end
--- end
+local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
 
--- local ime_input = vim.api.nvim_create_augroup('ime_input', { clear = true })
+vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
+    group = ime_input,
+    pattern = "*",
+    callback = set_ime
+})
 
--- vim.api.nvim_create_autocmd({ 'InsertEnter', 'InsertLeave' }, {
--- 	group = ime_input,
--- 	pattern = '*',
--- 	callback = set_ime
--- })
+vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
+    group = ime_input,
+    pattern = "[/\\?]",
+    callback = set_ime
+})
 
--- vim.api.nvim_create_autocmd({ 'CmdlineEnter', 'CmdlineLeave' }, {
--- 	group = ime_input,
--- 	pattern = '[/\\?]',
--- 	callback = set_ime
--- })
