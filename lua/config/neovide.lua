@@ -3,8 +3,15 @@
 -- ===============================
 
 -- 基础 UI / 字体配置
-vim.o.guifont = 'FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5' -- 设置 Neovide 字体及大小
-vim.opt.linespace = 0                                                       -- 消除行间距，使行高更紧凑
+local IS_MACOS = vim.uv.os_uname().sysname == 'Darwin'
+
+if IS_MACOS then
+	vim.o.guifont = 'FantasqueSansMono NF,FiraCode Nerd Font,PingFang SC:h18.5' -- 设置 Neovide 字体及大小
+else
+	vim.o.guifont = 'FiraCode Nerd Font:h13.5'                                 -- 设置 Neovide 字体及大小
+end
+
+vim.opt.linespace = 0                                                        -- 消除行间距，使行高更紧凑
 
 -- 窗口效果与行为
 vim.g.neovide_window_blurred = true        -- 启用窗口模糊效果
