@@ -31,23 +31,29 @@ require('which-key').setup()
 require('bufferline').setup({
 	options = {
 		mode = 'tabs',
+	-- 	-- 格式为 '2. ¹3'
 		numbers = function(opts)
 			return string.format('%s%s', opts.ordinal, opts.raise(opts.id))
 		end,
 		diagnostics = 'nvim_lsp',
-		diagnostics_indicator = function(count, level, diagnostics_dict, context)
-			local icon = level:match('error') and ' ' or ' '
-			return ' ' .. icon .. count
-		end,
+	-- 	diagnostics_indicator = function(count, level, diagnostics_dict, context)
+	-- 		local icon = level:match('error') and ' ' or ' '
+	-- 		return ' ' .. icon .. count
+	-- 	end,
 		indicator = {
 			icon = '▎ ',
 			style = 'icon',
 		},
-		tab_size = 16,
-		padding = 0,
-		separator_style = 'thick',
-		left_trunc_marker = ' ',
-		right_trunc_marker = ' ',
+	-- 	show_buffer_close_icons = true,
+	-- 	color_icons = true,
+	-- 	show_close_icon = true,
+	-- 	enforce_regular_tabs = true,
+	-- 	show_duplicate_prefix = false,
+	-- 	tab_size = 16,
+	-- 	padding = 0,
+	-- 	separator_style = 'thick',
+	-- 	left_trunc_marker = ' ',
+	-- 	right_trunc_marker = ' ',
 	}
 })
 

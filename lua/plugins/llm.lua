@@ -26,11 +26,10 @@ require('codecompanion').setup({
 	strategies = { chat = { adapter = 'qwen3' }, inline = { adapter = 'qwen3' }, agent = { adapter = 'qwen3' } },
 	adapters = {
 		http = {
-			-- 必须使用 function 包裹以实现延迟加载
+			-- 使用 function 包裹以实现延迟加载
 			qwen3 = function() return qwen3_ollama_adapter end,
 		}
 	},
 })
 
--- 快捷键映射：使用原始的 <CMD> 形式确保功能正确执行
 map('nv', '<D-o>', '<CMD>CodeCompanionChat Toggle<CR>', 'Open the LLM')
