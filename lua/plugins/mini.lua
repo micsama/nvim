@@ -8,7 +8,6 @@
 -- 获取通用工具函数（如：map）
 local map = require('util.utils').map
 local hipatterns = require('mini.hipatterns')
-local gen_loader = require('mini.snippets').gen_loader
 local map_multistep = require('mini.keymap').map_multistep
 
 -- ----------------------------------------------------------------------------
@@ -20,7 +19,9 @@ require('mini.pairs').setup()
 require('mini.surround').setup()
 
 -- mini.snippets 配置
-require('mini.snippets').setup({
+local ms = require('mini.snippets')
+local gen_loader = ms.gen_loader
+ms.setup({
 	mappings = {
 		jump_next = '<tab>',
 		jump_prev = '<s-tab>',
@@ -33,6 +34,8 @@ require('mini.snippets').setup({
 		}),
 	}
 })
+-- 这里比较奇怪 开了会报错
+ms.start_lsp_server()
 
 -- keymap 多步映射 (与 mini.snippets/completion 配合)
 -- 统一处理 <Tab>, <S-Tab>, <CR>, <BS> 在插入模式下的行为
@@ -71,7 +74,6 @@ require('mini.cursorword').setup()
 -- require('mini.base16').setup({}) -- 颜色主题，保持原样注释
 
 -- mini.snippets LSP Server 启动 (方便与其他LSP集成)
-MiniSnippets.start_lsp_server()
 
 -- ----------------------------------------------------------------------------
 -- 4. 代码高亮与辅助 (mini.hipatterns, hlchunk, mini.misc)
