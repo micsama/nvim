@@ -11,6 +11,7 @@ vim.opt.number = true -- 显示文件的绝对行号。
 vim.opt.relativenumber = true -- 显示相对于光标的相对行号，启用混合行号。
 vim.opt.foldlevel = 99 -- 默认展开所有折叠（99是最高级别，即不折叠）。
 vim.opt.foldmethod = 'expr' -- 使用表达式计算折叠（通常由LSP或插件接管）。
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.viewoptions = 'cursor,folds,slash,unix' -- 保存/恢复视图时记住光标位置、折叠状态等。
 vim.opt.tabstop = 2 -- 设置一个Tab键的宽度为2个空格。
 vim.opt.shiftwidth = 2 -- 自动缩进时使用的空格数。
