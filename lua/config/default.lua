@@ -42,17 +42,16 @@ vim.g.python3_host_prog = (os.getenv('VIRTUAL_ENV') or '/Users/dzmfg/.venvs/base
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
--- 环境变量配置（macOS 优化）。
-vim.env.PATH = '/opt/homebrew/bin:' .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
-
 -- 根据系统设置默认终端 Shell。
 local uname = vim.uv.os_uname()
 if uname.sysname == 'Darwin' then
 	vim.notify('macOS Loading...')
 	vim.opt.shell = '/opt/homebrew/bin/nu' -- 优先使用 nu shell。
+	vim.env.PATH = '/opt/homebrew/bin:' .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 else
 	vim.notify('Linux Loading...')
 	vim.opt.shell = '/usr/bin/bash'
+	vim.env.PATH =  '/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin' .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
 -- 终端颜色配置 (Dracula 近似值)
