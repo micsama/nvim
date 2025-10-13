@@ -4,8 +4,8 @@ vim.opt.colorcolumn = '100'   -- 在第100列显示辅助标尺线，帮助控�
 vim.opt.scrolloff = 5         -- 光标距离窗口顶部/底部保留5行缓冲。
 vim.opt.showmode = false      -- 隐藏模式提示（如INSERT/NORMAL等），通常由状态栏插件处理。
 vim.opt.virtualedit = 'block' -- 允许在块选择模式下移动到空位置。
--- vim.opt.splitright = true             -- 垂直分割时新窗口出现在右侧。
--- vim.opt.splitbelow = true             -- 水平分割时新窗口出现在下方。
+vim.opt.splitright = true             -- 垂直分割时新窗口出现在右侧。
+vim.opt.splitbelow = true             -- 水平分割时新窗口出现在下方。
 vim.cmd([[hi NonText ctermfg=gray guifg=grey10]]) -- 设置非文本元素（如文件末尾的~）的颜色。
 vim.opt.number = true -- 显示文件的绝对行号。
 vim.opt.relativenumber = true -- 显示相对于光标的相对行号，启用混合行号。

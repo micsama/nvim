@@ -1,6 +1,8 @@
 -- 键盘映射 (Keymaps)
 -- 集中管理所有快捷键。依赖 `util.utils` 中的 `map` 函数应用映射。
 local map = require("util.utils").map
+local map_fullwidth_to_halfwidth = require('util.utils').map_fullwidth_to_halfwidth
+map_fullwidth_to_halfwidth()
 
 vim.g.mapleader = " "       -- <Leader>键设置为空格键。
 vim.g.maplocalleader = "\\" -- 本地<Leader>键设置为反斜杠。
@@ -10,7 +12,6 @@ local mappings = {
 	-- 核心操作 (Core Operations)
 	{ "nvi", "<D-s>", "<CMD>up<CR>", "保存当前文件 (Save file)" },
 	{ "nv", "<D-w>", "<CMD>q<CR>", "关闭当前窗口 (Quit window)" },
-	{ "nv", ";", ":", "快速进入命令行模式 (Command mode)" },
 	{ "nv", "`", "~", "切换光标下字符大小写 (Toggle case)" },
 	{ "nv", "J", "5j", "向下快速移动5行" },
 	{ "nv", "K", "5k", "向上快速移动5行" },
@@ -42,8 +43,8 @@ local mappings = {
 	{ "nv", "<D-t>", "<CMD>tab new<CR>:Yazi<CR>", "新建标签页并打开Yazi" },
 	{ "nv", "<D-k>", "<CMD>tabnext<CR>", "下一个标签页" },
 	{ "nv", "<D-j>", "<CMD>tabprevious<CR>", "上一个标签页" },
-	-- { "n", "<D-s-j>", "<CMD>tabmove -1<CR>", "标签页左移" },
-	-- { "n", "<D-s-k>", "<CMD>tabmove +1<CR>", "标签页右移" },
+	{ "n", "<D-s-j>", "<CMD>tabmove -1<CR>", "标签页左移" },
+	{ "n", "<D-s-k>", "<CMD>tabmove +1<CR>", "标签页右移" },
 	{ "it", "<D-j>", "<C-\\><C-n>:-tabnext<CR>", "插入模式：上一个标签页" },
 	{ "it", "<D-k>", "<C-\\><C-n>:+tabnext<CR>", "插入模式：下一个标签页" },
 	{ "it", "<D-t>", "<C-\\><C-n>:tab new<CR>:Yazi<CR>", "插入模式：新建标签并打开 Yazi" },
