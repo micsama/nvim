@@ -56,7 +56,20 @@ require('mini.diff').setup({
 	},
 })
 
-require('mini.files').setup({ mappings = { go_in_plus = "<CR>" } })
+require('mini.files').setup({
+	mappings = { go_in_plus = '<CR>' },
+	content = {
+		filter = function(fs_entry)
+			-- 隐藏以 '.' 开头的文件或目录
+			if vim.startswith(fs_entry.name, '.DS') then
+				return false
+			end
+			return true
+		end,
+	},
+	use_as_default_explorer = true,
+	permanent_delete = false,
+})
 require('mini.git').setup()
 
 -- ----------------------------------------------------------------------------
@@ -92,8 +105,8 @@ hipatterns.setup({
 	},
 })
 
--- hlchunk 代替 mini.indentscope (按原逻辑)
--- require('mini.indentscope').setup() -- 已替换，保持注释或移除
+-- hlchunk 代替 mini.indentscope，因为mini.indentscope只有默认的缩进显示
+-- require('mini.indentscope').setup()
 require("hlchunk").setup({
 	chunk = {
 		enable = true,
