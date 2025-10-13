@@ -1,27 +1,30 @@
--- ~/.config/nvim/lua/plugins/lsp.lua or similar
----@brief
+---@brief Pyright LSP 配置
+---
 --- https://github.com/microsoft/pyright
+---
 --- `pyright`, a static type checker and language server for python
-
-local function set_python_path(path)
-	local clients = vim.lsp.get_clients({
+local function set_python_path(command)
+	local user_path_valid = command.args and string.len(command.args) > 0
+	local path = user_path_valid and command.args or "./.venv/bin/python"
+	local clients = vim.lsp.get_clients {
 		bufnr = vim.api.nvim_get_current_buf(),
 		name = 'pyright',
-	})
+	}
 	for _, client in ipairs(clients) do
 		if client.settings then
 			client.settings.python = vim.tbl_deep_extend('force', client.settings.python, { pythonPath = path })
 		else
 			client.config.settings = vim.tbl_deep_extend('force', client.config.settings, { python = { pythonPath = path } })
 		end
-		client.notify('workspace/didChangeConfiguration', { settings = nil })
+		client:notify('workspace/didChangeConfiguration', { settings = nil })
 	end
+	vim.notify('Pyright pythonPath set to: ' .. path, vim.log.levels.INFO, { title = 'Pyright Config' })
 end
 
+---@type vim.lsp.Config
 return {
 	cmd = { 'pyright-langserver', '--stdio' },
 	filetypes = { 'python' },
-	-- 自动识别项目根目录的标记文件
 	root_markers = {
 		'pyproject.toml',
 		'setup.py',
@@ -30,7 +33,6 @@ return {
 		'Pipfile',
 		'pyrightconfig.json',
 		'.git',
-		'main.py',
 	},
 	settings = {
 		python = {
@@ -52,27 +54,10 @@ return {
 		end, {
 			desc = 'Organize Imports',
 		})
-
-		-- 新增命令: 使用当前目录下的虚拟环境
-		vim.api.nvim_buf_create_user_command(bufnr, 'LspUseVenv', function()
-			local root_dir = vim.fs.dirname(vim.fs.find({ '.git', 'pyproject.toml', '.venv' },
-				{ upward = true, stop = vim.env.HOME })[1] or vim.fn.getcwd())
-			if not root_dir then
-				print('Could not find project root.')
-				return
-			end
-
-			local venv_path = vim.fn.glob(root_dir .. '/.venv/bin/python')
-			if venv_path == '' then
-				print('Virtual environment .venv/bin/python not found.')
-				return
-			end
-
-			-- 如果找到虚拟环境，则设置 Python 路径并重启 LSP
-			set_python_path(venv_path)
-			print('Pyright using virtual environment: ' .. venv_path)
-		end, {
-			desc = 'Use the virtual environment in the current directory',
+		vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightSetPythonPath', set_python_path, {
+			desc = 'Reconfigure pyright with the provided python path (default: .venv/bin/python)',
+			nargs = '?',
+			complete = 'file',
 		})
 	end,
 }
