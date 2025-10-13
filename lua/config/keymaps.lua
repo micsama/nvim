@@ -43,8 +43,8 @@ local mappings = {
 	{ "nv", "<D-t>", "<CMD>tab new<CR>:Yazi<CR>", "新建标签页并打开Yazi" },
 	{ "nv", "<D-k>", "<CMD>tabnext<CR>", "下一个标签页" },
 	{ "nv", "<D-j>", "<CMD>tabprevious<CR>", "上一个标签页" },
-	-- { "n", "<D-s-j>", "<CMD>tabmove -1<CR>", "标签页左移" },
-	-- { "n", "<D-s-k>", "<CMD>tabmove +1<CR>", "标签页右移" },
+	{ "n", "<D-s-j>", "<CMD>tabmove -1<CR>", "标签页左移" },
+	{ "n", "<D-s-k>", "<CMD>tabmove +1<CR>", "标签页右移" },
 	{ "it", "<D-j>", "<C-\\><C-n>:-tabnext<CR>", "插入模式：上一个标签页" },
 	{ "it", "<D-k>", "<C-\\><C-n>:+tabnext<CR>", "插入模式：下一个标签页" },
 	{ "it", "<D-t>", "<C-\\><C-n>:tab new<CR>:Yazi<CR>", "插入模式：新建标签并打开 Yazi" },
@@ -92,7 +92,7 @@ end, "关闭下方窗口 (Close lower window)")
 
 -- 标签页数字切换
 for i = 1, 9 do
-	map("n", "<D-" .. i .. ">", function()
+	map("nit", "<D-" .. i .. ">", function()
 		local tab_count = vim.fn.tabpagenr('$')
 		if i <= tab_count then
 			vim.cmd("tabnext " .. i)
