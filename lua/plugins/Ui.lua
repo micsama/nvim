@@ -54,8 +54,9 @@ require('bufferline').setup({
 -- 2. Lualine (底部状态栏)
 require('lualine').setup {
 	sections = {
-		lualine_a = { 'filename' },
+		lualine_a = { ' (function(d) return d:len() > 10 and d:sub(1, 10) .. "..." or d end)(vim.fn.fnamemodify(vim.fn.getcwd(), ":t")) ','filename' },
 		lualine_b = { 'branch', 'diff', 'diagnostics' },
+		lualine_c = {},
 		lualine_x = { 'progress' },
 		lualine_y = { 'filesize', 'filetype' },
 		lualine_z = { 'location' }
