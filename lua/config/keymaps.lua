@@ -74,7 +74,8 @@ local mappings = {
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
 	{ "nv", "tt", "<cmd>Translate zh<CR>", "翻译光标下内容为中文" },
 	{ "n", "<D-b>", function() MiniFiles.open() end, "打开文件树" },
-	{ "n", 'H', function() MiniDiff.toggle_overlay() end, "切换Hunk预览" }
+	{ "n", 'H', function() MiniDiff.toggle_overlay() end, "切换Hunk预览" },
+	{ 'nv', '<D-o>', '<CMD>CodeCompanionChat Toggle<CR>', 'Open the LLM' }
 }
 
 -- 应用所有表格中的快捷键映射

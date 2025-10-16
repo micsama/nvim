@@ -14,4 +14,4 @@ require('plugins.Ui')          -- 用户界面和外观
 require('plugins.lsp')         -- 语言服务器协议 (LSP)
 require('plugins.editor')      -- 编辑器增强功能
 require('plugins.dap')         -- 调试适配器协议 (DAP)
-require('plugins.llm')         -- 大型语言模型相关插件
+require('llm.deepseek')         -- 大型语言模型相关插件

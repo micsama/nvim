@@ -39,7 +39,6 @@ return {
 			analysis = {
 				typeCheckingMode = "off",
 				autoSearchPaths = true,
-				useLibraryCodeForTypes = true,
 				diagnosticMode = 'openFilesOnly',
 			},
 		},
