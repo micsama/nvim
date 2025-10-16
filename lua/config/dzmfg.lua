@@ -10,8 +10,8 @@ vim.cmd.colorscheme('onedark') -- 应用 onedark 主题
 
 
 -- 加载功能模块配置 (Loading Functional Plugin Configurations)
-require('plugins.Ui')          -- 用户界面和外观
-require('plugins.lsp')         -- 语言服务器协议 (LSP)
-require('plugins.editor')      -- 编辑器增强功能
-require('plugins.dap')         -- 调试适配器协议 (DAP)
-require('llm.deepseek')         -- 大型语言模型相关插件
+require('plugins.Ui')        -- 用户界面和外观
+require('plugins.lsp')       -- 语言服务器协议 (LSP)
+require('plugins.editor')    -- 编辑器增强功能
+require('plugins.dap')       -- 调试适配器协议 (DAP)
+require('llm.codecompanion') -- 大型语言模型相关插件
