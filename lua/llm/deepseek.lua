@@ -174,7 +174,7 @@ return {
 			type = "enum",
 			desc = "ID of the model to use.",
 			---@type string|fun(): string
-			default = "deepseek-reasoner",
+			default = "deepseek-chat",
 			choices = {
 				["deepseek-reasoner"] = { formatted_name = "DeepSeek", opts = { can_reason = true, can_use_tools = false } },
 				["deepseek-chat"] = { formatted_name = "DeepSeek", opts = { can_use_tools = true } },
