@@ -9,7 +9,8 @@ local map = require('util.utils').map
 
 -- 提取 Ollama (qwen3) 适配器的配置
 local qwen3_ollama_adapter = require('codecompanion.adapters.http').extend('ollama', {
-	name = 'qwen3', opts = { vision = true, stream = true },
+	name = 'qwen3',
+	opts = { vision = true, stream = true },
 	schema = {
 		model = { default = 'qwen3:4b-instruct-2507-q8_0' },
 		think = { default = false },
@@ -32,4 +33,3 @@ require('codecompanion').setup({
 	},
 })
 
-map('nv', '<D-o>', '<CMD>CodeCompanionChat Toggle<CR>', 'Open the LLM')

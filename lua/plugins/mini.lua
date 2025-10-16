@@ -119,6 +119,7 @@ require('mini.misc').setup()
 map('n', '<D-f>', function() require('mini.misc').zoom() end, "放大当前窗口")
 -- 启用终端背景色同步功能
 require('mini.misc').setup_termbg_sync()
+-- require('mini.misc').setup_auto_root()
 -- 暴露全局函数 (put/put_text)
 require('mini.misc').setup({
 	make_global = { 'put', 'put_text' },
