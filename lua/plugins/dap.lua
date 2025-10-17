@@ -96,7 +96,7 @@ dap.configurations.python = {
 		request = 'launch',
 		name = 'Launch File',
 		program = '${file}',
-		args = {}
+		args = {'--prefix','test'}
 	}
 }
 

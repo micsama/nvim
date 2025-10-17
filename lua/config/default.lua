@@ -114,6 +114,7 @@ vim.api.nvim_create_autocmd('TermOpen', {
 
 -- 自动重新加载配置文件
 vim.api.nvim_create_augroup('NVIMRC', { clear = true })
+
 vim.api.nvim_create_autocmd('BufWritePost', {
 	pattern = 'init.lua,*/default.lua', -- 匹配 init.lua 或当前的 default.lua
 	group = 'NVIMRC',
