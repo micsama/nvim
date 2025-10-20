@@ -1,5 +1,5 @@
-local qwen3_ollama_adapter = require('llm.local.qwen3')
-local deepseek_adapter = require('llm.deepseek')
+local qwen3_ollama_adapter = require('plugins.llm.local.qwen3')
+local deepseek_adapter = require('plugins.llm.deepseek')
 
 local IS_MACOS = vim.uv.os_uname().sysname == 'Darwin'
 

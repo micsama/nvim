@@ -65,12 +65,14 @@ vim.pack.add({
 	'https://github.com/mfussenegger/nvim-dap-python',     -- Python 调试配置
 	'https://github.com/nvim-telescope/telescope-dap.nvim', -- Telescope DAP 扩展
 
-	-- H. 文件类型特定 / 娱乐 (Filetype Specific / Fun)
+	-- H. 文件类型特定(Filetype Specific)
 	'https://github.com/kaymmm/bullets.nvim',                      -- Markdown 列表增强
 	'https://github.com/MeanderingProgrammer/render-markdown.nvim', -- Markdown 实时渲染/预览
+	'https://github.com/hat0uma/csvview.nvim'                      -- csv
 })
-
 -- initialize config
+--
 
+-- vim.pack.update()
 require('plugins.mini') -- 配置 mini家族的 核心插件
-require('config.dzmfg')
+require('dzmfg')

@@ -49,7 +49,7 @@ function M.map(mode, lhs, rhs, opts_or_desc)
 	end
 
 	-- 2. 选项处理 (保持不变)
-	local opts = { noremap = true, silent = false }   -- 默认 silent 设为 true 更常见
+	local opts = { noremap = true, silent = false }
 	if opts_or_desc then
 		if type(opts_or_desc) == 'string' then
 			opts.desc = opts_or_desc
@@ -71,9 +71,9 @@ end
 --- 绑定全角字符到半角字符的 Normal 模式操作
 function M.map_fullwidth_to_halfwidth()
 	for fullwidth_char, config in pairs(FULLWIDTH_TO_HALFWIDTH_MAP) do
-		M.map('n', fullwidth_char, config.rhs, {
+		M.map('nv', fullwidth_char, config.rhs, {
 			desc = config.desc,
-			silent = false,       -- 对于 ':', '?' 等操作，不应该 silent
+			silent = false,
 		})
 	end
 end

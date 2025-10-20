@@ -16,7 +16,7 @@
     "description": "Snippet for 'if __name__ == \"__main__\"'."
   },
   "Python File Header": {
-    "prefix": "py",
+    "prefix": "!",
     "body": [
       "#!/usr/bin/env python3",
       "# -*- coding: utf-8 -*-",
