@@ -27,7 +27,7 @@ vim.g.neovide_confirm_quit = true          -- 退出时要求确认
 
 -- 输入、鼠标与触控板
 vim.g.neovide_input_macos_option_key_is_meta = 'only_left' -- 仅将左 Option 键映射为 Meta
-vim.g.neovide_hide_mouse_when_typing = true               -- 打字时自动隐藏鼠标
+vim.g.neovide_hide_mouse_when_typing = true                -- 打字时自动隐藏鼠标
 vim.g.neovide_touch_deadzone = 8.0                         -- 设置触摸板死区，防止意外滚动
 
 -- 动画与光标视觉特效 (VFX)
@@ -49,24 +49,24 @@ vim.keymap.set('n', '<D-=>', function() scale(1.1) end, { desc = '放大 Neovide
 vim.keymap.set('n', '<D-->', function() scale(1 / 1.1) end, { desc = '缩小 Neovide 字体/UI' })
 
 local function set_ime(args)
-    if args.event:match("Enter$") then
-        vim.g.neovide_input_ime = true
-    else
-        vim.g.neovide_input_ime = false
-    end
+	if args.event:match("Enter$") then
+		vim.g.neovide_input_ime = true
+	else
+		vim.g.neovide_input_ime = false
+	end
 end
 
-local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
-
-vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
-    group = ime_input,
-    pattern = "*",
-    callback = set_ime
-})
-
-
-vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
-    group = ime_input,
-    pattern = "[/\\?]",
-    callback = set_ime
-})
+-- local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
+--
+-- vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
+--     group = ime_input,
+--     pattern = "*",
+--     callback = set_ime
+-- })
+--
+--
+-- vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
+--     group = ime_input,
+--     pattern = "[/\\?]",
+--     callback = set_ime
+-- })
