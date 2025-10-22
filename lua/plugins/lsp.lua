@@ -52,7 +52,7 @@ vim.diagnostic.config({
 
 
 -- 启用的 Language Servers
-vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide' })
+vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide','dockerls' })
 
 -- 格式化整个文件并保留光标位置
 map('n', '<D-S-f>', function()
@@ -79,7 +79,7 @@ require('nvim-treesitter.configs').setup({
 	ensure_installed = {
 		'gitignore', 'json', 'nu', 'gitcommit', 'git_config', 'vimdoc', 'csv',
 		'fish', 'markdown_inline', 'markdown', 'bash', 'lua', 'yaml', 'python',
-		'toml', 'rust', 'cmake',
+		'toml', 'rust', 'cmake', 'dockerfile'
 	},
 	-- 核心功能启用
 	highlight = { enable = true, additional_vim_regex_highlighting = false },

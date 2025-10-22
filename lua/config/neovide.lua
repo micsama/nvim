@@ -27,7 +27,7 @@ vim.g.neovide_confirm_quit = true          -- 退出时要求确认
 
 -- 输入、鼠标与触控板
 vim.g.neovide_input_macos_option_key_is_meta = 'only_left' -- 仅将左 Option 键映射为 Meta
-vim.g.neovide_hide_mouse_when_typing = true                -- 打字时自动隐藏鼠标
+vim.g.neovide_hide_mouse_when_typing = false               -- 打字时自动隐藏鼠标
 vim.g.neovide_touch_deadzone = 8.0                         -- 设置触摸板死区，防止意外滚动
 
 -- 动画与光标视觉特效 (VFX)
