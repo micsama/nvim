@@ -3,7 +3,7 @@
     "bufferline.nvim": [],
     "bullets.nvim": [],
     "codecompanion.nvim": {
-      "rev": "5efcc8f"
+      "rev": "e69aebb"
     },
     "csvview.nvim": [],
     "dropbar.nvim": [],
@@ -18,7 +18,7 @@
     },
     "mason.nvim": [],
     "mini.nvim": {
-      "rev": "e04b5c6"
+      "rev": "cf32454"
     },
     "nui.nvim": [],
     "nvim-dap": {
@@ -30,7 +30,9 @@
     "nvim-neoclip.lua": [],
     "nvim-nio": [],
     "nvim-treesitter": [],
-    "nvim-treesitter-context": [],
+    "nvim-treesitter-context": {
+      "rev": "ec308c7"
+    },
     "onedarkpro.nvim": [],
     "plenary.nvim": [],
     "render-markdown.nvim": {
@@ -47,7 +49,7 @@
     "undotree": [],
     "which-key.nvim": [],
     "yazi.nvim": {
-      "rev": "19c0411"
+      "rev": "14da37b"
     }
   }
 }
