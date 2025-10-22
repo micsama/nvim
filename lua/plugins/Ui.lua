@@ -23,10 +23,16 @@ local floatty_opts = { id = vim.fn.getcwd }
 local term = require("floatty").setup(floatty_opts)
 map('ntv', '<D-g>', term.toggle, "切换终端")
 
+
 -- 2. Lazygit 浮动窗口
 local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
 	cmd = "lazygit", window = { width = 0.95, height = 0.95, } }))
 map('n', '<leader>gg', lazygit.toggle, "打开lazygit")
+
+-- 2. Lazygit 浮动窗口
+local gemini = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
+	cmd = "gemini", window = { width = 0.8, height = 0.95, } }))
+map('n', '<D-e>', gemini.toggle, "打开lazygit")
 
 -- 3. Which-Key 基础配置
 require('which-key').setup()
@@ -62,7 +68,7 @@ require('bufferline').setup({
 -- 2. Lualine (底部状态栏)
 require('lualine').setup {
 	sections = {
-		lualine_a = { ' (function(d) return d:len() > 10 and d:sub(1, 10) .. "..." or d end)(vim.fn.fnamemodify(vim.fn.getcwd(), ":t")) ','filename' },
+		lualine_a = { ' (function(d) return d:len() > 10 and d:sub(1, 10) .. "..." or d end)(vim.fn.fnamemodify(vim.fn.getcwd(), ":t")) ', 'filename' },
 		lualine_b = { 'branch', 'diff', 'diagnostics' },
 		lualine_c = {},
 		lualine_x = { 'progress' },
