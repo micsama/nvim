@@ -3,7 +3,7 @@
     "bufferline.nvim": [],
     "bullets.nvim": [],
     "codecompanion.nvim": {
-      "rev": "e69aebb"
+      "rev": "bcd4f84"
     },
     "csvview.nvim": [],
     "dropbar.nvim": [],
@@ -18,7 +18,7 @@
     },
     "mason.nvim": [],
     "mini.nvim": {
-      "rev": "cf32454"
+      "rev": "64a23d0"
     },
     "nui.nvim": [],
     "nvim-dap": {
@@ -49,7 +49,7 @@
     "undotree": [],
     "which-key.nvim": [],
     "yazi.nvim": {
-      "rev": "14da37b"
+      "rev": "3c52751"
     }
   }
 }
