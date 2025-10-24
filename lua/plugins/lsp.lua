@@ -52,7 +52,8 @@ vim.diagnostic.config({
 
 
 -- 启用的 Language Servers
-vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide','dockerls' })
+vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide', 'dockerls',
+	'bashls' })
 
 -- 格式化整个文件并保留光标位置
 map('n', '<D-S-f>', function()
