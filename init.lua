@@ -71,7 +71,6 @@ vim.pack.add({
 	'https://github.com/hat0uma/csvview.nvim'                      -- csv
 })
 -- initialize config
---
 
 -- vim.pack.update()
 require('plugins.mini') -- 配置 mini家族的 核心插件

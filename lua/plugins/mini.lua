@@ -1,8 +1,6 @@
 -- ============================================================================
 -- Neovim 配置: Mini.nvim 插件集合
 --
--- 专注于格式、代码组合、易读性优化。
--- 不改变原代码的功能逻辑。
 -- ============================================================================
 
 -- 获取通用工具函数（如：map）
@@ -76,8 +74,13 @@ require('mini.git').setup()
 -- 3. UI/美化/显示 (mini.icons, mini.notify, mini.starter, mini.cursorword)
 -- ----------------------------------------------------------------------------
 
-require('mini.icons').setup({ style = 'glyph' })
--- 兼容/调整图标显示
+require('mini.icons').setup({
+	style = 'glyph',
+	default = {
+	},
+	directory = {
+	}
+})
 MiniIcons.mock_nvim_web_devicons()
 MiniIcons.tweak_lsp_kind()
 
@@ -121,6 +124,4 @@ map('n', '<D-f>', function() require('mini.misc').zoom() end, "放大当前窗�
 require('mini.misc').setup_termbg_sync()
 -- require('mini.misc').setup_auto_root()
 -- 暴露全局函数 (put/put_text)
-require('mini.misc').setup({
-	make_global = { 'put', 'put_text' },
-})
+require('mini.misc').setup({ make_global = { 'put', 'put_text' } })

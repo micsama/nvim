@@ -3,7 +3,7 @@
     "bufferline.nvim": [],
     "bullets.nvim": [],
     "codecompanion.nvim": {
-      "rev": "bcd4f84"
+      "rev": "9c646bd"
     },
     "csvview.nvim": [],
     "dropbar.nvim": [],
@@ -18,7 +18,7 @@
     },
     "mason.nvim": [],
     "mini.nvim": {
-      "rev": "64a23d0"
+      "rev": "ee4a4a4"
     },
     "nui.nvim": [],
     "nvim-dap": {
@@ -36,20 +36,22 @@
     "onedarkpro.nvim": [],
     "plenary.nvim": [],
     "render-markdown.nvim": {
-      "rev": "475d3ad"
+      "rev": "10126ef"
     },
     "sqlite.lua": [],
     "telescope-dap.nvim": [],
     "telescope-fzf-native.nvim": [],
     "telescope.nvim": [],
     "tiny-inline-diagnostic.nvim": {
-      "rev": "1cb11cc"
+      "rev": "994c13d"
     },
     "translate.nvim": [],
     "undotree": [],
-    "which-key.nvim": [],
+    "which-key.nvim": {
+      "rev": "3aab214"
+    },
     "yazi.nvim": {
-      "rev": "3c52751"
+      "rev": "d5eb45f"
     }
   }
 }

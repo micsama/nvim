@@ -73,10 +73,18 @@ local mappings = {
 	{ "n", "<D-y>", "<cmd>Yazi<cr>", "在当前文件位置打开Yazi" },
 	{ "n", "<leader>t", '<cmd>Trouble<CR>', "打开 Trouble 诊断面板" },
 	{ "nv", "tt", "<cmd>Translate zh<CR>", "翻译光标下内容为中文" },
-	{ "n", "<D-b>", function() MiniFiles.open() end, "打开文件树" },
+	{ "n", "<D-b>", function() ToggleMiniFilesAtCurrentFile() end, "打开文件树" },
 	{ "n", 'H', function() MiniDiff.toggle_overlay() end, "切换Hunk预览" },
 	{ 'nv', '<D-o>', '<CMD>CodeCompanionChat Toggle<CR>', 'Open the LLM' }
 }
+
+function ToggleMiniFilesAtCurrentFile()
+	if not MiniFiles.close() then
+		local current_file = vim.api.nvim_buf_get_name(0)
+		local is_valid_file = current_file and current_file ~= "" and vim.fn.filereadable(current_file) == 1
+		MiniFiles.open(is_valid_file and current_file or nil)
+	end
+end
 
 -- 应用所有表格中的快捷键映射
 for _, mapping in ipairs(mappings) do
