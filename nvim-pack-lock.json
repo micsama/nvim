@@ -3,9 +3,12 @@
     "bufferline.nvim": [],
     "bullets.nvim": [],
     "codecompanion.nvim": {
-      "rev": "5efcc8f"
+      "rev": "31f8705"
     },
-    "csvview.nvim": [],
+    "csvview.nvim": {
+      "rev": "bbab4c2",
+      "src": "https://github.com/hat0uma/csvview.nvim"
+    },
     "dropbar.nvim": [],
     "faster.nvim": [],
     "floatty.nvim": [],
@@ -18,11 +21,11 @@
     },
     "mason.nvim": [],
     "mini.nvim": {
-      "rev": "e04b5c6"
+      "rev": "f545dcc"
     },
     "nui.nvim": [],
     "nvim-dap": {
-      "rev": "6782b09"
+      "rev": "e97dc47"
     },
     "nvim-dap-python": [],
     "nvim-dap-ui": [],
@@ -30,24 +33,30 @@
     "nvim-neoclip.lua": [],
     "nvim-nio": [],
     "nvim-treesitter": [],
-    "nvim-treesitter-context": [],
+    "nvim-treesitter-context": {
+      "rev": "ec308c7"
+    },
     "onedarkpro.nvim": [],
     "plenary.nvim": [],
     "render-markdown.nvim": {
-      "rev": "475d3ad"
+      "rev": "a1b2bf0"
     },
     "sqlite.lua": [],
     "telescope-dap.nvim": [],
     "telescope-fzf-native.nvim": [],
-    "telescope.nvim": [],
+    "telescope.nvim": {
+      "rev": "84b9ba0"
+    },
     "tiny-inline-diagnostic.nvim": {
-      "rev": "1cb11cc"
+      "rev": "d4d1718"
     },
     "translate.nvim": [],
     "undotree": [],
-    "which-key.nvim": [],
+    "which-key.nvim": {
+      "rev": "3aab214"
+    },
     "yazi.nvim": {
-      "rev": "19c0411"
+      "rev": "793cc09"
     }
   }
 }

@@ -32,7 +32,7 @@ map('n', '<leader>gg', lazygit.toggle, "打开lazygit")
 -- 2. Lazygit 浮动窗口
 local gemini = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
 	cmd = "gemini", window = { width = 0.8, height = 0.95, } }))
-map('n', '<D-e>', gemini.toggle, "打开lazygit")
+map('ntv', '<D-e>', gemini.toggle, "打开gemini")
 
 -- 3. Which-Key 基础配置
 require('which-key').setup()
