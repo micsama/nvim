@@ -26,6 +26,7 @@ vim.g.neovide_floating_blur_amount_y = 2.0 -- 浮动窗口 Y 轴模糊量
 vim.g.neovide_confirm_quit = true          -- 退出时要求确认
 
 -- 输入、鼠标与触控板
+vim.g.neovide_has_mouse_grid_detection = true
 vim.g.neovide_input_macos_option_key_is_meta = 'only_left' -- 仅将左 Option 键映射为 Meta
 vim.g.neovide_hide_mouse_when_typing = true                -- 打字时自动隐藏鼠标
 vim.g.neovide_touch_deadzone = 8.0                         -- 设置触摸板死区，防止意外滚动
@@ -56,17 +57,23 @@ local function set_ime(args)
 	end
 end
 
--- local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
---
--- vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
---     group = ime_input,
---     pattern = "*",
---     callback = set_ime
--- })
---
---
--- vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
---     group = ime_input,
---     pattern = "[/\\?]",
---     callback = set_ime
--- })
+local ime_input = vim.api.nvim_create_augroup("ime_input", { clear = true })
+
+vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
+	group = ime_input,
+	pattern = "*",
+	callback = set_ime
+})
+
+
+vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
+	group = ime_input,
+	pattern = "[/\\?]",
+	callback = set_ime
+})
+-- ✅ 终端模式
+vim.api.nvim_create_autocmd({ "TermEnter", "TermLeave" }, {
+	group = ime_input,
+	pattern = "*",
+	callback = set_ime,
+})
