@@ -29,10 +29,10 @@ local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_op
 	cmd = "lazygit", window = { width = 0.95, height = 0.95, } }))
 map('n', '<leader>gg', lazygit.toggle, "打开lazygit")
 
--- 2. Lazygit 浮动窗口
-local gemini = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
-	cmd = "gemini", window = { width = 0.8, height = 0.95, } }))
-map('n', '<D-e>', gemini.toggle, "打开lazygit")
+-- 2. gemini 浮动窗口
+local codex = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
+	cmd = "codex", window = { width = 0.8, height = 0.95, } }))
+map('ntv', '<D-e>', codex.toggle, "打开codex")
 
 -- 3. Which-Key 基础配置
 require('which-key').setup()
