@@ -24,7 +24,7 @@ vim.pack.add({
 	'https://github.com/kkharji/sqlite.lua',                      -- SQLite 数据库支持 (如 Neoclip 依赖)
 	'https://github.com/MunifTanjim/nui.nvim',                    -- 强大的 Neovim UI 组件库
 	'https://github.com/nvim-telescope/telescope-fzf-native.nvim', -- Telescope FZF 性能优化
-	-- 'https://github.com/neovim/nvim-lspconfig',                   -- lsp
+	'https://github.com/neovim/nvim-lspconfig',                   -- lsp
 
 	-- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
 	'https://github.com/olimorris/onedarkpro.nvim', -- 主题色 (Colorscheme)

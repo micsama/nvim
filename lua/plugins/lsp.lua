@@ -9,14 +9,73 @@
 -- ============================================================================
 -- 模块引入与实用工具
 -- ============================================================================
+local function set_python_path(command)
+	local user_path_valid = command.args and string.len(command.args) > 0
+	local path = user_path_valid and command.args or "./.venv/bin/python"
+	local clients = vim.lsp.get_clients {
+		bufnr = vim.api.nvim_get_current_buf(),
+		name = 'pyright',
+	}
+	for _, client in ipairs(clients) do
+		if client.settings then
+			client.settings.python = vim.tbl_deep_extend('force', client.settings.python, { pythonPath = path })
+		else
+			client.config.settings = vim.tbl_deep_extend('force', client.config.settings, { python = { pythonPath = path } })
+		end
+		client:notify('workspace/didChangeConfiguration', { settings = nil })
+	end
+	vim.notify('Pyright pythonPath set to: ' .. path, vim.log.levels.INFO, { title = 'Pyright Config' })
+end
+
 local map = require('util.utils').map
 
+vim.lsp.config('pyright', {
+	cmd = { 'pyright-langserver', '--stdio' },
+	filetypes = { 'python' },
+	root_markers = {
+		'pyproject.toml',
+		'setup.py',
+		'setup.cfg',
+		'requirements.txt',
+		'Pipfile',
+		'pyrightconfig.json',
+		'.git',
+	},
+	settings = {
+		python = {
+			analysis = {
+				typeCheckingMode = "off",
+				autoSearchPaths = true,
+				diagnosticMode = 'openFilesOnly',
+			},
+		},
+	},
+	on_attach = function(client, bufnr)
+		vim.notify("hi,attach python")
+		vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightOrganizeImports', function()
+			local params = {
+				command = 'pyright.organizeimports',
+				arguments = { vim.uri_from_bufnr(bufnr) },
+			}
+			client.request('workspace/executeCommand', params, nil, bufnr)
+		end, {
+			desc = 'Organize Imports',
+		})
+		vim.api.nvim_buf_create_user_command(bufnr, 'Venv', set_python_path, {
+			desc = 'Reconfigure pyright with the provided python path (default: .venv/bin/python)',
+			nargs = '?',
+			complete = 'file',
+		})
+	end,
+})
 -- ============================================================================
 -- LSP 和诊断配置 (vim.diagnostic, vim.lsp)
 -- ============================================================================
 -- 启用 Inlay Hints
 vim.lsp.inlay_hint.enable(true)
-
+-- 启用的 Language Servers
+vim.lsp.config('luals', {})
+vim.lsp.config('markdown-oxide', {})
 -- 全局 LSP 配置
 vim.lsp.config('*', {
 	capabilities = {
@@ -51,9 +110,7 @@ vim.diagnostic.config({
 })
 
 
--- 启用的 Language Servers
-vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide', 'dockerls',
-	'bashls' })
+vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide', 'dockerls', 'bashls' })
 
 -- 格式化整个文件并保留光标位置
 map('n', '<D-S-f>', function()
