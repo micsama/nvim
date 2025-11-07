@@ -27,3 +27,4 @@ mini.md
 ## 插件管理与锁文件
 lazy-lock.json
 AGENTS.md
+nvim-pack-lock.json
