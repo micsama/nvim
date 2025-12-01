@@ -13,7 +13,7 @@ local map = require('util.utils').map
 local telescope_builtin = require('telescope.builtin')
 
 -- Floatty 配置基础（使用当前工作目录作为 ID）
-local floatty_opts = { id = vim.fn.getcwd }
+local floatty_opts = { id = vim.fn.getcwd,wo={wrap = true}}
 
 -- ============================================================================
 -- 核心工具 (Floatty / Lazygit / Which-Key)
