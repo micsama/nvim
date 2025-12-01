@@ -51,7 +51,6 @@ vim.lsp.config('pyright', {
 		},
 	},
 	on_attach = function(client, bufnr)
-		vim.notify("hi,attach python")
 		vim.api.nvim_buf_create_user_command(bufnr, 'LspPyrightOrganizeImports', function()
 			local params = {
 				command = 'pyright.organizeimports',
