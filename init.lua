@@ -56,14 +56,14 @@ vim.pack.add({
 	'https://github.com/olimorris/codecompanion.nvim', -- LLM/AI 代码伴侣工具
 
 	-- G. 调试 (DAP) 及其依赖
-	'https://github.com/williamboman/mason.nvim',          -- 插件/LSP/DAP 安装器
-	'https://github.com/nvim-neotest/nvim-nio',            -- 异步 I/O 依赖
-	'https://github.com/mfussenegger/nvim-dap',            -- Debug Adapter Protocol 核心
-	'https://github.com/rcarriga/nvim-dap-ui',             -- DAP 调试 UI 界面
-	'https://github.com/theHamsta/nvim-dap-virtual-text',  -- DAP 调试虚拟文本显示
-	'https://github.com/jay-babu/mason-nvim-dap.nvim',     -- Mason DAP 自动安装
-	'https://github.com/mfussenegger/nvim-dap-python',     -- Python 调试配置
-	'https://github.com/nvim-telescope/telescope-dap.nvim', -- Telescope DAP 扩展
+	-- 'https://github.com/williamboman/mason.nvim',          -- 插件/LSP/DAP 安装器
+	-- 'https://github.com/nvim-neotest/nvim-nio',            -- 异步 I/O 依赖
+	-- 'https://github.com/mfussenegger/nvim-dap',            -- Debug Adapter Protocol 核心
+	-- 'https://github.com/rcarriga/nvim-dap-ui',             -- DAP 调试 UI 界面
+	-- 'https://github.com/theHamsta/nvim-dap-virtual-text',  -- DAP 调试虚拟文本显示
+	-- 'https://github.com/jay-babu/mason-nvim-dap.nvim',     -- Mason DAP 自动安装
+	-- 'https://github.com/mfussenegger/nvim-dap-python',     -- Python 调试配置
+	-- 'https://github.com/nvim-telescope/telescope-dap.nvim', -- Telescope DAP 扩展
 
 	-- H. 文件类型特定(Filetype Specific)
 	'https://github.com/kaymmm/bullets.nvim',                      -- Markdown 列表增强
