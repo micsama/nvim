@@ -15,8 +15,8 @@ end
 
 -- 3. 插件管理：使用 vim.pack.add 定义所有插件列表
 vim.pack.add({
-	{ src = 'https://github.com/nvim-telescope/telescope.nvim',   branch = '0.1.x' },
-	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter', branch = 'master', build = ':TSUpdate' },
+	{ src = 'https://github.com/nvim-telescope/telescope.nvim',   tag = 'v0.2.0' },
+	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
 	'https://github.com/nvim-mini/mini.nvim', -- mini.nvim(具体配置见mini.lua)
 
 	-- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
@@ -56,8 +56,8 @@ vim.pack.add({
 	'https://github.com/olimorris/codecompanion.nvim', -- LLM/AI 代码伴侣工具
 
 	-- G. 调试 (DAP) 及其依赖
-	-- 'https://github.com/williamboman/mason.nvim',          -- 插件/LSP/DAP 安装器
-	-- 'https://github.com/nvim-neotest/nvim-nio',            -- 异步 I/O 依赖
+	'https://github.com/williamboman/mason.nvim', -- 插件/LSP/DAP 安装器
+	'https://github.com/nvim-neotest/nvim-nio',  -- 异步 I/O 依赖
 	-- 'https://github.com/mfussenegger/nvim-dap',            -- Debug Adapter Protocol 核心
 	-- 'https://github.com/rcarriga/nvim-dap-ui',             -- DAP 调试 UI 界面
 	-- 'https://github.com/theHamsta/nvim-dap-virtual-text',  -- DAP 调试虚拟文本显示

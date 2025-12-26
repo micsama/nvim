@@ -10,7 +10,6 @@
 -- 模块引入与实用工具
 -- ============================================================================
 local map = require('util.utils').map
-local telescope_builtin = require('telescope.builtin')
 
 -- Floatty 配置基础（使用当前工作目录作为 ID）
 local floatty_opts = { id = vim.fn.getcwd,wo={wrap = true}}
@@ -85,15 +84,11 @@ require('lualine').setup {
 -- 模糊查找 (Telescope) 及快捷键
 -- ============================================================================
 
-require('telescope').setup({
-	extensions = {}
-})
-
--- -- TODO: 如果需要，取消注释启用 fzf 扩展
--- -- require('telescope').load_extension('fzf')
+local builtin = require('telescope.builtin')
+-- builtin.load_extension('fzf')
 
 -- Telescope 快捷键映射
-map('nv', '<leader>ff', telescope_builtin.find_files, 'Find Files')
-map('nv', '<leader>fg', telescope_builtin.live_grep, 'Live Grep')
-map('nv', '<leader>fb', telescope_builtin.buffers, 'Find Buffers')
-map('nv', '<leader>fh', telescope_builtin.help_tags, 'Find Help Tags')
+map('nv', '<leader>ff', builtin.find_files, 'Find Files')
+map('nv', '<leader>fg', builtin.live_grep, 'Live Grep')
+map('nv', '<leader>fb', builtin.buffers, 'Find Buffers')
+map('nv', '<leader>fh', builtin.help_tags, 'Find Help Tags')

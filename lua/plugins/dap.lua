@@ -10,7 +10,6 @@ local dapui = require('dapui')
 -- ============================================================================
 
 -- DAP 辅助插件设置
-require('mason').setup()
 require('nvim-dap-virtual-text').setup()
 require('mason-nvim-dap').setup({ ensure_installed = { 'python' } })
 require('dap-python').setup('python')

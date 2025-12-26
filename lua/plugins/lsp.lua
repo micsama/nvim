@@ -28,7 +28,7 @@ local function set_python_path(command)
 end
 
 local map = require('util.utils').map
-
+require('mason').setup()
 vim.lsp.config('pyright', {
 	cmd = { 'pyright-langserver', '--stdio' },
 	filetypes = { 'python' },
@@ -70,8 +70,6 @@ vim.lsp.config('pyright', {
 -- ============================================================================
 -- LSP 和诊断配置 (vim.diagnostic, vim.lsp)
 -- ============================================================================
--- 启用 Inlay Hints
-vim.lsp.inlay_hint.enable(true)
 -- 启用的 Language Servers
 vim.lsp.config('luals', {})
 vim.lsp.config('markdown-oxide', {})
@@ -109,7 +107,8 @@ vim.diagnostic.config({
 })
 
 
-vim.lsp.enable({ 'tombi', 'luals', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide', 'dockerls', 'bashls' })
+vim.lsp.enable({ 'tombi', 'lua_ls', 'jsonls', 'pyright', 'ruff', 'rust_analyzer', 'nushell', 'markdown-oxide', 'dockerls',
+	'bashls' })
 
 -- 格式化整个文件并保留光标位置
 map('n', '<D-S-f>', function()
@@ -128,29 +127,32 @@ end, '格式化文件')
 -- Treesitter 要求禁用 smartindent
 vim.opt.smartindent = false
 
--- Treesitter 配置
-require('nvim-treesitter.configs').setup({
-	auto_install = true,
-	sync_install = false,
-	-- 保持常用的语言列表
-	ensure_installed = {
-		'gitignore', 'json', 'nu', 'gitcommit', 'git_config', 'vimdoc', 'csv',
-		'fish', 'markdown_inline', 'markdown', 'bash', 'lua', 'yaml', 'python',
-		'toml', 'rust', 'cmake', 'dockerfile'
-	},
-	-- 核心功能启用
-	highlight = { enable = true, additional_vim_regex_highlighting = false },
-	indent = { enable = true },
-	incremental_selection = {
-		enable = true,
-		keymaps = {
-			init_selection = '<CR>',
-			node_incremental = '<CR>',
-			node_decremental = '<s-CR>',
-			scope_incremental = '<c-l>',
-		},
-	},
+vim.api.nvim_create_autocmd('FileType', {
+	pattern = { '<filetype>' },
+	callback = function() vim.treesitter.start() end,
 })
+require("nvim-treesitter").setup {
+	install_dir = vim.fn.stdpath('data') .. '/site'
+}
+
+-- Treesitter 配置
+-- auto_install = true,
+-- sync_install = false,
+-- -- 保持常用的语言列表
+-- -- 核心功能启用
+-- highlight = { enable = true, additional_vim_regex_highlighting = false },
+-- indent = { enable = true },
+-- incremental_selection = {
+-- 	enable = true,
+-- 	keymaps = {
+-- 		init_selection = '<CR>',
+-- 		node_incremental = '<CR>',
+-- 		node_decremental = '<s-CR>',
+-- 		scope_incremental = '<c-l>',
+-- 	},
+-- },
+
+
 
 -- Treesitter 辅助插件
 require('treesitter-context').setup()
