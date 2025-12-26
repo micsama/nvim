@@ -55,7 +55,8 @@ else
 	vim.notify('Linux Loading...')
 	vim.opt.shell = '/usr/bin/bash'
 	vim.env.PATH = '/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin' ..
-	vim.env.PATH                                                                                                             -- 将 Homebrew 的 bin 目录添加到 PATH。
+			vim.env
+			.PATH   -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
 -- 终端颜色配置 (Dracula 近似值)

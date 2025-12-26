@@ -33,12 +33,12 @@ vim.g.neovide_touch_deadzone = 8.0                         -- 设置触摸板死
 
 -- 动画与光标视觉特效 (VFX)
 vim.g.neovide_scroll_animation_length = 0.3        -- 滚动动画时长 (秒)
-vim.g.neovide_position_animation_length = 0.15     -- 光标位置移动动画时长
+vim.g.neovide_position_animation_length = 0.18     -- 光标位置移动动画时长
 vim.g.neovide_cursor_animation_length = 0.07       -- 光标闪烁动画时长
 vim.g.neovide_cursor_vfx_mode = 'pixiedust'        -- 光标视觉特效模式
 vim.g.neovide_cursor_animate_in_insert_mode = true -- 插入模式下也启用光标动画
 vim.g.neovide_scroll_animation_far_lines = 1       -- 启用快速滚动时的平滑动画
-vim.g.neovide_cursor_vfx_particle_density = 12.0   -- 光标特效粒子密度
+vim.g.neovide_cursor_vfx_particle_density = 15.0   -- 光标特效粒子密度
 vim.g.neovide_underline_stroke_scale = 1.0         -- 下划线笔触缩放比例
 
 -- 动态缩放功能与快捷键
@@ -65,12 +65,12 @@ vim.api.nvim_create_autocmd({ "InsertEnter", "InsertLeave" }, {
 	callback = set_ime
 })
 
-
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
 	group = ime_input,
 	pattern = "[/\\?]",
 	callback = set_ime
 })
+
 -- ✅ 终端模式
 vim.api.nvim_create_autocmd({ "TermEnter", "TermLeave" }, {
 	group = ime_input,
