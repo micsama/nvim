@@ -5,59 +5,58 @@
 vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 
 -- 1. 加载核心配置
-require('config.default') -- 加载基础 Vim/Neovim 选项配置
-require('config.keymaps') -- 加载全局键盘快捷键映射
+require("config.default") -- 加载基础 Vim/Neovim 选项配置
+require("config.keymaps") -- 加载全局键盘快捷键映射
 
 -- 2. GUI 客户端特定配置
 if vim.g.neovide then
-	require('config.neovide') -- 仅在 Neovide 环境下加载 GUI 特有配置
+	require("config.neovide") -- 仅在 Neovide 环境下加载 GUI 特有配置
 end
 
 -- 3. 插件管理：使用 vim.pack.add 定义所有插件列表
 vim.pack.add({
-	{ src = 'https://github.com/nvim-telescope/telescope.nvim',   tag = 'v0.2.0' },
-	{ src = 'https://github.com/nvim-treesitter/nvim-treesitter', build = ':TSUpdate' },
-	'https://github.com/nvim-mini/mini.nvim', -- mini.nvim(具体配置见mini.lua)
+	{ src = "https://github.com/nvim-telescope/telescope.nvim", tag = "v0.2.0" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+	"https://github.com/nvim-mini/mini.nvim", -- mini.nvim(具体配置见mini.lua)
 
 	-- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
-	'https://github.com/nvim-lua/plenary.nvim',                   -- Lua 基础工具库，许多插件依赖
-	'https://github.com/kkharji/sqlite.lua',                      -- SQLite 数据库支持 (如 Neoclip 依赖)
-	'https://github.com/MunifTanjim/nui.nvim',                    -- 强大的 Neovim UI 组件库
-	'https://github.com/nvim-telescope/telescope-fzf-native.nvim', -- Telescope FZF 性能优化
-	'https://github.com/neovim/nvim-lspconfig',                   -- lsp
+	"https://github.com/nvim-lua/plenary.nvim", -- Lua 基础工具库，许多插件依赖
+	"https://github.com/kkharji/sqlite.lua", -- SQLite 数据库支持 (如 Neoclip 依赖)
+	"https://github.com/MunifTanjim/nui.nvim", -- 强大的 Neovim UI 组件库
+	"https://github.com/nvim-telescope/telescope-fzf-native.nvim", -- Telescope FZF 性能优化
+	"https://github.com/neovim/nvim-lspconfig", -- lsp
 
 	-- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
-	'https://github.com/olimorris/onedarkpro.nvim', -- 主题色 (Colorscheme)
-	'https://github.com/nvim-lualine/lualine.nvim', -- 状态行 (Statusline)
-	'https://github.com/akinsho/bufferline.nvim',  -- 标签页/缓冲区行 (Tab/Buffer Line)
-	'https://github.com/Bekaboo/dropbar.nvim',     -- 文件路径/上下文导航栏
-	'https://github.com/folke/which-key.nvim',     -- 快捷键提示系统
+	"https://github.com/olimorris/onedarkpro.nvim", -- 主题色 (Colorscheme)
+	"https://github.com/nvim-lualine/lualine.nvim", -- 状态行 (Statusline)
+	"https://github.com/akinsho/bufferline.nvim", -- 标签页/缓冲区行 (Tab/Buffer Line)
+	"https://github.com/Bekaboo/dropbar.nvim", -- 文件路径/上下文导航栏
+	"https://github.com/folke/which-key.nvim", -- 快捷键提示系统
 
 	-- 'https://github.com/folke/noice.nvim',         -- 好通知
 	-- 'https://github.com/rcarriga/nvim-notify',     -- 通知系统
 
-
 	-- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
-	'https://github.com/nvim-treesitter/nvim-treesitter-context', -- Treesitter 上下文显示
-	'https://github.com/shellRaining/hlchunk.nvim',              -- 高亮当前代码块/缩进块
-	'https://github.com/mbbill/undotree',                        -- 可视化撤销树
-	'https://github.com/rachartier/tiny-inline-diagnostic.nvim', -- 行内诊断信息简洁显示
-	'https://github.com/AckslD/nvim-neoclip.lua',                -- 剪贴板历史管理器
+	"https://github.com/SUSTech-data/wildfire.nvim", --支持按回车键范围选择
+	"https://github.com/nvim-treesitter/nvim-treesitter-context", -- Treesitter 上下文显示
+	"https://github.com/shellRaining/hlchunk.nvim", -- 高亮当前代码块/缩进块
+	"https://github.com/mbbill/undotree", -- 可视化撤销树
+	"https://github.com/rachartier/tiny-inline-diagnostic.nvim", -- 行内诊断信息简洁显示
+	"https://github.com/AckslD/nvim-neoclip.lua", -- 剪贴板历史管理器
 	-- 'https://github.com/folke/trouble.nvim',                     -- 统一的诊断/Quickfix/LSP 列表
-	-- 'https://github.com/keaising/im-select.nvim',                -- 输入法自动切换（现在直接用neovide的功能）
-	'https://github.com/uga-rosa/translate.nvim', -- 翻译功能
+	"https://github.com/uga-rosa/translate.nvim", -- 翻译功能
 
 	-- E. 文件管理与工作区 (File Management & Workspaces)
-	'https://github.com/mikavilpas/yazi.nvim',   -- Yazi 文件管理器集成
-	'https://github.com/pteroctopus/faster.nvim', -- 大型文件优化处理
+	"https://github.com/mikavilpas/yazi.nvim", -- Yazi 文件管理器集成
+	"https://github.com/pteroctopus/faster.nvim", -- 大型文件优化处理
 
 	-- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
-	'https://github.com/ingur/floatty.nvim',          -- 集成终端，并支持lazygit等工作
-	'https://github.com/olimorris/codecompanion.nvim', -- LLM/AI 代码伴侣工具
+	"https://github.com/ingur/floatty.nvim", -- 集成终端，并支持lazygit等工作
+	"https://github.com/olimorris/codecompanion.nvim", -- LLM/AI 代码伴侣工具
 
 	-- G. 调试 (DAP) 及其依赖
-	'https://github.com/williamboman/mason.nvim', -- 插件/LSP/DAP 安装器
-	'https://github.com/nvim-neotest/nvim-nio',  -- 异步 I/O 依赖
+	"https://github.com/williamboman/mason.nvim", -- 插件/LSP/DAP 安装器
+	"https://github.com/nvim-neotest/nvim-nio", -- 异步 I/O 依赖
 	-- 'https://github.com/mfussenegger/nvim-dap',            -- Debug Adapter Protocol 核心
 	-- 'https://github.com/rcarriga/nvim-dap-ui',             -- DAP 调试 UI 界面
 	-- 'https://github.com/theHamsta/nvim-dap-virtual-text',  -- DAP 调试虚拟文本显示
@@ -66,12 +65,12 @@ vim.pack.add({
 	-- 'https://github.com/nvim-telescope/telescope-dap.nvim', -- Telescope DAP 扩展
 
 	-- H. 文件类型特定(Filetype Specific)
-	'https://github.com/kaymmm/bullets.nvim',                      -- Markdown 列表增强
-	'https://github.com/MeanderingProgrammer/render-markdown.nvim', -- Markdown 实时渲染/预览
-	'https://github.com/hat0uma/csvview.nvim'                      -- csv
+	"https://github.com/kaymmm/bullets.nvim", -- Markdown 列表增强
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim", -- Markdown 实时渲染/预览
+	"https://github.com/hat0uma/csvview.nvim", -- csv
 })
 -- initialize config
 
 -- vim.pack.update()
-require('plugins.mini') -- 配置 mini家族的 核心插件
-require('dzmfg')
+require("dzmfg")
+require("plugins.mini") -- 配置 mini家族的 核心插件
