@@ -15,7 +15,16 @@ end
 
 -- 3. 插件管理：使用 vim.pack.add 定义所有插件列表
 vim.pack.add({
+
+	-- 准备研究后续加入
+	-- "https://github.com/debugloop/telescope-undo.nvim",
+
+
+
+
 	{ src = "https://github.com/nvim-telescope/telescope.nvim", tag = "v0.2.0" },
+	-- Telescope FZF 性能优化(需要在安装的目录下手动运行 make)
+	{ src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim"  ,build = "make"},
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 	"https://github.com/nvim-mini/mini.nvim", -- mini.nvim(具体配置见mini.lua)
 
@@ -23,7 +32,6 @@ vim.pack.add({
 	"https://github.com/nvim-lua/plenary.nvim", -- Lua 基础工具库，许多插件依赖
 	"https://github.com/kkharji/sqlite.lua", -- SQLite 数据库支持 (如 Neoclip 依赖)
 	"https://github.com/MunifTanjim/nui.nvim", -- 强大的 Neovim UI 组件库
-	"https://github.com/nvim-telescope/telescope-fzf-native.nvim", -- Telescope FZF 性能优化
 	"https://github.com/neovim/nvim-lspconfig", -- lsp
 
 	-- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
@@ -33,8 +41,8 @@ vim.pack.add({
 	"https://github.com/Bekaboo/dropbar.nvim", -- 文件路径/上下文导航栏
 	"https://github.com/folke/which-key.nvim", -- 快捷键提示系统
 
-	-- 'https://github.com/folke/noice.nvim',         -- 好通知
-	-- 'https://github.com/rcarriga/nvim-notify',     -- 通知系统
+	"https://github.com/folke/noice.nvim", -- 好通知
+	"https://github.com/rcarriga/nvim-notify", -- 通知系统
 
 	-- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
 	"https://github.com/SUSTech-data/wildfire.nvim", --支持按回车键范围选择

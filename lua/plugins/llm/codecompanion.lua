@@ -7,7 +7,7 @@ local IS_MACOS = vim.uv.os_uname().sysname == 'Darwin'
 
 
 -- 定义 DeepSeek 模型的配置，语言设置为简体中文
-local gpt5_apapter = {
+local gpt5_adapter = {
   opts = { language = '简体中文' },
   adapter = 'gpt5'
 }
@@ -25,7 +25,7 @@ local qw_adapter = {
 }
 
 local gpt5 = {
-  chat = gpt5_apapter,
+  chat = gpt5_adapter,
   inline = gpt5_adapter,
   agent = gpt5_adapter
 }
