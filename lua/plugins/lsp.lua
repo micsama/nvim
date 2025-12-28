@@ -83,7 +83,7 @@ vim.lsp.config("pyright", {
 				command = "pyright.organizeimports",
 				arguments = { vim.uri_from_bufnr(bufnr) },
 			}
-			client.request("workspace/executeCommand", params, nil, bufnr)
+			client:request("workspace/executeCommand", params, nil, bufnr)
 		end, {
 			desc = "Organize Imports",
 		})
@@ -115,6 +115,7 @@ vim.diagnostic.config({
 })
 
 vim.lsp.enable({
+	"biome",
 	"tombi",
 	"lua_ls",
 	"jsonls",
