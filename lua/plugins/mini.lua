@@ -84,7 +84,7 @@ require('mini.icons').setup({
 MiniIcons.mock_nvim_web_devicons()
 MiniIcons.tweak_lsp_kind()
 
-require('mini.notify').setup()
+-- require('mini.notify').setup()
 require('mini.starter').setup()
 require('mini.cursorword').setup()
 -- require('mini.base16').setup({}) -- 颜色主题，保持原样注释

@@ -11,24 +11,24 @@
 -- ============================================================================
 local map = require('util.utils').map
 
--- Floatty 配置基础（使用当前工作目录作为 ID）
-local floatty_opts = { id = vim.fn.getcwd,wo={wrap = true}}
 
 -- ============================================================================
 -- 核心工具 (Floatty / Lazygit / Which-Key)
 -- ============================================================================
 
+-- Floatty 配置基础（使用当前工作目录作为 ID）
+local floatty_opts = { id = vim.fn.getcwd,wo={wrap = true}}
+
 -- 1. 普通浮动终端 (term)
 local term = require("floatty").setup(floatty_opts)
 map('ntv', '<D-g>', term.toggle, "切换终端")
-
 
 -- 2. Lazygit 浮动窗口
 local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
 	cmd = "lazygit", window = { width = 0.95, height = 0.95, } }))
 map('n', '<leader>gg', lazygit.toggle, "打开lazygit")
 
--- 2. gemini 浮动窗口
+-- 2. Codex 浮动窗口
 local codex = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
 	cmd = "codex", window = { width = 0.8, height = 0.95, } }))
 map('ntv', '<D-e>', codex.toggle, "打开codex")
@@ -44,9 +44,9 @@ require('which-key').setup()
 require('bufferline').setup({
 	options = {
 		mode = 'tabs',
-		numbers = function(opts)
-			return string.format('%s%s', opts.ordinal, opts.raise(opts.id))
-		end,
+	-- 	numbers = function(opts)
+	-- 		return string.format('%s%s', opts.ordinal, opts.raise(opts.id))
+	-- 	end,
 		diagnostics = 'nvim_lsp',
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
 			local icon = level:match('error') and ' ' or ' '
@@ -58,7 +58,6 @@ require('bufferline').setup({
 		},
 		tab_size = 16,
 		padding = 0,
-		separator_style = 'thick',
 		left_trunc_marker = ' ',
 		right_trunc_marker = ' ',
 	}
@@ -68,27 +67,26 @@ require('bufferline').setup({
 require('lualine').setup {
 	sections = {
 		lualine_a = { ' (function(d) return d:len() > 10 and d:sub(1, 10) .. "..." or d end)(vim.fn.fnamemodify(vim.fn.getcwd(), ":t")) ', 'filename' },
-		lualine_b = { 'branch', 'diff', 'diagnostics' },
-		lualine_c = {},
+		lualine_b = { 'branch'},
+		lualine_c = {'diff', 'diagnostics'},
 		lualine_x = { 'progress' },
 		lualine_y = { 'filesize', 'filetype' },
 		lualine_z = { 'location' }
 	},
-	tabline = {},
-	winbar = {},
-	inactive_winbar = {},
-	extensions = {}
+	-- tabline = {},
+	-- winbar = {},
+	-- inactive_winbar = {},
+	-- extensions = {}
 }
 
 -- ============================================================================
 -- 模糊查找 (Telescope) 及快捷键
 -- ============================================================================
-
 local builtin = require('telescope.builtin')
--- builtin.load_extension('fzf')
+require('telescope').load_extension('fzf')
 
 -- Telescope 快捷键映射
 map('nv', '<leader>ff', builtin.find_files, 'Find Files')
 map('nv', '<leader>fg', builtin.live_grep, 'Live Grep')
-map('nv', '<leader>fb', builtin.buffers, 'Find Buffers')
-map('nv', '<leader>fh', builtin.help_tags, 'Find Help Tags')
+-- map('nv', '<leader>fb', builtin.buffers, 'Find Buffers')
+-- map('nv', '<leader>fh', builtin.help_tags, 'Find Help Tags')
