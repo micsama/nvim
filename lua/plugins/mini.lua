@@ -71,7 +71,7 @@ require("mini.files").setup({
 
 local function yank_relative_path()
 	local p = vim.fn.fnamemodify(MiniFiles.get_fs_entry().path, ":.")
-	vim.fn.setreg("+", p)
+	vim.fn.setreg('+', p)
 	vim.notify(p)
 end
 
