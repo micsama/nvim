@@ -78,6 +78,7 @@ local mappings = {
 	{ 'nv', '<D-o>', '<CMD>CodeCompanionChat Toggle<CR>', 'Open the LLM' }
 }
 
+-- 打开文件树后，定位到当前文件
 function ToggleMiniFilesAtCurrentFile()
 	if not MiniFiles.close() then
 		local current_file = vim.api.nvim_buf_get_name(0)
