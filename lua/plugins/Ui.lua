@@ -44,9 +44,9 @@ require('which-key').setup()
 require('bufferline').setup({
 	options = {
 		mode = 'tabs',
-	-- 	numbers = function(opts)
-	-- 		return string.format('%s%s', opts.ordinal, opts.raise(opts.id))
-	-- 	end,
+		numbers = function(opts)
+			return string.format('%s', opts.ordinal)
+		end,
 		diagnostics = 'nvim_lsp',
 		diagnostics_indicator = function(count, level, diagnostics_dict, context)
 			local icon = level:match('error') and ' ' or ' '

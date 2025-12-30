@@ -183,5 +183,21 @@ require("nvim-treesitter").setup({
 
 -- Treesitter 辅助插件
 require("treesitter-context").setup()
-require("faster").setup()
+require("faster").setup({
+	behaviours = {
+		bigfile = {
+			features_disabled = {
+				"illuminate",
+				"matchparen",
+				"lsp",
+				"treesitter",
+				"indent_blankline",
+				"vimopts",
+				-- "syntax",
+				-- "filetype",
+			},
+			filesize = 10,
+		},
+	},
+})
 require("render-markdown").setup({ completions = { lsp = { enabled = true } } })
