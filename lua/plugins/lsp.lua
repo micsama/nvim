@@ -130,7 +130,7 @@ vim.lsp.enable({
 })
 
 -- 格式化整个文件并保留光标位置
-map("n", "<D-S-f>", function()
+map("niv", "<D-S-f>", function()
 	vim.notify("Formatting...")
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	vim.lsp.buf.format({ async = false })

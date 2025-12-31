@@ -42,7 +42,7 @@ vim.pack.add({
 	"https://github.com/folke/which-key.nvim", -- 快捷键提示系统
 
 	"https://github.com/folke/noice.nvim", -- 好通知
-	"https://github.com/rcarriga/nvim-notify", -- 通知系统
+	-- "https://github.com/rcarriga/nvim-notify", -- 通知系统
 
 	-- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
 	"https://github.com/SUSTech-data/wildfire.nvim", --支持按回车键范围选择

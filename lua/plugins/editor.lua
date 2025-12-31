@@ -33,25 +33,30 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- ## 其他插件配置
 require("wildfire").setup({
-		surrounds = {
-			{ "(", ")" },
-			{ "{", "}" },
-			{ "<", ">" },
-			{ "[", "]" },
-		},
-		keymaps = {
-			init_selection = "<CR>",
-			node_incremental = "<CR>",
-			node_decremental = "<BS>",
-		},
-		filetype_exclude = { "qf" }, --keymaps will be unset in excluding filetypes
+	surrounds = {
+		{ "(", ")" },
+		{ "{", "}" },
+		{ "<", ">" },
+		{ "[", "]" },
+	},
+	keymaps = {
+		init_selection = "<CR>",
+		node_incremental = "<CR>",
+		node_decremental = "<BS>",
+	},
+	filetype_exclude = { "qf" }, --keymaps will be unset in excluding filetypes
 })
 
 require("yazi").setup()
 
 require("Bullets").setup({})
 
-require("noice").setup({})
+require("noice").setup({
+	override = {
+		["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+		["vim.lsp.util.stylize_markdown"] = true,
+	},
+})
 
 require("tiny-inline-diagnostic").setup()
 
