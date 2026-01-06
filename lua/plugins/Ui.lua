@@ -95,5 +95,5 @@ require("telescope").load_extension("fzf")
 -- Telescope 快捷键映射
 map("nv", "<leader>ff", builtin.find_files, "Find Files")
 map("nv", "<leader>fg", builtin.live_grep, "Live Grep")
--- map('nv', '<leader>fb', builtin.buffers, 'Find Buffers')
--- map('nv', '<leader>fh', builtin.help_tags, 'Find Help Tags')
+map('nv', '<leader>fb', builtin.buffers, 'Find Buffers')
+map('nv', '<leader>fh', builtin.help_tags, 'Find Help Tags')

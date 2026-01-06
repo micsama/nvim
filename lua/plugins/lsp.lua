@@ -200,4 +200,7 @@ require("faster").setup({
 		},
 	},
 })
-require("render-markdown").setup({ completions = { lsp = { enabled = true } } })
+require("render-markdown").setup({
+	file_types = { "markdown", "codecompanion", 'vimwiki'  },
+	completions = { lsp = { enabled = true } },
+})

@@ -63,7 +63,7 @@ local mappings = {
 	{ "i", '<c-f>', function() vim.lsp.buf.signature_help() end, "函数签名帮助 (插入模式)" },
 
 	-- 插件与杂项 (Plugins & Utilities)
-	{ "nv", "<M-z>", "<CMD>set wrap!<CR>", "切换自动换行" },
+	{ "nv", "<D-z>", "<CMD>set wrap!<CR>", "切换自动换行" },
 	{ "it", "<D-left>", "<C-o>0", "插入模式：移动到行首" },
 	{ "it", "<D-right>", "<C-o>$", "插入模式：移动到行尾" },
 	{ "n", "<leader><CR>", "<CMD>nohlsearch<CR>", "清除搜索高亮" },
