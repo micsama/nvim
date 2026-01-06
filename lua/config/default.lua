@@ -30,7 +30,7 @@ vim.o.formatoptions = vim.o.formatoptions:gsub("tc", "") -- 禁用自动换行(t
 vim.opt.list = true -- 显示不可见字符（如Tab/空格等）。
 vim.opt.listchars = { tab = "|\\ ", trail = "▫" } -- 设置不可见字符的显示样式: Tab为|和空格，行尾空格为▫。
 vim.opt.exrc = true -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。
-vim.opt.wildignore:append({ '*/__pycache__/*', '*/.git/*', '*/venv/*' }) --默认过滤掉一些冗余
+vim.opt.wildignore:append({ "*/__pycache__/*", "*/.git/*", "*/venv/*" }) --默认过滤掉一些冗余
 -- 文件和备份配置
 local config_dir = vim.fn.stdpath("config") .. "/tmp" -- 获取配置目录下的tmp子目录
 vim.o.backupdir = config_dir .. "/backup,." -- 备份文件保存位置
@@ -60,21 +60,22 @@ end
 
 -- 终端颜色配置 (Dracula 近似值)
 local terminal_colors = {
-	"#000000",
-	"#FF5555",
-	"#50FA7B",
-	"#F1FA8C", -- 0-3 (黑色, 红色, 绿色, 黄色)
-	"#BD93F9",
-	"#FF79C6",
-	"#8BE9FD",
-	"#BFBFBF", -- 4-7 (蓝色, 品红, 青色, 白色)
-	"#4D4D4D",
-	"#FF6E67",
-	"#5AF78E",
-	"#F4F99D", -- 8-11 (亮黑, 亮红, 亮绿, 亮黄)
-	"#CAA9FA",
-	"#FF92D0",
-	"#9AEDFE", -- 12-14 (亮蓝, 亮品红, 亮青色)
+	"#000000", -- 0:  黑色 (Black)
+	"#FF5555", -- 1:  红色 (Red)
+	"#50FA7B", -- 2:  绿色 (Green)
+	"#F1FA8C", -- 3:  黄色 (Yellow)
+	"#BD93F9", -- 4:  蓝色 (Blue)
+	"#FF79C6", -- 5:  品红 (Magenta)
+	"#8BE9FD", -- 6:  青色 (Cyan)
+	"#BFBFBF", -- 7:  白色 (White)
+	"#4D4D4D", -- 8:  亮黑 (Bright Black)
+	"#FF6E67", -- 9:  亮红 (Bright Red)
+	"#5AF78E", -- 10: 亮绿 (Bright Green)
+	"#F4F99D", -- 11: 亮黄 (Bright Yellow)
+	"#CAA9FA", -- 12: 亮蓝 (Bright Blue)
+	"#FF92D0", -- 13: 亮品红 (Bright Magenta)
+	"#9AEDFE", -- 14: 亮青 (Bright Cyan)
+	"#FFFFFF", -- 15: 亮白 (Bright White)
 }
 
 for i, color in ipairs(terminal_colors) do
