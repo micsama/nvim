@@ -19,14 +19,12 @@ vim.pack.add({
 	-- 准备研究后续加入
 	-- "https://github.com/debugloop/telescope-undo.nvim",
 
-
-
-
 	{ src = "https://github.com/nvim-telescope/telescope.nvim", tag = "v0.2.0" },
 	-- Telescope FZF 性能优化(需要在安装的目录下手动运行 make)
-	{ src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim"  ,build = "make"},
+	{ src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 	"https://github.com/nvim-mini/mini.nvim", -- mini.nvim(具体配置见mini.lua)
+	{ src = "https://github.com/mistricky/codesnap.nvim", tag = "v2.0.0-beta.17" }, -- 将代码用图片分享出去
 
 	-- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
 	"https://github.com/nvim-lua/plenary.nvim", -- Lua 基础工具库，许多插件依赖
@@ -42,7 +40,7 @@ vim.pack.add({
 	"https://github.com/folke/which-key.nvim", -- 快捷键提示系统
 
 	"https://github.com/folke/noice.nvim", -- 好通知
-	-- "https://github.com/rcarriga/nvim-notify", -- 通知系统
+	"https://github.com/rcarriga/nvim-notify", -- 通知系统
 
 	-- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
 	"https://github.com/SUSTech-data/wildfire.nvim", --支持按回车键范围选择
