@@ -53,6 +53,7 @@ require("Bullets").setup({})
 
 require("noice").setup({
 	lsp = {
+		signature = { enabled = false }, -- 很重要，防止出现多个重叠的
 		override = {
 			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 			["vim.lsp.util.stylize_markdown"] = true,
