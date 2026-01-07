@@ -10,15 +10,19 @@
 -- 🎨 Themes, LSP, DAP, and AI companions ready!
 -- 📅 Last updated: 2025-10-16
 
-require("onedarkpro").setup({
-	colors = {
-		cursorline = "#303442", -- 自定义光标行颜色 (可选，默认基于背景)
-	},
-	options = {
-		cursorline = true, -- 启用 onedarkpro 对光标行的着色
+require("catppuccin").setup({
+	highlight_overrides = {
+		all = function(colors)
+			return {
+				["@variable"] = { link = "@variable.parameter" },
+				["LineNr"] = { fg = colors.overlay0 },
+				["CursorLineNr"] = { fg = colors.mauve },
+			}
+		end,
 	},
 })
-vim.cmd.colorscheme("onedark") -- 应用 onedark 主题
+
+vim.cmd.colorscheme("catppuccin-mocha") -- 应用 onedark 主题
 
 -- 加载功能模块配置 (Loading Functional Plugin Configurations)
 require("plugins.Ui") -- 用户界面和外观

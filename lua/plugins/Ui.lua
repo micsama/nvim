@@ -97,11 +97,11 @@ local map = require("util.utils").map
 local builtin = require('telescope.builtin')
 
 -- 文件与历史查找
-map("nv", "<leader>ff", builtin.find_files, "🔍 查找文件")
-map("nv", "<leader>fr", builtin.oldfiles, "🕒 最近打开") -- 改为 fr (Recent)
+map("nv", "<leader>ff", builtin.find_files, "🔍 搜索文件")
+map("nv", "<leader>fr", builtin.oldfiles, "🕒 历史记录") -- 改为 fr (Recent)
 map("nv", "<leader>fg", builtin.live_grep, "🛰️ 全局搜索")
-map("nv", "<leader>fw", builtin.grep_string, "词 关键词搜索") -- 搜索光标下单词
+map("nv", "<leader>fw", builtin.grep_string, "词 单词搜索") -- 搜索光标下单词
 
 -- 状态与导航
 map("nv", "<leader>fs", builtin.treesitter, "🌳 语法树符号") -- 改为 fs (Symbol)
-map("nv", "<leader>fc", builtin.search_history, "📜 搜索历史") -- 改为 fc (Command history)
+map("nv", "<leader>fc", builtin.search_history, "📜 /搜索历史") -- 改为 fc (Command history)

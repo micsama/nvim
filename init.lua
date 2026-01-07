@@ -33,7 +33,8 @@ vim.pack.add({
 	"https://github.com/neovim/nvim-lspconfig", -- lsp
 
 	-- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
-	"https://github.com/olimorris/onedarkpro.nvim", -- 主题色 (Colorscheme)
+	"https://github.com/catppuccin/nvim",
+	-- "https://github.com/olimorris/onedarkpro.nvim", -- 主题色 (Colorscheme)
 	"https://github.com/nvim-lualine/lualine.nvim", -- 状态行 (Statusline)
 	"https://github.com/akinsho/bufferline.nvim", -- 标签页/缓冲区行 (Tab/Buffer Line)
 	"https://github.com/Bekaboo/dropbar.nvim", -- 文件路径/上下文导航栏

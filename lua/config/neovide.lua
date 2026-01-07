@@ -6,7 +6,7 @@
 local IS_MACOS = vim.uv.os_uname().sysname == "Darwin"
 
 if IS_MACOS then
-	vim.o.guifont = "FiraCode Nerd Font,PingFang SC:h16.5" -- 设置 Neovide 字体及大小
+	vim.o.guifont = "FantasqueSansM Nerd Font,FiraCode Nerd Font,PingFang SC:h16.5" -- 设置 Neovide 字体及大小
 else
 	vim.o.guifont = "Microsoft YaHei:h14.5" -- 设置 Neovide 字体及大小
 	vim.g.neovide_title_background_color =
@@ -15,14 +15,25 @@ else
 	vim.g.neovide_title_text_color = "pink"
 end
 
+
 vim.opt.linespace = 0 -- 消除行间距，使行高更紧凑
 
 -- 窗口效果与行为
 vim.g.neovide_window_blurred = true -- 启用窗口模糊效果
-vim.g.neovide_floating_blur_amount_x = 2.0 -- 浮动窗口 X 轴模糊量
-vim.g.neovide_floating_blur_amount_y = 2.0 -- 浮动窗口 Y 轴模糊量
-vim.g.neovide_confirm_quit = true -- 退出时要求确认
+vim.g.neovide_floating_blur_amount_x = 1.5 -- 浮动窗口 X 轴模糊量
+vim.g.neovide_floating_blur_amount_y = 1.5 -- 浮动窗口 Y 轴模糊量
 
+-- vim.g.neovide_floating_shadow = true
+-- vim.g.neovide_floating_z_height = 10
+-- vim.g.neovide_light_angle_degrees = 45
+-- vim.g.neovide_light_radius = 5
+-- vim.g.neovide_floating_corner_radius = 0.6
+
+vim.g.neovide_opacity = 0.83
+vim.g.neovide_normal_opacity = 0.78
+
+vim.g.neovide_confirm_quit = true -- 退出时要求确认
+-- vim.g.neovide_cursor_animate_command_line = false
 -- 输入、鼠标与触控板
 vim.g.neovide_has_mouse_grid_detection = true
 vim.g.neovide_input_macos_option_key_is_meta = "only_left" -- 仅将左 Option 键映射为 Meta
