@@ -9,108 +9,48 @@
 -- ============================================================================
 -- 模块引入与实用工具
 -- ============================================================================
+-- 1. Lua 诊断与分析
 vim.lsp.config.lua_ls = {
 	settings = {
 		Lua = {
-			runtime = {
-				version = "LuaJIT" -- 告诉 LSP 你在用 LuaJIT
-			},
+			runtime = { version = "LuaJIT" },
+			diagnostics = { globals = { "vim" } },
+			workspace = { checkThirdParty = false },
 		},
 	},
 	on_attach = function(client)
+		-- 核心：必须禁用 lua_ls 的格式化，确保不与 StyLua 冲突
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
 	end,
 }
 
-local map = require("util.utils").map
-require("mason").setup({
-	ui = {
-		icons = {
-			package_installed = "✓",
-			package_pending = "➜",
-			package_uninstalled = "✗",
-		},
-	},
-})
--- ============================================================================
--- LSP 和诊断配置 (vim.diagnostic, vim.lsp)
--- ============================================================================
-vim.lsp.config("markdown-oxide", {})
--- 全局 LSP 配置
---
-vim.lsp.config("*", {
-	capabilities = {
-		textDocument = {
-			semanticTokens = {
-				multilineTokenSupport = true,
-			},
-		},
-	},
-	-- 添加了 rust 的 Cargo.toml 到 root_markers
-	root_markers = { ".git", ".venv", "Cargo.toml" },
-})
-
+-- 3. Python 及其它配置 (保持之前的优化结构)
 local function set_python_path(command)
-	local user_path_valid = command.args and string.len(command.args) > 0
-	local path = user_path_valid and command.args or "./.venv/bin/python"
-	local clients = vim.lsp.get_clients({
-		bufnr = vim.api.nvim_get_current_buf(),
-		name = "pyright",
-	})
+	local path = (command.args and #command.args > 0) and command.args or "./.venv/bin/python"
+	local clients = vim.lsp.get_clients({ bufnr = 0, name = "pyright" })
 	for _, client in ipairs(clients) do
-		if client.settings then
-			client.settings.python = vim.tbl_deep_extend("force", client.settings.python, { pythonPath = path })
-		else
-			client.config.settings =
-				vim.tbl_deep_extend("force", client.config.settings, { python = { pythonPath = path } })
-		end
-		client:notify("workspace/didChangeConfiguration", { settings = nil })
+		client.config.settings.python.pythonPath = path
+		client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
 	end
-	vim.notify("Pyright pythonPath set to: " .. path, vim.log.levels.INFO, { title = "Pyright Config" })
+	vim.notify("Pyright path -> " .. path, vim.log.levels.INFO)
 end
-vim.lsp.config("pyright", {
-	cmd = { "pyright-langserver", "--stdio" },
-	filetypes = { "python" },
-	root_markers = {
-		"pyproject.toml",
-		"setup.py",
-		"setup.cfg",
-		"requirements.txt",
-		"Pipfile",
-		"pyrightconfig.json",
-		".git",
-	},
-	settings = {
-		python = {
-			analysis = {
-				typeCheckingMode = "off",
-				autoSearchPaths = true,
-				diagnosticMode = "openFilesOnly",
-			},
-		},
-	},
+
+vim.lsp.config.pyright = {
+	settings = { python = { analysis = { typeCheckingMode = "off" } } },
 	on_attach = function(client, bufnr)
-		vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightOrganizeImports", function()
-			local params = {
-				command = "pyright.organizeimports",
-				arguments = { vim.uri_from_bufnr(bufnr) },
-			}
-			client:request("workspace/executeCommand", params, nil, bufnr)
-		end, {
-			desc = "Organize Imports",
-		})
-		vim.api.nvim_buf_create_user_command(bufnr, "Venv", set_python_path, {
-			desc = "Reconfigure pyright with the provided python path (default: .venv/bin/python)",
-			nargs = "?",
-			complete = "file",
-		})
+		vim.api.nvim_buf_create_user_command(bufnr, "Venv", set_python_path, { nargs = "?" })
 	end,
-})
--- 设置图标
+}
+
+-- Ruff 编码补丁
+vim.lsp.config.ruff = {
+	capabilities = { offsetEncoding = { "utf-16" } },
+}
+
+-- 4. 诊断 UI 配置
 vim.diagnostic.config({
 	severity_sort = true,
-	underline = true,
 	signs = {
 		text = {
 			[vim.diagnostic.severity.ERROR] = "✘",
@@ -118,36 +58,31 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.HINT] = "⚑",
 			[vim.diagnostic.severity.INFO] = "»",
 		},
-		linehl = {
-			[vim.diagnostic.severity.ERROR] = "ErrorMsg",
-		},
 	},
 	virtual_text = false,
-	update_in_insert = false,
-	float = true,
+	float = { border = "rounded" },
 })
 
+-- 5. 一键启用所有服务
 vim.lsp.enable({
-	"biome",
-	"tombi",
 	"lua_ls",
-	"jsonls",
 	"stylua",
 	"pyright",
 	"ruff",
 	"rust_analyzer",
-	"nushell",
+	"jsonls",
 	"markdown-oxide",
-	"dockerls",
 	"bashls",
+	"dockerls",
+	"biome",
+	"tombi",
+	"nushell",
 })
-
 -- 格式化整个文件并保留光标位置
 map("niv", "<D-S-f>", function()
 	vim.notify("Formatting...")
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	vim.lsp.buf.format({ async = false })
-	-- pcall 防止在格式化失败时报错
 	pcall(vim.api.nvim_win_set_cursor, 0, cursor)
 end, "格式化文件")
 
@@ -176,23 +111,6 @@ require("nvim-treesitter").setup({
 	},
 	install_dir = vim.fn.stdpath("data") .. "/site",
 })
-
--- Treesitter 配置
--- auto_install = true,
--- sync_install = false,
--- -- 保持常用的语言列表
--- -- 核心功能启用
--- highlight = { enable = true, additional_vim_regex_highlighting = false },
--- indent = { enable = true },
--- incremental_selection = {
--- 	enable = true,
--- 	keymaps = {
--- 		init_selection = '<CR>',
--- 		node_incremental = '<CR>',
--- 		node_decremental = '<s-CR>',
--- 		scope_incremental = '<c-l>',
--- 	},
--- },
 
 -- Treesitter 辅助插件
 require("treesitter-context").setup()
