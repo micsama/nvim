@@ -60,7 +60,7 @@ require("bufferline").setup({
 			icon = "▎ ",
 			style = "icon",
 		},
-		tab_size = 16,
+		tab_size = 12,
 		padding = 0,
 		left_trunc_marker = " ",
 		right_trunc_marker = " ",
@@ -94,7 +94,7 @@ require("telescope").load_extension("fzf")
 
 -- Telescope 快捷键映射
 local map = require("util.utils").map
-local builtin = require('telescope.builtin')
+local builtin = require("telescope.builtin")
 
 -- 文件与历史查找
 map("nv", "<leader>ff", builtin.find_files, "🔍 搜索文件")

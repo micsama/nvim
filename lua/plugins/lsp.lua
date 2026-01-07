@@ -9,6 +9,19 @@
 -- ============================================================================
 -- 模块引入与实用工具
 -- ============================================================================
+vim.lsp.config.lua_ls = {
+	settings = {
+		Lua = {
+			runtime = {
+				version = "LuaJIT" -- 告诉 LSP 你在用 LuaJIT
+			},
+		},
+	},
+	on_attach = function(client)
+		client.server_capabilities.documentFormattingProvider = false
+		client.server_capabilities.documentRangeFormattingProvider = false
+	end,
+}
 
 local map = require("util.utils").map
 require("mason").setup({
@@ -201,6 +214,6 @@ require("faster").setup({
 	},
 })
 require("render-markdown").setup({
-	file_types = { "markdown", "codecompanion", 'vimwiki'  },
+	file_types = { "markdown", "codecompanion", "vimwiki" },
 	completions = { lsp = { enabled = true } },
 })
