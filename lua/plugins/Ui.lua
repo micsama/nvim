@@ -27,7 +27,6 @@ local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_op
 	cmd = "lazygit",
 	window = { width = 1, height = 1 },
 }))
--- map("n", "<leader>gg", lazygit.toggle, "打开lazygit")
 map("ntv", "<D-i>", lazygit.toggle, "打开lazygit")
 
 -- 2. Codex 浮动窗口
@@ -89,12 +88,16 @@ require("lualine").setup({
 -- ============================================================================
 -- 模糊查找 (Telescope) 及快捷键
 -- ============================================================================
+require("telescope").setup({
+	defaults = {
+		-- 建议方案：文件名在前，路径在后，且路径进行缩略
+		path_display = { "filename_first" },
+		-- 如果你想要更激进的缩写，可以加上 truncate
+		-- path_display = { "truncate" },
+	},
+})
 local builtin = require("telescope.builtin")
 require("telescope").load_extension("fzf")
-
--- Telescope 快捷键映射
-local map = require("utils").map
-local builtin = require("telescope.builtin")
 
 -- stylua: ignore start
 local telescope_maps = {
