@@ -15,26 +15,17 @@ local map = require("utils").map
 -- 核心工具 (Floatty / Lazygit / Which-Key)
 -- ============================================================================
 
--- Floatty 配置基础（使用当前工作目录作为 ID）
-local floatty_opts = { id = vim.fn.getcwd, wo = { wrap = true } }
+local apps = {
+	["<D-g>"] = { "切换终端" },
+	["<D-i>"] = { "Lazygit", { cmd = "lazygit", window = { width = 1, height = 1 } } },
+	["<D-e>"] = { "Codex", { cmd = "codex", window = { width = 0.9, height = 0.95 } } },
+}
 
--- 1. 普通浮动终端 (term)
-local term = require("floatty").setup(floatty_opts)
-map("ntv", "<D-g>", term.toggle, "切换终端")
-
--- 2. Lazygit 浮动窗口
-local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
-	cmd = "lazygit",
-	window = { width = 1, height = 1 },
-}))
-map("ntv", "<D-i>", lazygit.toggle, "打开lazygit")
-
--- 2. Codex 浮动窗口
-local codex = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
-	cmd = "codex",
-	window = { width = 0.9, height = 0.95 },
-}))
-map("ntv", "<D-e>", codex.toggle, "打开codex")
+local base = { id = vim.fn.getcwd, wo = { wrap = true } }
+for key, cfg in pairs(apps) do
+	local opts = vim.tbl_deep_extend("force", base, cfg[2] or {})
+	map("ntv", key, require("floatty").setup(opts).toggle, "打开" .. cfg[1])
+end
 
 -- 3. Which-Key 基础配置
 require("which-key").setup()
@@ -47,11 +38,9 @@ require("which-key").setup()
 require("bufferline").setup({
 	options = {
 		mode = "tabs",
-		numbers = function(opts)
-			return string.format("%s", opts.ordinal)
-		end,
+		numbers = "ordinal",
 		diagnostics = "nvim_lsp",
-		diagnostics_indicator = function(count, level, diagnostics_dict, context)
+		diagnostics_indicator = function(count, level)
 			local icon = level:match("error") and " " or " "
 			return " " .. icon .. count
 		end,
@@ -61,8 +50,6 @@ require("bufferline").setup({
 		},
 		tab_size = 12,
 		padding = 0,
-		left_trunc_marker = " ",
-		right_trunc_marker = " ",
 	},
 })
 
@@ -70,19 +57,21 @@ require("bufferline").setup({
 require("lualine").setup({
 	sections = {
 		lualine_a = {
-			' (function(d) return d:len() > 10 and d:sub(1, 10) .. "..." or d end)(vim.fn.fnamemodify(vim.fn.getcwd(), ":t")) ',
+			{
+				function()
+					local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+					return #dir > 10 and dir:sub(1, 10) .. "..." or dir
+				end,
+				icon = "󰉖",
+			},
 			"filename",
 		},
 		lualine_b = { "branch" },
 		lualine_c = { "diff", "diagnostics" },
-		lualine_x = { "progress" },
-		lualine_y = { "filesize", "filetype" },
+		lualine_x = { "filesize", "filetype" },
+		lualine_y = { "progress" },
 		lualine_z = { "location" },
 	},
-	-- tabline = {},
-	-- winbar = {},
-	-- inactive_winbar = {},
-	-- extensions = {}
 })
 
 -- ============================================================================

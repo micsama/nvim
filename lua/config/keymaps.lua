@@ -49,7 +49,6 @@ local static_maps = {
     { "nv",  "U",           ":UndotreeToggle<CR>",               "撤销树" },
     { "n",   "<D-y>",       "<cmd>Yazi<cr>",                     "打开 Yazi" },
     -- { "n",   "<leader>t",   "<cmd>Trouble diagnostics toggle<CR>","Trouble 面板" },
-    { "nv",  "tt",          "<cmd>Translate zh<CR>",             "翻译内容" },
     { "nv",  "<D-o>",       "<CMD>CodeCompanionChat Toggle<CR>", "AI 聊天" },
 }
 

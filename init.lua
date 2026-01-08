@@ -34,7 +34,6 @@ vim.pack.add({
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
     "https://github.com/catppuccin/nvim",                            -- 主题色
-    -- "https://github.com/olimorris/onedarkpro.nvim",               -- 主题色 (Colorscheme)
     "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
     "https://github.com/akinsho/bufferline.nvim",                    -- 标签页/缓冲区行 (Tab/Buffer Line)
     "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
@@ -51,7 +50,6 @@ vim.pack.add({
     "https://github.com/rachartier/tiny-inline-diagnostic.nvim",     -- 行内诊断信息简洁显示
     "https://github.com/AckslD/nvim-neoclip.lua",                    -- 剪贴板历史管理器
     -- 'https://github.com/folke/trouble.nvim',                      -- 统一的诊断/Quickfix/LSP 列表
-    "https://github.com/uga-rosa/translate.nvim",                    -- 翻译功能
 
     -- E. 文件管理与工作区 (File Management & Workspaces)
     "https://github.com/mikavilpas/yazi.nvim",                       -- Yazi 文件管理器集成
@@ -78,5 +76,6 @@ vim.pack.add({
 })
 -- stylua: ignore end
 -- initialize config
+require("config.theme")
 require("dzmfg")
 require("plugins.mini") -- 配置 mini家族的 核心插件

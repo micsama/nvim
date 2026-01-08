@@ -13,6 +13,21 @@
 -- LSP Configuration (Neovim 0.12+ Native Style)
 -- ============================================================================
 -- 1. Global Defaults
+vim.filetype.add({
+	-- 1. 处理特定的文件名
+	filename = {
+		["docker-compose.yaml"] = "yaml",
+		["docker-compose.yml"] = "yaml",
+		["compose.yaml"] = "yaml",
+		["compose.yml"] = "yaml",
+	},
+	-- 2. 处理后缀名（解决 typescript.tsx 这种非标准识别）
+	extension = {
+		tsx = "typescriptreact",
+		jsx = "javascriptreact",
+		-- 如果你有其他的非标准后缀也可以往这加
+	},
+})
 vim.lsp.config("*", {
 	root_markers = { ".git", ".venv", "pyproject.toml", "Cargo.toml", "package.json", "init.lua" },
 	capabilities = {
@@ -28,7 +43,6 @@ vim.lsp.config.lua_ls = {
 		},
 	},
 	on_attach = function(client, bufnr)
-		-- 硬性禁用格式化
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
 		client.server_capabilities.documentOnTypeFormattingProvider = false
@@ -36,10 +50,11 @@ vim.lsp.config.lua_ls = {
 }
 
 vim.lsp.config.ruff = {
-	capabilities = {
-		hoverProvider = false, -- 直接在此禁用
-	},
+	on_attach = function(client, bufnr)
+		client.server_capabilities.hoverProvider = false
+	end,
 }
+
 local function set_python_path(command)
 	local path = (command.args and #command.args > 0) and command.args or "./.venv/bin/python"
 	local clients = vim.lsp.get_clients({ bufnr = 0, name = "pyright" })
@@ -84,17 +99,18 @@ vim.diagnostic.config({
 -- 4. Fast Activation & Tooling
 -- 仅需在此列表添加 Server 名称即可自动继承全局配置
 vim.lsp.enable({
-	"lua_ls",
-	"pyright",
-	"ruff",
-	"rust_analyzer",
-	"biome",
-	"markdown-oxide",
-	"dockerls",
-	"bashls",
-	"nushell",
-	"tombi",
-	"stylua",
+	"lua_ls", -- Lua: 针对 Neovim 配置的核心支持
+	"pyright", -- Python: 微软提供的静态类型检查与补全
+	"ruff", -- Python: 极速的代码规范检查与格式化 (替代 flake8/isort)
+	"rust_analyzer", -- Rust: 官方推荐的高级语言支持
+	"biome", -- JS/TS/JSON: 性能极高的 Web 开发工具链 (取代 Prettier/ESLint)
+	"markdown-oxide", -- Markdown: 基于 PKM 理念的超强双向链接与补全
+	"docker_language_server", -- Docker: Dockerfile 的官方语法支持与 Lint
+	"bashls", -- Bash: 脚本自动补全与 shellcheck 集成
+	"nushell", -- Nushell: 针对这个现代 Shell 的脚本支持
+	"tombi", -- Taplo/TOML: 如果是用于 TOML 文件 (通常包名为 taplo)
+	"stylua", -- Lua Formatter:
+	"jsonls", -- JSON: 官方提供的模式验证与属性补全
 })
 
 -- Inlay Hints (Optional: Toggle with <leader>ih)

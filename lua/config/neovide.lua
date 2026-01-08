@@ -23,12 +23,6 @@ vim.g.neovide_window_blurred = true -- 启用窗口模糊效果
 vim.g.neovide_floating_blur_amount_x = 1.5 -- 浮动窗口 X 轴模糊量
 vim.g.neovide_floating_blur_amount_y = 1.5 -- 浮动窗口 Y 轴模糊量
 
--- vim.g.neovide_floating_shadow = true
--- vim.g.neovide_floating_z_height = 10
--- vim.g.neovide_light_angle_degrees = 45
--- vim.g.neovide_light_radius = 5
--- vim.g.neovide_floating_corner_radius = 0.6
-
 vim.g.neovide_opacity = 0.86
 vim.g.neovide_normal_opacity = 0.83
 
