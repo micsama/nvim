@@ -9,7 +9,7 @@
 -- ============================================================================
 -- 模块引入与实用工具
 -- ============================================================================
-local map = require("util.utils").map
+local map = require("utils").map
 
 -- ============================================================================
 -- 核心工具 (Floatty / Lazygit / Which-Key)
@@ -93,7 +93,7 @@ local builtin = require("telescope.builtin")
 require("telescope").load_extension("fzf")
 
 -- Telescope 快捷键映射
-local map = require("util.utils").map
+local map = require("utils").map
 local builtin = require("telescope.builtin")
 
 -- 文件与历史查找

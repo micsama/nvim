@@ -1,6 +1,6 @@
 -- 键盘映射 (Keymaps)
-local map = require("util.utils").map
-local utils = require("util.utils")
+local map = require("utils").map
+local utils = require("utils")
 
 utils.map_fullwidth_to_halfwidth()
 vim.g.mapleader = " "

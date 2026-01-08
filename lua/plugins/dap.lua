@@ -1,7 +1,7 @@
 -- ============================================================================
 -- 模块引入
 -- ============================================================================
-local map = require('util.utils').map
+local map = require('utils').map
 local dap = require('dap')
 local dapui = require('dapui')
 

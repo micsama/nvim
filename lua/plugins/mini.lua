@@ -4,7 +4,7 @@
 -- ============================================================================
 
 -- 获取通用工具函数（如：map）
-local map = require("util.utils").map
+local map = require("utils").map
 local hipatterns = require("mini.hipatterns")
 local map_multistep = require("mini.keymap").map_multistep
 

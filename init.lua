@@ -78,5 +78,6 @@ vim.pack.add({
 })
 -- stylua: ignore end
 -- initialize config
+vim.notify("hi,start")
 require("dzmfg")
 require("plugins.mini") -- 配置 mini家族的 核心插件
