@@ -20,7 +20,7 @@ require("catppuccin").setup({
 				["CursorLineNr"] = { fg = colors.mauve, bold = true }, -- 当前行号：强调定位（mauve + bold）
 
 				-- Telescope
-				TelescopeMatching = { fg = colors.red, bold = true }, -- 匹配高亮：红色+加粗，提升命中感
+				TelescopeMatching = { fg = colors.red, bold = true, underline = true }, -- 匹配高亮：红色+加粗，提升命中感
 				TelescopeSelection = { bg = colors.surface1, fg = colors.lavender, bold = true }, -- 选中行：surface1 背景 + lavender 前景
 				TelescopeSelectionCaret = { fg = colors.red }, -- 选中 caret：红色箭头，定位更清晰
 				TelescopePromptPrefix = { fg = colors.red }, -- 提示符前缀：红色，与匹配色一致
