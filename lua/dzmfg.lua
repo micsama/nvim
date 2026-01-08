@@ -24,17 +24,6 @@ require("catppuccin").setup({
 
 vim.cmd.colorscheme("catppuccin-mocha") -- 应用 onedark 主题
 
-local get_root = require("utils").get_root
-vim.api.nvim_create_autocmd("BufEnter", {
-    callback = function(ctx)
-        local root = get_root(ctx.buf)
-        if root and root ~= vim.fn.getcwd() then
-            vim.cmd.tcd(root)
-            vim.notify(root, 2, { title = "CWD" })
-        end
-    end,
-})
-
 -- 加载功能模块配置 (Loading Functional Plugin Configurations)
 require("plugins.Ui") -- 用户界面和外观
 require("plugins.editor") -- 编辑器增强功能

@@ -13,7 +13,6 @@
 -- LSP Configuration (Neovim 0.12+ Native Style)
 -- ============================================================================
 -- 1. Global Defaults
-local root_util = require("utils")
 vim.lsp.config("*", {
 	root_markers = { ".git", ".venv", "pyproject.toml", "Cargo.toml", "package.json", "init.lua" },
 	capabilities = {
@@ -26,8 +25,6 @@ vim.lsp.config.lua_ls = {
 	settings = {
 		Lua = {
 			runtime = { version = "LuaJIT" },
-			diagnostics = { globals = { "vim" } },
-			workspace = { checkThirdParty = false, library = { vim.env.VIMRUNTIME } },
 		},
 	},
 	on_attach = function(client, bufnr)
@@ -43,7 +40,15 @@ vim.lsp.config.ruff = {
 		hoverProvider = false, -- 直接在此禁用
 	},
 }
-
+local function set_python_path(command)
+	local path = (command.args and #command.args > 0) and command.args or "./.venv/bin/python"
+	local clients = vim.lsp.get_clients({ bufnr = 0, name = "pyright" })
+	for _, client in ipairs(clients) do
+		client.config.settings.python.pythonPath = path
+		client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+	end
+	vim.notify("Pyright path -> " .. path, vim.log.levels.INFO)
+end
 vim.lsp.config.pyright = {
 	settings = {
 		python = {
@@ -55,16 +60,8 @@ vim.lsp.config.pyright = {
 			},
 		},
 	},
-	before_init = function(_, config)
-		vim.notify("Using UV Virtualenv", "info", { title = "LSP: Pyright", render = "compact" })
-		local venv_path = vim.fs.joinpath(vim.uv.cwd(), ".venv", "bin", "python")
-		if vim.uv.fs_stat(venv_path) then
-			config.settings.python.pythonPath = venv_path
-			-- 使用异步 notify，避免阻塞启动
-			vim.schedule(function()
-				vim.notify("Using UV Virtualenv", "info", { title = "LSP: Pyright", render = "compact" })
-			end)
-		end
+	on_attach = function(client, bufnr)
+		vim.api.nvim_buf_create_user_command(bufnr, "Venv", set_python_path, { nargs = "?" })
 	end,
 }
 

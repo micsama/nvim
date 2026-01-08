@@ -1,6 +1,6 @@
 -- utils.lua
 
-local M = { markers = { "pyproject.toml", ".git", ".venv", "Cargo.toml", "go.mod" } }
+local M = {}
 
 -- 在文件加载时立即判断系统类型，并缓存结果
 local IS_MACOS = vim.uv.os_uname().sysname == "Darwin"
@@ -73,24 +73,6 @@ function M.map_fullwidth_to_halfwidth()
 			desc = config.desc,
 			silent = false,
 		})
-	end
-end
-
-local _last_path = nil
-
-M.get_root = function(buf)
-	return vim.fs.root(buf or 0, M.markers)
-end
-
-M.sync_venv = function(config, root)
-	local path = vim.fs.joinpath(root, ".venv", "bin", "python")
-	vim.notify(path, 2, { title = "Python Venv" })
-	if vim.uv.fs_stat(path) and path ~= _last_path then
-		_last_path = path
-		config.settings.python.pythonPath = path
-		vim.schedule(function()
-			vim.notify(path, 2, { title = "Python Venv" })
-		end)
 	end
 end
 
