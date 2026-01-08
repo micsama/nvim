@@ -9,130 +9,107 @@
 -- ============================================================================
 -- 模块引入与实用工具
 -- ============================================================================
+-- ============================================================================
+-- LSP Configuration (Neovim 0.12+ Native Style)
+-- ============================================================================
+-- 1. Global Defaults
+local root_util = require("utils")
+vim.lsp.config("*", {
+	root_markers = { ".git", ".venv", "pyproject.toml", "Cargo.toml", "package.json", "init.lua" },
+	capabilities = {
+		textDocument = { semanticTokens = { multilineTokenSupport = true } },
+	},
+})
+
+-- 2. Specialized Server Settings
 vim.lsp.config.lua_ls = {
 	settings = {
 		Lua = {
-			runtime = {
-				version = "LuaJIT", -- 告诉 LSP 你在用 LuaJIT
-			},
+			runtime = { version = "LuaJIT" },
+			diagnostics = { globals = { "vim" } },
+			workspace = { checkThirdParty = false, library = { vim.env.VIMRUNTIME } },
 		},
 	},
-	on_attach = function(client)
+	on_attach = function(client, bufnr)
+		-- 硬性禁用格式化
 		client.server_capabilities.documentFormattingProvider = false
 		client.server_capabilities.documentRangeFormattingProvider = false
+		client.server_capabilities.documentOnTypeFormattingProvider = false
 	end,
 }
 
-require("mason").setup({
-	ui = {
-		icons = {
-			package_installed = "✓",
-			package_pending = "➜",
-			package_uninstalled = "✗",
-		},
-	},
-})
--- ============================================================================
--- LSP 和诊断配置 (vim.diagnostic, vim.lsp)
--- ============================================================================
-vim.lsp.config("markdown-oxide", {})
--- 全局 LSP 配置
---
-vim.lsp.config("*", {
+vim.lsp.config.ruff = {
 	capabilities = {
-		textDocument = {
-			semanticTokens = {
-				multilineTokenSupport = true,
-			},
-		},
+		hoverProvider = false, -- 直接在此禁用
 	},
-	-- 添加了 rust 的 Cargo.toml 到 root_markers
-	root_markers = { ".git", ".venv", "Cargo.toml" },
-})
+}
 
-local function set_python_path(command)
-	local user_path_valid = command.args and string.len(command.args) > 0
-	local path = user_path_valid and command.args or "./.venv/bin/python"
-	local clients = vim.lsp.get_clients({
-		bufnr = vim.api.nvim_get_current_buf(),
-		name = "pyright",
-	})
-	for _, client in ipairs(clients) do
-		if client.settings then
-			client.settings.python = vim.tbl_deep_extend("force", client.settings.python, { pythonPath = path })
-		else
-			client.config.settings =
-				vim.tbl_deep_extend("force", client.config.settings, { python = { pythonPath = path } })
-		end
-		client:notify("workspace/didChangeConfiguration", { settings = nil })
-	end
-	vim.notify("Pyright pythonPath set to: " .. path, vim.log.levels.INFO, { title = "Pyright Config" })
-end
-vim.lsp.config("pyright", {
+vim.lsp.config.pyright = {
 	settings = {
 		python = {
 			analysis = {
-				typeCheckingMode = "off",
+				typeCheckingMode = "basic",
 				autoSearchPaths = true,
 				useLibraryCodeForTypes = true,
 				diagnosticMode = "openFilesOnly",
 			},
 		},
 	},
-	on_attach = function(client, bufnr)
-		vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightOrganizeImports", function()
-			local params = {
-				command = "pyright.organizeimports",
-				arguments = { vim.uri_from_bufnr(bufnr) },
-			}
-			client:request("workspace/executeCommand", params, nil, bufnr)
-		end, {
-			desc = "Organize Imports",
-		})
-		vim.api.nvim_buf_create_user_command(bufnr, "Venv", set_python_path, {
-			desc = "Reconfigure pyright with the provided python path (default: .venv/bin/python)",
-			nargs = "?",
-			complete = "file",
-		})
+	before_init = function(_, config)
+		vim.notify("Using UV Virtualenv", "info", { title = "LSP: Pyright", render = "compact" })
+		local venv_path = vim.fs.joinpath(vim.uv.cwd(), ".venv", "bin", "python")
+		if vim.uv.fs_stat(venv_path) then
+			config.settings.python.pythonPath = venv_path
+			-- 使用异步 notify，避免阻塞启动
+			vim.schedule(function()
+				vim.notify("Using UV Virtualenv", "info", { title = "LSP: Pyright", render = "compact" })
+			end)
+		end
 	end,
-})
--- 设置图标
+}
+
+-- 3. Diagnostics Configuration
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = true,
 	signs = {
 		text = {
-			[vim.diagnostic.severity.ERROR] = "✘",
-			[vim.diagnostic.severity.WARN] = "▲",
-			[vim.diagnostic.severity.HINT] = "⚑",
-			[vim.diagnostic.severity.INFO] = "»",
-		},
-		linehl = {
-			[vim.diagnostic.severity.ERROR] = "ErrorMsg",
+			[1] = "✘",
+			[2] = "▲",
+			[3] = "⚑",
+			[4] = "»",
 		},
 	},
-	virtual_text = false,
-	update_in_insert = false,
-	float = true,
+	virtual_text = false, -- Handled by tiny-inline-diagnostic
+	float = { border = "rounded", source = "always" },
 })
 
+-- 4. Fast Activation & Tooling
+-- 仅需在此列表添加 Server 名称即可自动继承全局配置
 vim.lsp.enable({
-	"biome",
-	"tombi",
 	"lua_ls",
-	"jsonls",
-	"stylua",
 	"pyright",
 	"ruff",
 	"rust_analyzer",
-	"nushell",
+	"biome",
 	"markdown-oxide",
 	"dockerls",
 	"bashls",
+	"nushell",
+	"tombi",
+	"stylua",
 })
 
+-- Inlay Hints (Optional: Toggle with <leader>ih)
+vim.keymap.set("n", "<leader>ih", function()
+	vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = "LSP: Toggle Inlay Hints" })
+
+-- Mason Infrastructure
+require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
+
 -- 格式化整个文件并保留光标位置
-local map = require("util.utils").map
+local map = require("utils").map
 map("niv", "<D-S-f>", function()
 	vim.notify("Formatting...")
 	local cursor = vim.api.nvim_win_get_cursor(0)
