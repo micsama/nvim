@@ -29,8 +29,8 @@ vim.g.neovide_floating_blur_amount_y = 1.5 -- 浮动窗口 Y 轴模糊量
 -- vim.g.neovide_light_radius = 5
 -- vim.g.neovide_floating_corner_radius = 0.6
 
-vim.g.neovide_opacity = 0.83
-vim.g.neovide_normal_opacity = 0.78
+vim.g.neovide_opacity = 0.86
+vim.g.neovide_normal_opacity = 0.83
 
 vim.g.neovide_confirm_quit = true -- 退出时要求确认
 -- vim.g.neovide_cursor_animate_command_line = false
