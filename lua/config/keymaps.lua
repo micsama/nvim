@@ -71,10 +71,7 @@ local function_maps = {
     { "n", "<leader>=",  function() vim.diagnostic.jump({ count = -1 }) end,                 "前一个诊断" },
     { "n", "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end,                   "打开侧边文件树" },
     { "n", "H",          function() MiniDiff.toggle_overlay() end,                           "切换 Hunk 预览" },
-    { "n", "<leader>q",  function()
-        local wins = vim.api.nvim_tabpage_list_wins(0)
-        if #wins > 1 then vim.cmd("wincmd j | q") end
-    end, "关闭下方窗口" },
+    { "n", "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
 }
 -- stylua: ignore end
 
