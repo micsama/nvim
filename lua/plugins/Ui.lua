@@ -90,10 +90,11 @@ require("lualine").setup({
 -- ============================================================================
 require("telescope").setup({
 	defaults = {
-		-- 建议方案：文件名在前，路径在后，且路径进行缩略
 		path_display = { "filename_first" },
-		-- 如果你想要更激进的缩写，可以加上 truncate
-		-- path_display = { "truncate" },
+		sorting_strategy = "ascending",
+		layout_config = {
+			prompt_position = "top", -- 配合上面的 ascending，搜索框就在最顶端
+		},
 	},
 })
 local builtin = require("telescope.builtin")
