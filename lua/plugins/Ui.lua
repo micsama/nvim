@@ -25,15 +25,15 @@ map("ntv", "<D-g>", term.toggle, "切换终端")
 -- 2. Lazygit 浮动窗口
 local lazygit = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
 	cmd = "lazygit",
-	window = { width = 0.95, height = 0.95 },
+	window = { width = 1, height = 1 },
 }))
-map("n", "<leader>gg", lazygit.toggle, "打开lazygit")
+-- map("n", "<leader>gg", lazygit.toggle, "打开lazygit")
 map("ntv", "<D-i>", lazygit.toggle, "打开lazygit")
 
 -- 2. Codex 浮动窗口
 local codex = require("floatty").setup(vim.tbl_deep_extend("force", floatty_opts, {
 	cmd = "codex",
-	window = { width = 0.8, height = 0.95 },
+	window = { width = 0.9, height = 0.95 },
 }))
 map("ntv", "<D-e>", codex.toggle, "打开codex")
 
@@ -96,12 +96,26 @@ require("telescope").load_extension("fzf")
 local map = require("utils").map
 local builtin = require("telescope.builtin")
 
--- 文件与历史查找
-map("nv", "<leader>ff", builtin.find_files, "🔍 搜索文件")
-map("nv", "<leader>fr", builtin.oldfiles, "🕒 历史记录") -- 改为 fr (Recent)
-map("nv", "<leader>fg", builtin.live_grep, "🛰️ 全局搜索")
-map("nv", "<leader>fw", builtin.grep_string, "词 单词搜索") -- 搜索光标下单词
+-- stylua: ignore start
+local telescope_maps = {
+  -- 文件 / 搜索（高频）
+  { "nv", "<leader>ff", builtin.find_files,      "📁 查找文件" },
+  { "nv", "<leader>fr", builtin.oldfiles,        "🕒 最近文件" },
+  { "nv", "<leader>fg", builtin.live_grep,       "🔎 全局搜索" },
+  { "nv", "<leader>fw", builtin.grep_string,     "🔦 搜索光标词" },
+  { "nv", "<leader>f/", builtin.search_history,  "📜 搜索历史（/）" },
 
--- 状态与导航
-map("nv", "<leader>fs", builtin.treesitter, "🌳 语法树符号") -- 改为 fs (Symbol)
-map("nv", "<leader>fc", builtin.search_history, "📜 /搜索历史") -- 改为 fc (Command history)
+  -- 代码结构
+  { "nv", "<leader>fs", builtin.treesitter,      "🌳 语法树符号" },
+
+  -- 历史 / 回溯
+  { "nv", "<leader>fy", "<CMD>Telescope neoclip<CR>", "📋 剪贴板历史" },
+  { "nv", "<leader>fn", "<CMD>Telescope noice<CR>",   "🔔 通知历史" },
+  { "nv", "<leader>fp", "<CMD>Telescope pickers<CR>", "🧰 Picker 历史" },
+}
+
+-- stylua: ignore end
+
+vim.iter(telescope_maps):each(function(m)
+	map(unpack(m))
+end)

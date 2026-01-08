@@ -43,7 +43,6 @@ function M.map(mode, lhs, rhs, opts_or_desc)
 	if not IS_MACOS then
 		-- 替换 <D-key> 为 <M-key>
 		key_to_use = string.gsub(lhs, "<D%-", "<M-")
-		-- vim.notify(key_to_use)
 	end
 
 	-- 2. 选项处理
