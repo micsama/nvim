@@ -66,6 +66,7 @@ vim.lsp.config.ruff = {
 vim.lsp.config.basedpyright = {
 	settings = {
 		basedpyright = {
+			pythonpath = "./.venv/bin/python",
 			analysis = {
 				diagnosticSeverityOverrides = {
 					-- reportUnusedImport = "none",
@@ -128,7 +129,7 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.WARN] = "󱓈", -- 闪电：警示，但不像牌子那么笨重
 			[vim.diagnostic.severity.INFO] = "󰋽", -- 气泡：对话/信息
 			[vim.diagnostic.severity.HINT] = "󰛩", -- 萤火虫/微光：微妙的暗示
-	},
+		},
 	},
 	virtual_text = false, -- handled by tiny-inline-diagnostic
 	float = {
