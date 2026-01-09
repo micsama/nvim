@@ -122,15 +122,19 @@ vim.diagnostic.config({
 	severity_sort = true,
 	underline = true,
 	signs = {
+		priority = 200,
 		text = {
-			[1] = "✘",
-			[2] = "▲",
-			[3] = "⚑",
-			[4] = "»",
-		},
+			[vim.diagnostic.severity.ERROR] = "✘",
+			[vim.diagnostic.severity.WARN] = "󱓈", -- 闪电：警示，但不像牌子那么笨重
+			[vim.diagnostic.severity.INFO] = "󰋽", -- 气泡：对话/信息
+			[vim.diagnostic.severity.HINT] = "󰛩", -- 萤火虫/微光：微妙的暗示
 	},
-	virtual_text = false, -- Handled by tiny-inline-diagnostic
-	float = { border = "rounded", source = "always" },
+	},
+	virtual_text = false, -- handled by tiny-inline-diagnostic
+	float = {
+		border = "rounded",
+		source = "always",
+	},
 })
 
 -- 4. Fast Activation & Tooling
@@ -173,7 +177,6 @@ end, "格式化文件")
 
 -- Treesitter 要求禁用 smartindent
 vim.opt.smartindent = false
-
 
 require("nvim-treesitter").setup({
 	incremental_selection = {
