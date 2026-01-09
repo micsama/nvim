@@ -17,6 +17,7 @@ require("plugins.lsp") -- 语言服务器协议 (LSP)
 require("plugins.llm.codecompanion") -- 大型语言模型相关插件
 -- require('plugins.dap')       -- 调试适配器协议 (DAP)
 
+
 local function diag_line_summary()
 	local bufnr = vim.api.nvim_get_current_buf()
 	local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1

@@ -28,7 +28,9 @@ for key, cfg in pairs(apps) do
 end
 
 -- 3. Which-Key 基础配置
-require("which-key").setup()
+require("which-key").setup({
+	preset = "modern",
+})
 
 -- ============================================================================
 -- 界面和状态栏 (Bufferline / Lualine)
@@ -97,6 +99,7 @@ local telescope_maps = {
   { "nv", "<leader>fg", builtin.live_grep,       "🔎 全局搜索" },
   { "nv", "<leader>fw", builtin.grep_string,     "🔦 搜索光标词" },
   { "nv", "<leader>f/", builtin.search_history,  "📜 搜索历史（/）" },
+	{ "nv", "<leader>f:", builtin.command_history, "⌨️ 指令历史" },
 
   -- 代码结构
   { "nv", "<leader>fs", builtin.treesitter,      "🌳 语法树符号" },
