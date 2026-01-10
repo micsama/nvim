@@ -37,7 +37,7 @@ vim.o.backupdir = config_dir .. "/backup,." -- 备份文件保存位置
 vim.o.directory = config_dir .. "/backup,." -- 交换文件保存位置
 vim.o.undofile = true -- 启用撤销历史持久化
 vim.o.undodir = config_dir .. "/undo,." -- 撤销历史文件保存位置
-
+vim.opt.smartindent = false
 -- =============================== 环境 ================================
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python" -- 优先使用虚拟环境中的 Python。
 

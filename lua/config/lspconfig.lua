@@ -25,7 +25,6 @@ vim.filetype.add({
 	extension = {
 		tsx = "typescriptreact",
 		jsx = "javascriptreact",
-		-- 如果你有其他的非标准后缀也可以往这加
 	},
 })
 vim.lsp.config("*", {
@@ -47,11 +46,31 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.HINT] = "󰛩", -- 萤火虫/微光：微妙的暗示
 		},
 	},
-	virtual_text = true,
+	float = {
+		border = "rounded",
+		source = "if_many",
+		header = "", -- 禁用旧的 header 样式。用title
+		title = { { "  Diagnostics ", "DiagnosticFloatingInfo" } },
+		title_pos = "left",
+		prefix = function(diag, i, _)
+			local icons = { "✘ ", "󱓈 ", "󰋽 ", "󰛩 " }
+			local severity_name = vim.diagnostic.severity[diag.severity]
+			local prefix_text = string.format("%d. %s", i, icons[diag.severity] or "")
+			return prefix_text, "DiagnosticFloating" .. severity_name
+		end,
+	},
+	virtual_text = {
+		severity = { min = vim.diagnostic.severity.WARN },
+		spacing = 2,
+		prefix = "●",
+		format = function(diagnostic)
+			local first_line = vim.split(diagnostic.message, "\n", { plain = true })[1]
+			return vim.trim(first_line)
+		end,
+		hl_mode = "blend",
+	},
 })
 
--- 4. Fast Activation & Tooling
--- 仅需在此列表添加 Server 名称即可自动继承全局配置
 vim.lsp.enable({
 	"lua_ls", -- Lua: 针对 Neovim 配置的核心支持
 	"ty",
@@ -67,11 +86,10 @@ vim.lsp.enable({
 })
 
 -- Inlay Hints (Optional: Toggle with <leader>ih)
-vim.keymap.set("n", "<leader>ih", function()
+vim.keymap.set("n", "<leader>th", function()
 	vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = "LSP: Toggle Inlay Hints" })
 
--- Mason Infrastructure
 require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
 
 -- 格式化整个文件并保留光标位置
@@ -87,8 +105,6 @@ end, "格式化文件")
 -- Treesitter 及其他辅助插件
 -- ============================================================================
 
--- Treesitter 要求禁用 smartindent
-vim.opt.smartindent = false
 
 require("nvim-treesitter").setup({
 	incremental_selection = {

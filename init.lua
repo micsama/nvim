@@ -74,5 +74,6 @@ vim.pack.add({
 -- stylua: ignore end
 -- initialize config
 require("config.theme")
+require("config.lspconfig") -- 语言服务器协议 (LSP)
 require("dzmfg")
 require("plugins.mini") -- 配置 mini家族的 核心插件
