@@ -23,14 +23,13 @@ vim.pack.add({
     { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     { src = "https://github.com/nvim-telescope/telescope.nvim", tag = "v0.2.0" },
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
-    { src = "https://github.com/mistricky/codesnap.nvim", tag = "v2.0.0-beta.17" }, -- 将代码用图片分享出去
     "https://github.com/nvim-mini/mini.nvim",                        -- mini.nvim(具体配置见mini.lua)
 
     -- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
     "https://github.com/nvim-lua/plenary.nvim",                      -- Lua 基础工具库，许多插件依赖
     "https://github.com/kkharji/sqlite.lua",                         -- SQLite 数据库支持 (如 Neoclip 依赖)
     "https://github.com/MunifTanjim/nui.nvim",                       -- 强大的 Neovim UI 组件库
-    "https://github.com/neovim/nvim-lspconfig",                      -- lsp
+    "https://github.com/neovim/nvim-lspconfig",                   -- lsp
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
     "https://github.com/catppuccin/nvim",                            -- 主题色
@@ -61,7 +60,7 @@ vim.pack.add({
 
     -- G. 调试 (DAP) 及其依赖
     "https://github.com/williamboman/mason.nvim",                    -- 插件/LSP/DAP 安装器
-    "https://github.com/nvim-neotest/nvim-nio",                      -- 异步 I/O 依赖
+    -- "https://github.com/nvim-neotest/nvim-nio",                      -- 异步 I/O 依赖
     -- 'https://github.com/mfussenegger/nvim-dap',                   -- Debug Adapter Protocol 核心
     -- 'https://github.com/rcarriga/nvim-dap-ui',                    -- DAP 调试 UI 界面
     -- 'https://github.com/theHamsta/nvim-dap-virtual-text',         -- DAP 调试虚拟文本显示

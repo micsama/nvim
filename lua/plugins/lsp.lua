@@ -52,72 +52,6 @@ vim.lsp.config.lua_ls = {
 	end,
 }
 
-vim.lsp.config.ruff = {
-	on_attach = function(client, bufnr)
-		client.server_capabilities.hoverProvider = false
-	end,
-	init_options = {
-		settings = {
-			showSyntaxErrors = false, -- 关键：不要让 ruff 报语法错误
-		},
-	},
-}
-
-vim.lsp.config.basedpyright = {
-	settings = {
-		basedpyright = {
-			analysis = {
-				diagnosticSeverityOverrides = {
-					-- reportUnusedImport = "none",
-					-- reportUnusedVariable = "none",
-					-- reportUnusedParameter = "none",
-					-- reportUnusedFunction  = "none",
-					-- reportUnusedClass     = "none",
-				},
-				typeCheckingMode = "basic",
-				autoSearchPaths = true,
-				useLibraryCodeForTypes = true,
-				diagnosticMode = "openFilesOnly",
-			},
-		},
-	},
-	on_attach = function(client, bufnr)
-		-- 把“高频交互、性能敏感”的能力交给 pyrefly
-		client.server_capabilities.referencesProvider = false
-		client.server_capabilities.completionProvider = false
-		client.server_capabilities.definitionProvider = false
-		client.server_capabilities.documentHighlightProvider = false
-		client.server_capabilities.renameProvider = false
-		client.server_capabilities.semanticTokensProvider = false
-		-- vim.api.nvim_buf_create_user_command(bufnr, "Venv", set_python_path, { nargs = "?" })
-	end,
-}
-
-vim.lsp.config.pyrefly = {
-	cmd = { "pyrefly", "lsp" },
-	filetypes = { "python" },
-	on_attach = function(client, bufnr)
-		-- basedpyright 更权威：这些都关掉，后续pyrefly发展好了的话，在启用。
-		client.server_capabilities.hoverProvider = false
-		client.server_capabilities.signatureHelpProvider = false
-		client.server_capabilities.referenceProvider = false
-		client.server_capabilities.documentSymbolProvider = false
-		client.server_capabilities.inlayHintProvider = false
-		client.server_capabilities.codeActionProvider = false
-		disable_diagnostics(client)
-	end,
-}
-
--- local function set_python_path(command)
---   local path = (command.args and #command.args > 0) and command.args or "./.venv/bin/python"
---   local clients = vim.lsp.get_clients({ bufnr = 0, name = "basedpyright" })
---   for _, client in ipairs(clients) do
---     client.config.settings.basedpyright.pythonPath = path
---     client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
---   end
---   vim.notify("pythonPath -> " .. path, vim.log.levels.INFO)
--- end
--- 3. Diagnostics Configuration
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = true,
@@ -137,8 +71,9 @@ vim.diagnostic.config({
 -- 仅需在此列表添加 Server 名称即可自动继承全局配置
 vim.lsp.enable({
 	"lua_ls", -- Lua: 针对 Neovim 配置的核心支持
-	"basedpyright", -- Python: 微软提供的静态类型检查与补全
-	"pyrefly",
+	-- "basedpyright", -- Python: 微软提供的静态类型检查与补全
+	"ty",
+	-- "pyrefly",
 	"ruff", -- Python: 极速的代码规范检查与格式化 (替代 flake8/isort)
 	"rust_analyzer", -- Rust: 官方推荐的高级语言支持
 	"biome", -- JS/TS/JSON: 性能极高的 Web 开发工具链 (取代 Prettier/ESLint)
