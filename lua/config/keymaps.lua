@@ -97,7 +97,7 @@ function ToggleMiniFilesAtCurrentFile()
 end
 
 -- 清理未使用的或冲突的默认映射
-vim.keymap.del("n", "grr")
-vim.keymap.del("x", "gra")
-vim.keymap.del("n", "gra")
-vim.keymap.del("n", "grn")
+-- vim.keymap.del("n", "grr")
+-- vim.keymap.del("x", "gra")
+-- vim.keymap.del("n", "gra")
+-- vim.keymap.del("n", "grn")

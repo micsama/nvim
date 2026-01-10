@@ -61,6 +61,4 @@ require("noice").setup({
 	},
 })
 
-require("tiny-inline-diagnostic").setup()
-
 require("neoclip").setup({ enable_persistent_history = true })

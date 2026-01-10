@@ -12,9 +12,6 @@
 -- ============================================================================
 -- LSP Configuration (Neovim 0.12+ Native Style)
 -- ============================================================================
-local function disable_diagnostics(client)
-	client.handlers["textDocument/publishDiagnostics"] = function() end
-end
 -- 1. Global Defaults
 vim.filetype.add({
 	-- 1. 处理特定的文件名
@@ -38,20 +35,6 @@ vim.lsp.config("*", {
 	},
 })
 
--- 2. Specialized Server Settings
-vim.lsp.config.lua_ls = {
-	settings = {
-		Lua = {
-			runtime = { version = "LuaJIT" },
-		},
-	},
-	on_attach = function(client, bufnr)
-		client.server_capabilities.documentFormattingProvider = false
-		client.server_capabilities.documentRangeFormattingProvider = false
-		client.server_capabilities.documentOnTypeFormattingProvider = false
-	end,
-}
-
 vim.diagnostic.config({
 	severity_sort = true,
 	underline = true,
@@ -64,20 +47,14 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.HINT] = "󰛩", -- 萤火虫/微光：微妙的暗示
 		},
 	},
-	virtual_text = false, -- handled by tiny-inline-diagnostic
-	float = {
-		border = "rounded",
-		source = "always",
-	},
+	virtual_text = true,
 })
 
 -- 4. Fast Activation & Tooling
 -- 仅需在此列表添加 Server 名称即可自动继承全局配置
 vim.lsp.enable({
 	"lua_ls", -- Lua: 针对 Neovim 配置的核心支持
-	-- "basedpyright", -- Python: 微软提供的静态类型检查与补全
 	"ty",
-	-- "pyrefly",
 	"ruff", -- Python: 极速的代码规范检查与格式化 (替代 flake8/isort)
 	"rust_analyzer", -- Rust: 官方推荐的高级语言支持
 	"markdown-oxide", -- Markdown: 基于 PKM 理念的超强双向链接与补全

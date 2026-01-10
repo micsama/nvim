@@ -29,7 +29,6 @@ vim.pack.add({
     "https://github.com/nvim-lua/plenary.nvim",                      -- Lua 基础工具库，许多插件依赖
     "https://github.com/kkharji/sqlite.lua",                         -- SQLite 数据库支持 (如 Neoclip 依赖)
     "https://github.com/MunifTanjim/nui.nvim",                       -- 强大的 Neovim UI 组件库
-    "https://github.com/neovim/nvim-lspconfig",                   -- lsp
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
     "https://github.com/catppuccin/nvim",                            -- 主题色
@@ -46,7 +45,6 @@ vim.pack.add({
     "https://github.com/nvim-treesitter/nvim-treesitter-context",    -- Treesitter 上下文显示
     "https://github.com/shellRaining/hlchunk.nvim",                  -- 高亮当前代码块/缩进块
     "https://github.com/mbbill/undotree",                            -- 可视化撤销树
-    "https://github.com/rachartier/tiny-inline-diagnostic.nvim",     -- 行内诊断信息简洁显示
     "https://github.com/AckslD/nvim-neoclip.lua",                    -- 剪贴板历史管理器
     -- 'https://github.com/folke/trouble.nvim',                      -- 统一的诊断/Quickfix/LSP 列表
 
