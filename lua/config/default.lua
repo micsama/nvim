@@ -51,7 +51,7 @@ if uname.sysname == "Darwin" then
 	vim.env.PATH = "/opt/homebrew/bin:" .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 else
 	vim.opt.shell = "/usr/bin/bash"
-	-- vim.env.PATH = "/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin"
+		-- vim.env.PATH = "/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin"
 		.. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
