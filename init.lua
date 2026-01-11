@@ -49,7 +49,6 @@ vim.pack.add({
     -- 'https://github.com/folke/trouble.nvim',                      -- 统一的诊断/Quickfix/LSP 列表
 
     -- E. 文件管理与工作区 (File Management & Workspaces)
-    "https://github.com/mikavilpas/yazi.nvim",                       -- Yazi 文件管理器集成
     "https://github.com/pteroctopus/faster.nvim",                    -- 大型文件优化处理
 
     -- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)

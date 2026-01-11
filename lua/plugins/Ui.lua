@@ -11,21 +11,17 @@
 -- ============================================================================
 local map = require("utils").map
 
--- ============================================================================
--- 核心工具 (Floatty / Lazygit / Which-Key)
--- ============================================================================
-
-local apps = {
-	["<D-g>"] = { "切换终端" },
-	["<D-i>"] = { "Lazygit", { cmd = "lazygit", window = { width = 1, height = 1 } } },
-	["<D-e>"] = { "Codex", { cmd = "codex", window = { width = 0.9, height = 0.95 } } },
-}
-
-local base = { id = vim.fn.getcwd, wo = { wrap = true } }
-for key, cfg in pairs(apps) do
-	local opts = vim.tbl_deep_extend("force", base, cfg[2] or {})
-	map("ntv", key, require("floatty").setup(opts).toggle, "打开" .. cfg[1])
-end
+-- local apps = {
+-- 	["<D-g>"] = { "切换终端" },
+-- 	["<D-i>"] = { "Lazygit", { cmd = "lazygit", window = { width = 1, height = 1 } } },
+-- 	["<D-e>"] = { "Codex", { cmd = "codex", window = { width = 0.9, height = 0.95 } } },
+-- }
+--
+-- local base = { id = vim.fn.getcwd, wo = { wrap = true } }
+-- for key, cfg in pairs(apps) do
+-- 	local opts = vim.tbl_deep_extend("force", base, cfg[2] or {})
+-- 	map("ntv", key, require("floatty").setup(opts).toggle, "打开" .. cfg[1])
+-- end
 
 -- 3. Which-Key 基础配置
 require("which-key").setup({
@@ -114,18 +110,13 @@ local telescope_maps = {
   { "nv", "<leader>fw", builtin.grep_string,     "🔦 搜索光标词" },
   { "nv", "<leader>f/", builtin.search_history,  "📜 搜索历史（/）" },
 	{ "nv", "<leader>f:", builtin.command_history, "⌨️ 指令历史" },
-
-  -- 代码结构
   { "nv", "<leader>fs", builtin.treesitter,      "🌳 语法树符号" },
-
-  -- 历史 / 回溯
   { "nv", "<leader>fy", "<CMD>Telescope neoclip<CR>", "📋 剪贴板历史" },
-  { "nv", "<leader>fn", "<CMD>Telescope noice<CR>",   "🔔 通知历史" },
+  { "nv", "<leader>fn", "<CMD>Telescope notify<CR>",   "🔔 通知历史" },
   { "nv", "<leader>fp", "<CMD>Telescope pickers<CR>", "🧰 Picker 历史" },
 }
-
--- stylua: ignore end
-
 vim.iter(telescope_maps):each(function(m)
 	map(unpack(m))
 end)
+-- stylua: ignore end
+
