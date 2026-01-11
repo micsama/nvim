@@ -82,7 +82,7 @@ vim.lsp.enable({
 	"nushell", -- Nushell: 针对这个现代 Shell 的脚本支持
 	"tombi", -- Taplo/TOML: 如果是用于 TOML 文件 (通常包名为 taplo)
 	"stylua", -- Lua Formatter:
-	"jsonls", -- JSON: 官方提供的模式验证与属性补全
+	"biome",
 })
 
 -- Inlay Hints (Optional: Toggle with <leader>ih)
@@ -104,19 +104,6 @@ end, "格式化文件")
 -- ============================================================================
 -- Treesitter 及其他辅助插件
 -- ============================================================================
-
-require("nvim-treesitter").setup({
-	incremental_selection = {
-		enable = true,
-		keymaps = {
-			init_selection = "<CR>",
-			node_incremental = "<CR>",
-			node_decremental = "<s-CR>",
-			scope_incremental = "<c-l>",
-		},
-	},
-	install_dir = vim.fn.stdpath("data") .. "/site",
-})
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "<filetype>" },

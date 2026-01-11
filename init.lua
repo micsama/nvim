@@ -52,12 +52,12 @@ vim.pack.add({
     "https://github.com/pteroctopus/faster.nvim",                    -- 大型文件优化处理
 
     -- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
-    "https://github.com/ingur/floatty.nvim",                         -- 集成终端，并支持lazygit等工作
+    -- "https://github.com/ingur/floatty.nvim",                       -- 集成终端，并支持lazygit等工作(已经被我改造！)
     "https://github.com/olimorris/codecompanion.nvim",               -- LLM/AI 代码伴侣工具
 
     -- G. 调试 (DAP) 及其依赖
     "https://github.com/williamboman/mason.nvim",                    -- 插件/LSP/DAP 安装器
-    -- "https://github.com/nvim-neotest/nvim-nio",                      -- 异步 I/O 依赖
+    -- "https://github.com/nvim-neotest/nvim-nio",                   -- 异步 I/O 依赖
     -- 'https://github.com/mfussenegger/nvim-dap',                   -- Debug Adapter Protocol 核心
     -- 'https://github.com/rcarriga/nvim-dap-ui',                    -- DAP 调试 UI 界面
     -- 'https://github.com/theHamsta/nvim-dap-virtual-text',         -- DAP 调试虚拟文本显示
