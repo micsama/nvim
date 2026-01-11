@@ -10,6 +10,11 @@
 -- 插件配置
 -- ============================================================================
 
+-- 修复窗口 UI/行号/git标记等
+vim.api.nvim_create_user_command("FixUI", function()
+	vim.cmd("setlocal number relativenumber signcolumn=yes cursorline list")
+end, {})
+
 -- ## Undotree
 -- 统一使用 Lua 变量来配置 Undotree 的全局选项
 vim.g.undotree_DiffAutoOpen = 1
