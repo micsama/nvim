@@ -55,6 +55,20 @@ require("bufferline").setup({
 	},
 })
 
+require("notify").setup({
+	timeout = 1500,
+	render = "compact",
+	icons = {
+		ERROR = "✘ ",
+		WARN = "󱓈 ",
+		INFO = "󰋽 ",
+		DEBUG = "󰛩 ",
+		TRACE = "󰓎 ",
+	},
+})
+
+vim.notify = require("notify")
+
 -- 2. Lualine (底部状态栏)
 require("lualine").setup({
 	sections = {

@@ -95,7 +95,7 @@ require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
 -- 格式化整个文件并保留光标位置
 local map = require("utils").map
 map("niv", "<D-S-f>", function()
-	vim.notify("Formatting...")
+	vim.notify("Formatting…", nil, { title = "LSP", icon = "󰏫", timeout = 500 })
 	local cursor = vim.api.nvim_win_get_cursor(0)
 	vim.lsp.buf.format({ async = false })
 	pcall(vim.api.nvim_win_set_cursor, 0, cursor)
@@ -104,7 +104,6 @@ end, "格式化文件")
 -- ============================================================================
 -- Treesitter 及其他辅助插件
 -- ============================================================================
-
 
 require("nvim-treesitter").setup({
 	incremental_selection = {

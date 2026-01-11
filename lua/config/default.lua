@@ -96,11 +96,12 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		-- 如果找到根目录，且它不是当前目录，则切换当前窗口的目录
 		if root and root ~= "." and root ~= vim.fn.getcwd() then
 			vim.cmd.tcd(root)
-			vim.notify("CWD changed to " .. root, vim.log.levels.INFO)
+			vim.notify(root, nil, { title = "Workspace ->", icon = "󱉭" })
 		end
 	end,
 	desc = "Auto change working directory to project root",
 })
+
 --
 -- -- 恢复上次打开文件时的光标位置
 vim.api.nvim_create_autocmd("BufReadPost", {

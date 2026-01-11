@@ -69,16 +69,21 @@ require("mini.files").setup({
 	permanent_delete = false,
 })
 
-local function yank_relative_path()
-	local p = vim.fn.fnamemodify(MiniFiles.get_fs_entry().path, ":.")
+local function yank(mod)
+	local p = vim.fn.fnamemodify(MiniFiles.get_fs_entry().path, mod)
 	vim.fn.setreg("+", p)
-	vim.notify(p)
+	vim.notify("Copied: " .. p, nil, { title = "MiniFiles", icon = "📂" })
 end
 
 vim.api.nvim_create_autocmd("User", {
 	pattern = "MiniFilesBufferCreate",
-	callback = function(a)
-		vim.keymap.set("n", "yp", yank_relative_path, { buffer = a.data.buf_id })
+	callback = function(ev)
+		map("n", "yp", function()
+			yank(":.")
+		end, { buffer = ev.data.buf_id })
+		map("n", "yP", function()
+			yank(":p")
+		end, { buffer = ev.data.buf_id })
 	end,
 })
 

@@ -82,7 +82,7 @@ vim.iter(vim.fn.range(1, 9)):each(function(i)
 		if i <= vim.fn.tabpagenr("$") then
 			vim.cmd("tabnext " .. i)
 		else
-			vim.notify("标签页 " .. i .. " 不存在", vim.log.levels.WARN)
+			vim.notify("标签页[" .. i .. "]不存在", vim.log.levels.WARN, { title = "󰓩  Tabs" })
 		end
 	end, "切换到标签页 " .. i)
 end)
