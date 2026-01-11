@@ -33,21 +33,20 @@ local static_maps = {
     { "n",   "<down>",      "<CMD>res -5<CR>",                   "减小窗口高度" },
     { "n",   "<left>",      "<CMD>vertical resize-5<CR>",        "减小窗口宽度" },
     { "n",   "<right>",     "<CMD>vertical resize+5<CR>",        "增加窗口宽度" },
-    { "nv",  "<D-t>",       "<CMD>tab new<CR>:Yazi<CR>",         "新标签页 & Yazi" },
+    { "nv",  "<D-t>",       "<CMD>tab new<CR>",                  "新标签页" },
     { "nv",  "<D-k>",       "<CMD>tabnext<CR>",                  "下一个标签页" },
-    { "nv",  "<D-j>",       "<CMD>tabprevious<CR>",               "上一个标签页" },
+    { "nv",  "<D-j>",       "<CMD>tabprevious<CR>",              "上一个标签页" },
     { "n",   "<D-s-j>",     "<CMD>tabmove -1<CR>",               "标签页左移" },
     { "n",   "<D-s-k>",     "<CMD>tabmove +1<CR>",               "标签页右移" },
     { "it",  "<D-j>",       "<C-\\><C-n>:-tabnext<CR>",          "插入: 上个标签" },
     { "it",  "<D-k>",       "<C-\\><C-n>:+tabnext<CR>",          "插入: 下个标签" },
-    { "it",  "<D-t>",       "<C-\\><C-n>:tab new<CR>:Yazi<CR>",  "插入: 新标签并 Yazi" },
+    { "it",  "<D-t>",       "<C-\\><C-n>:tab new<CR>",           "插入: 新标签" },
 
     -- 插件简短指令
     { "nv",  "<D-z>",       "<CMD>set wrap!<CR>",                "切换自动换行" },
     { "n",   "<leader><CR>","<CMD>nohlsearch<CR>",               "清除搜索高亮" },
     { "n",   "<leader>rc",  "<CMD>edit $MYVIMRC<CR>",            "打开配置文件" },
     { "nv",  "U",           ":UndotreeToggle<CR>",               "撤销树" },
-    { "n",   "<D-y>",       "<cmd>Yazi<cr>",                     "打开 Yazi" },
     -- { "n",   "<leader>t",   "<cmd>Trouble diagnostics toggle<CR>","Trouble 面板" },
     { "nv",  "<D-o>",       "<CMD>CodeCompanionChat Toggle<CR>", "AI 聊天" },
 }
@@ -65,8 +64,8 @@ local function_maps = {
 
     -- 匿名闭包逻辑 (这些行会比较长)
     { "n", "gD",         function() vim.cmd('tab split | lua vim.lsp.buf.definition()') end, "新标签打开定义" },
-    { "n", "<leader>-",  function() vim.diagnostic.jump({ count = 1 }) end,                  "后一个诊断" },
-    { "n", "<leader>=",  function() vim.diagnostic.jump({ count = -1 }) end,                 "前一个诊断" },
+    { "n", "<leader>-",  function() vim.diagnostic.jump({ count = 1 , float = true}) end,                  "后一个诊断" },
+    { "n", "<leader>=",  function() vim.diagnostic.jump({ count = -1 , float = true}) end,                 "前一个诊断" },
     { "n", "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end,                   "打开侧边文件树" },
     { "n", "H",          function() MiniDiff.toggle_overlay() end,                           "切换 Hunk 预览" },
     { "n", "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
@@ -82,7 +81,7 @@ vim.iter(vim.fn.range(1, 9)):each(function(i)
 		if i <= vim.fn.tabpagenr("$") then
 			vim.cmd("tabnext " .. i)
 		else
-			vim.notify("标签页 " .. i .. " 不存在", vim.log.levels.WARN)
+			vim.notify("标签页[" .. i .. "]不存在", vim.log.levels.WARN, { title = "󰓩  Tabs" })
 		end
 	end, "切换到标签页 " .. i)
 end)
@@ -97,7 +96,7 @@ function ToggleMiniFilesAtCurrentFile()
 end
 
 -- 清理未使用的或冲突的默认映射
-vim.keymap.del("n", "grr")
-vim.keymap.del("x", "gra")
-vim.keymap.del("n", "gra")
-vim.keymap.del("n", "grn")
+-- vim.keymap.del("n", "grr")
+-- vim.keymap.del("x", "gra")
+-- vim.keymap.del("n", "gra")
+-- vim.keymap.del("n", "grn")

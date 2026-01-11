@@ -12,11 +12,10 @@
 
 -- 加载功能模块配置 (Loading Functional Plugin Configurations)
 require("plugins.Ui") -- 用户界面和外观
+require("plugins.floatty") -- 用户界面和外观
 require("plugins.editor") -- 编辑器增强功能
-require("plugins.lsp") -- 语言服务器协议 (LSP)
 require("plugins.llm.codecompanion") -- 大型语言模型相关插件
 -- require('plugins.dap')       -- 调试适配器协议 (DAP)
-
 
 local function diag_line_summary()
 	local bufnr = vim.api.nvim_get_current_buf()

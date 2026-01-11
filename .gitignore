@@ -1,4 +1,4 @@
-## Vim/Neovim 交换与备份文件
+## --- Vim/Neovim 核心冗余 ---
 *.swp
 *.swo
 *.swn
@@ -6,26 +6,28 @@
 *.un~
 *.tmp
 *~
+# Neovim 默认的 undo 文件、Shada 文件及各种日志
+undo/
+shada/
+*.log
 
-## 操作系统与编辑器生成文件
+## --- 操作系统与通用编辑器文件 ---
 .DS_Store
+Thumbs.db
 .vim-bookmarks
+.vscode/
+.idea/
 
-## 会话与运行期状态
+## --- 会话与状态 (建议全部忽略) ---
 sessions/
 .netrwhist
 tmp/
+tags
 
-## 机器相关与私有配置
-_machine_specific.vim
-lua/config/machine_specific.lua
-lua/plugins/llm/local/
-lua/Untitled*
+.env
+
 mini.md
-.geminiiginore
-
-## 插件管理与锁文件
-lazy-lock.json
 AGENTS.md
+
+lazy-lock.json
 nvim-pack-lock.json
-noice.log

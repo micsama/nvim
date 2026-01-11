@@ -29,7 +29,7 @@ vim.opt.shortmess:append("c") -- 缩短某些消息显示（如补全菜单）�
 vim.o.formatoptions = vim.o.formatoptions:gsub("tc", "") -- 禁用自动换行(t)和文本注释自动换行(c)。
 vim.opt.list = true -- 显示不可见字符（如Tab/空格等）。
 vim.opt.listchars = { tab = "|\\ ", trail = "▫" } -- 设置不可见字符的显示样式: Tab为|和空格，行尾空格为▫。
-vim.opt.exrc = true -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。
+-- vim.opt.exrc = true -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。
 vim.opt.wildignore:append({ "*/__pycache__/*", "*/.git/*", "*/venv/*" }) --默认过滤掉一些冗余
 -- 文件和备份配置
 local config_dir = vim.fn.stdpath("config") .. "/tmp" -- 获取配置目录下的tmp子目录
@@ -37,7 +37,6 @@ vim.o.backupdir = config_dir .. "/backup,." -- 备份文件保存位置
 vim.o.directory = config_dir .. "/backup,." -- 交换文件保存位置
 vim.o.undofile = true -- 启用撤销历史持久化
 vim.o.undodir = config_dir .. "/undo,." -- 撤销历史文件保存位置
-
 -- =============================== 环境 ================================
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python" -- 优先使用虚拟环境中的 Python。
 
@@ -52,7 +51,7 @@ if uname.sysname == "Darwin" then
 	vim.env.PATH = "/opt/homebrew/bin:" .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 else
 	vim.opt.shell = "/usr/bin/bash"
-	vim.env.PATH = "/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin"
+		-- vim.env.PATH = "/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin"
 		.. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
@@ -97,7 +96,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		-- 如果找到根目录，且它不是当前目录，则切换当前窗口的目录
 		if root and root ~= "." and root ~= vim.fn.getcwd() then
 			vim.cmd.tcd(root)
-			vim.notify("CWD changed to " .. root, vim.log.levels.INFO)
+			vim.notify(root, nil, { title = "Workspace ->", icon = "󱉭" })
 		end
 	end,
 	desc = "Auto change working directory to project root",
