@@ -8,9 +8,9 @@ local runners = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go
 -- Catppuccin Mocha 推荐色：Blue(Terminal), Green(Lazygit), Peach(Codex), Mauve(Runner)
 local apps = {
 	["<D-g>"] = { id = "TERM", name = "Terminal", icon = " ", hl = "Function" },
-	["<D-i>"] = { name = "Lazygit", icon = "󰊢 ", cmd = "lazygit", w = 0.98, h = 0.98, hl = "String" },
+	["<D-i>"] = { name = "Lazygit", icon = "󰊢 ", cmd = "lazygit", w = 0.98, h = 0.95, hl = "String" },
 	["<D-e>"] = { name = "Codex", icon = "󰚩 ", cmd = "codex", w = 0.9, h = 0.95, hl = "Number" },
-	["<D-r>"] = { name = "Runner", icon = "󰐊", is_runner = true, w = 0.5, h = 0.4, hl = "Constant" },
+	["<D-r>"] = { name = "Runner", icon = "󰐊", is_runner = true, w = 0.75, h = 0.6, hl = "Constant" },
 }
 
 -- 2. 辅助：元数据解析
@@ -120,20 +120,24 @@ function M.toggle(cfg)
 	end
 
 	vim.cmd("startinsert")
+	term.cfg = active_cfg
 	state.terms[id], state.last_id = term, id
 end
 
--- 5. 自动缩放与绑定
+-- 5. 自动缩放
 api.nvim_create_autocmd("VimResized", {
 	callback = function()
 		local term = state.terms[state.last_id]
-		if term and api.nvim_win_is_valid(term.win or -1) then
-			local cfg = term.cfg
-			local ww, wh = math.floor(vim.o.columns * (cfg.w or 0.8)), math.floor(vim.o.lines * (cfg.h or 0.8))
-			api.nvim_win_set_config(
-				term.win,
-				{ width = ww, height = wh, row = (vim.o.lines - wh) / 2, col = (vim.o.columns - ww) / 2 }
-			)
+		if term and term.cfg and api.nvim_win_is_valid(term.win or -1) then
+			local c = term.cfg
+			local ww, wh = math.floor(vim.o.columns * (c.w or 0.8)), math.floor(vim.o.lines * (c.h or 0.8))
+			api.nvim_win_set_config(term.win, {
+				relative = "editor", -- 必须保留此字段，否则会报你遇到的那个错
+				width = ww,
+				height = wh,
+				row = (vim.o.lines - wh) / 2,
+				col = (vim.o.columns - ww) / 2,
+			})
 		end
 	end,
 })

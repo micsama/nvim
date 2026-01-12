@@ -73,6 +73,7 @@ vim.diagnostic.config({
 
 vim.lsp.enable({
 	"lua_ls", -- Lua: 针对 Neovim 配置的核心支持
+	"basedpyright",
 	"ty",
 	"ruff", -- Python: 极速的代码规范检查与格式化 (替代 flake8/isort)
 	"rust_analyzer", -- Rust: 官方推荐的高级语言支持

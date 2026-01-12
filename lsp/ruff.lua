@@ -4,4 +4,7 @@ return {
 	filetypes = { "python" },
 	root_markers = { "pyproject.toml", "ruff.toml", ".ruff.toml", ".git" },
 	settings = {},
+	on_attach = function(client, bufnr)
+		client.server_capabilities.hoverProvider = nil
+	end,
 }
