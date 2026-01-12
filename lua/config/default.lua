@@ -76,7 +76,7 @@ local terminal_colors = {
 }
 
 for i, color in ipairs(terminal_colors) do
-	vim.g["terminal_color_" .. (i - 1)] = color -- 设置 terminal_color_0 到 terminal_color_14。
+	vim.g["terminal_color_" .. (i - 1)] = color -- 设置 terminal_color_0 到 terminal_color_15。
 end
 
 -- =============================== 自动命令 (AuCommands) ================================

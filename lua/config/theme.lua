@@ -7,6 +7,10 @@ require("catppuccin").setup({
 				["LineNr"] = { fg = colors.overlay0 }, -- 行号：弱化到 overlay0，避免抢内容视线
 				["CursorLineNr"] = { fg = colors.mauve, bold = true }, -- 当前行号：强调定位（mauve + bold）
 				["@punctuation.bracket"] = { fg = colors.subtext1 },
+				TreesitterContext = { bg = colors.surface0 },
+				TreesitterContextLineNumber = { fg = colors.green, bg = colors.surface0 },
+				-- NormalFloat = { bg = colors.surface0 },
+				-- FloatBorder = { fg = colors.surface1, bg = colors.surface0 },
 				-- Telescope
 				TelescopeMatching = { fg = colors.red, bold = true, underline = true }, -- 匹配高亮：红色+加粗，提升命中感
 				TelescopeSelection = { bg = colors.surface1, fg = colors.lavender, bold = true }, -- 选中行：surface1 背景 + lavender 前景
