@@ -4,80 +4,66 @@
 --  ██║   ██║██║
 --  ╚██████╔╝██║
 --   ╚═════╝ ╚═╝
--- User Interface & Appearance Plugins
--- 🎨 Themes, Statuslines, and Visual Enhancements
+-- UI & Appearance
+-- Themes / Statusline / Tabs / Notifications / Finder
 -- ============================================================================
--- 模块引入与实用工具
+
+-- ============================================================================
+-- 0. 依赖与工具 (Deps & Utils)
 -- ============================================================================
 local map = require("utils").map
 
--- local apps = {
--- 	["<D-g>"] = { "切换终端" },
--- 	["<D-i>"] = { "Lazygit", { cmd = "lazygit", window = { width = 1, height = 1 } } },
--- 	["<D-e>"] = { "Codex", { cmd = "codex", window = { width = 0.9, height = 0.95 } } },
--- }
---
--- local base = { id = vim.fn.getcwd, wo = { wrap = true } }
--- for key, cfg in pairs(apps) do
--- 	local opts = vim.tbl_deep_extend("force", base, cfg[2] or {})
--- 	map("ntv", key, require("floatty").setup(opts).toggle, "打开" .. cfg[1])
--- end
-
--- 3. Which-Key 基础配置
-require("which-key").setup({
-	preset = "modern",
-})
+-- ============================================================================
+-- 1. Which-Key (Keymap Helper)
+-- ============================================================================
+require("which-key").setup({ preset = "modern" })
 
 -- ============================================================================
--- 界面和状态栏 (Bufferline / Lualine)
+-- 2. Bufferline (Tabs)
 -- ============================================================================
+local function diagnostics_indicator(count, level)
+	local icon = level:match("error") and " " or " "
+	return (" %s%d"):format(icon, count)
+end
 
--- 1. Bufferline (顶部标签页)
 require("bufferline").setup({
 	options = {
 		mode = "tabs",
 		numbers = "ordinal",
 		diagnostics = "nvim_lsp",
-		diagnostics_indicator = function(count, level)
-			local icon = level:match("error") and " " or " "
-			return " " .. icon .. count
-		end,
-		indicator = {
-			icon = "▎ ",
-			style = "icon",
-		},
+		diagnostics_indicator = diagnostics_indicator,
+		indicator = { icon = "▎ ", style = "icon" },
 		tab_size = 12,
 		padding = 0,
 	},
 })
 
+-- ============================================================================
+-- 3. Notify (Notifications)
+-- ============================================================================
 require("notify").setup({
 	timeout = 1500,
 	render = "compact",
-	icons = {
-		ERROR = "✘ ",
-		WARN = "󱓈 ",
-		INFO = "󰋽 ",
-		DEBUG = "󰛩 ",
-		TRACE = "󰓎 ",
-	},
+	icons = { ERROR = "✘ ", WARN = "󱓈 ", INFO = "󰋽 ", DEBUG = "󰛩 ", TRACE = "󰓎 " },
 })
-
 vim.notify = require("notify")
 
--- 2. Lualine (底部状态栏)
+-- ============================================================================
+-- 4. Lualine (Statusline)
+-- ============================================================================
+local function short_cwd(max_len)
+	local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+	return (#dir > max_len) and (dir:sub(1, max_len) .. "...") or dir
+end
+
 require("lualine").setup({
 	sections = {
-		lualine_a = {
-			{
-				function()
-					local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-					return #dir > 10 and dir:sub(1, 10) .. "..." or dir
-				end,
-				icon = "󰉖",
-			},
-			"filename",
-		},
+		lualine_a = { {
+			function()
+				return short_cwd(10)
+			end,
+			icon = "󰉖",
+		}, "filename" },
 		lualine_b = { "branch" },
 		lualine_c = { "diff", "diagnostics" },
 		lualine_x = { "filesize", "filetype" },
@@ -87,36 +73,31 @@ require("lualine").setup({
 })
 
 -- ============================================================================
--- 模糊查找 (Telescope) 及快捷键
+-- 5. Telescope (Finder) + Keymaps
 -- ============================================================================
-require("telescope").setup({
+local telescope, builtin = require("telescope"), require("telescope.builtin")
+telescope.setup({
 	defaults = {
 		path_display = { "filename_first" },
 		sorting_strategy = "ascending",
-		layout_config = {
-			prompt_position = "top", -- 配合上面的 ascending，搜索框就在最顶端
-		},
+		layout_config = { prompt_position = "top" }, -- ascending + top prompt
 	},
 })
-local builtin = require("telescope.builtin")
-require("telescope").load_extension("fzf")
+telescope.load_extension("fzf")
 
 -- stylua: ignore start
 local telescope_maps = {
   -- 文件 / 搜索（高频）
-  { "nv", "<leader>ff", builtin.find_files,      "📁 查找文件" },
-  { "nv", "<leader>fr", builtin.oldfiles,        "🕒 最近文件" },
-  { "nv", "<leader>fg", builtin.live_grep,       "🔎 全局搜索" },
-  { "nv", "<leader>fw", builtin.grep_string,     "🔦 搜索光标词" },
-  { "nv", "<leader>f/", builtin.search_history,  "📜 搜索历史（/）" },
-	{ "nv", "<leader>f:", builtin.command_history, "⌨️ 指令历史" },
-  { "nv", "<leader>fs", builtin.treesitter,      "🌳 语法树符号" },
+  { "nv", "<leader>ff", builtin.find_files,           "📁 查找文件" },
+  { "nv", "<leader>fr", builtin.oldfiles,             "🕒 最近文件" },
+  { "nv", "<leader>fg", builtin.live_grep,            "🔎 全局搜索" },
+  { "nv", "<leader>fw", builtin.grep_string,          "🔦 搜索光标词" },
+  { "nv", "<leader>f/", builtin.search_history,       "📜 搜索历史（/）" },
+  { "nv", "<leader>f:", builtin.command_history,      "⌨️ 指令历史" },
+  { "nv", "<leader>fs", builtin.treesitter,           "🌳 语法树符号" },
   { "nv", "<leader>fy", "<CMD>Telescope neoclip<CR>", "📋 剪贴板历史" },
-  { "nv", "<leader>fn", "<CMD>Telescope notify<CR>",   "🔔 通知历史" },
+  { "nv", "<leader>fn", "<CMD>Telescope notify<CR>",  "🔔 通知历史" },
   { "nv", "<leader>fp", "<CMD>Telescope pickers<CR>", "🧰 Picker 历史" },
 }
-vim.iter(telescope_maps):each(function(m)
-	map(unpack(m))
-end)
+vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 -- stylua: ignore end
-
