@@ -1,12 +1,9 @@
 -- ============================================================================
 -- Neovim 配置: Mini.nvim 插件集合
---
 -- ============================================================================
 
 -- 获取通用工具函数（如：map）
 local map = require("utils").map
-local hipatterns = require("mini.hipatterns")
-local map_multistep = require("mini.keymap").map_multistep
 
 -- ----------------------------------------------------------------------------
 -- 1. 编辑器核心功能增强 (mini.pairs, mini.surround, mini.completion, mini.snippets)
@@ -32,15 +29,31 @@ ms.setup({
 		}),
 	},
 })
--- 这里比较奇怪 开了会报错
-ms.start_lsp_server()
+ms.start_lsp_server() -- 这里比较奇怪 开了会报错
 
--- keymap 多步映射 (与 mini.snippets/completion 配合)
--- 统一处理 <Tab>, <S-Tab>, <CR>, <BS> 在插入模式下的行为
-map_multistep("i", "<Tab>", { "pmenu_next" }) -- 补全菜单：下一个
-map_multistep("i", "<S-Tab>", { "pmenu_prev" }) -- 补全菜单：上一个
-map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" }) -- 接受补全或 mini.pairs 回车
-map_multistep("i", "<BS>", { "minipairs_bs" }) -- mini.pairs 退格
+local map_multistep = require("mini.keymap").map_multistep
+
+-- 【Tab 逻辑链】：代码片段跳转 -> 片段展开 -> 补全菜单 -> 增加缩进 -> 跳出括号
+map_multistep("i", "<Tab>", {
+	"minisnippets_next",
+	"minisnippets_expand",
+	"pmenu_next",
+	"increase_indent",
+	"jump_after_close",
+})
+
+-- 【Shift-Tab 逻辑链】：代码片段回跳 -> 补全菜单 -> 减少缩进 -> 跳到左括号前
+map_multistep("i", "<S-Tab>", { "minisnippets_prev", "pmenu_prev", "decrease_indent", "jump_before_open" })
+
+-- 【回车键 逻辑链】：确认补全项 -> 自动配对换行
+map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
+
+-- 【退格键 逻辑链】：成对删除括号 -> 贪婪删除空格
+map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
+
+-- 【选择模式】：确保在填写代码片段时 Tab 依然能跳转
+map_multistep("s", "<Tab>", { "minisnippets_next" })
+map_multistep("s", "<S-Tab>", { "minisnippets_prev" })
 
 -- ----------------------------------------------------------------------------
 -- 2. 工作流与版本控制工具 (mini.diff, mini.files, mini.git)
@@ -48,9 +61,13 @@ map_multistep("i", "<BS>", { "minipairs_bs" }) -- mini.pairs 退格
 
 -- require('mini.extra').setup() -- 暂时注释，功能复杂，后续处理
 require("mini.diff").setup({
+	source = {
+		require("mini.diff").gen_source.git(),
+		require("mini.diff").gen_source.save(),
+	},
 	view = {
 		style = "sign",
-		signs = { add = "▎", change = "░", delete = "▒" },
+		signs = { add = "▎", change = "░", delete = "█" },
 	},
 })
 
@@ -58,17 +75,18 @@ require("mini.files").setup({
 	mappings = { go_in_plus = "<CR>" },
 	content = {
 		filter = function(fs_entry)
-			-- 隐藏以 '.' 开头的文件或目录
 			if vim.startswith(fs_entry.name, ".DS") then
 				return false
 			end
 			return true
 		end,
 	},
-	use_as_default_explorer = true,
 	permanent_delete = false,
 })
 
+-- ----------------------------------------------------------------------------
+-- 2. yp, yP 来复制选择目标的
+-- ----------------------------------------------------------------------------
 local function yank(mod)
 	local p = vim.fn.fnamemodify(MiniFiles.get_fs_entry().path, mod)
 	vim.fn.setreg("+", p)
@@ -115,8 +133,8 @@ require("mini.cursorword").setup()
 -- ----------------------------------------------------------------------------
 -- 4. 代码高亮与辅助 (mini.hipatterns, hlchunk, mini.misc)
 -- ----------------------------------------------------------------------------
-
 -- mini.hipatterns 配置
+local hipatterns = require("mini.hipatterns")
 hipatterns.setup({
 	highlighters = {
 		-- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
