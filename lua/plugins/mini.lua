@@ -9,7 +9,8 @@ local map = require("utils").map
 -- 1. 编辑器核心功能增强 (mini.pairs, mini.surround, mini.completion, mini.snippets)
 -- ----------------------------------------------------------------------------
 
-require("mini.completion").setup()
+require("mini.completion").setup({ fallback_action = "<C-x><C-f>" })
+
 require("mini.pairs").setup()
 require("mini.surround").setup()
 
@@ -21,13 +22,9 @@ ms.setup({
 		jump_next = "<tab>",
 		jump_prev = "<s-tab>",
 	},
-	snippets = {
-		gen_loader.from_lang({
-			lang_patterns = {
-				markdown_inline = { "markdown.json" },
-			},
-		}),
-	},
+	snippets = { gen_loader.from_lang({ lang_patterns = {
+		markdown_inline = { "markdown.json" },
+	} }) },
 })
 ms.start_lsp_server() -- 这里比较奇怪 开了会报错
 
@@ -41,16 +38,12 @@ map_multistep("i", "<Tab>", {
 	"increase_indent",
 	"jump_after_close",
 })
-
 -- 【Shift-Tab 逻辑链】：代码片段回跳 -> 补全菜单 -> 减少缩进 -> 跳到左括号前
 map_multistep("i", "<S-Tab>", { "minisnippets_prev", "pmenu_prev", "decrease_indent", "jump_before_open" })
-
 -- 【回车键 逻辑链】：确认补全项 -> 自动配对换行
 map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
-
 -- 【退格键 逻辑链】：成对删除括号 -> 贪婪删除空格
 map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
-
 -- 【选择模式】：确保在填写代码片段时 Tab 依然能跳转
 map_multistep("s", "<Tab>", { "minisnippets_next" })
 map_multistep("s", "<S-Tab>", { "minisnippets_prev" })
@@ -65,10 +58,7 @@ require("mini.diff").setup({
 		require("mini.diff").gen_source.git(),
 		require("mini.diff").gen_source.save(),
 	},
-	view = {
-		style = "sign",
-		signs = { add = "▎", change = "░", delete = "█" },
-	},
+	view = { style = "sign", signs = { add = "▎", change = "░", delete = "█" } },
 })
 
 require("mini.files").setup({
@@ -113,8 +103,9 @@ require("mini.git").setup()
 
 require("mini.icons").setup({
 	style = "glyph",
-	default = {},
-	directory = {},
+	directory = {
+		workspace = { glyph = "󰉋", hl = "MiniIconsYellow" },
+	},
 })
 MiniIcons.mock_nvim_web_devicons()
 MiniIcons.tweak_lsp_kind()
@@ -124,12 +115,8 @@ MiniIcons.tweak_lsp_kind()
 -- 		enable = false,
 -- 	},
 -- })
-require("mini.starter").setup()
+
 require("mini.cursorword").setup()
--- require('mini.base16').setup({}) -- 颜色主题，保持原样注释
-
--- mini.snippets LSP Server 启动 (方便与其他LSP集成)
-
 -- ----------------------------------------------------------------------------
 -- 4. 代码高亮与辅助 (mini.hipatterns, hlchunk, mini.misc)
 -- ----------------------------------------------------------------------------
@@ -147,22 +134,9 @@ hipatterns.setup({
 	},
 })
 
--- hlchunk 代替 mini.indentscope，因为mini.indentscope只有默认的缩进显示
--- require('mini.indentscope').setup()
-require("hlchunk").setup({
-	chunk = {
-		enable = true,
-	},
-})
+require("hlchunk").setup({ chunk = { enable = true } })
 
--- mini.misc 配置及映射
 require("mini.misc").setup()
--- 映射：放大当前窗口
 map("n", "<D-f>", function()
 	require("mini.misc").zoom()
 end, "放大当前窗口")
--- 启用终端背景色同步功能
-require("mini.misc").setup_termbg_sync()
--- require('mini.misc').setup_auto_root()
--- 暴露全局函数 (put/put_text)
-require("mini.misc").setup({ make_global = { "put", "put_text" } })

@@ -5,7 +5,7 @@ local state = { terms = {}, last_id = nil, runner_cache = nil }
 -- 1. 配置中心：统一管理配色与参数
 local runners = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s" }
 
--- Catppuccin Mocha 推荐色：Blue(Terminal), Green(Lazygit), Peach(Codex), Mauve(Runner)
+-- Catppuccin Mocha 配色：Blue(Terminal), Green(Lazygit), Peach(Codex), Mauve(Runner)
 local apps = {
 	["<D-g>"] = { id = "TERM", name = "Terminal", icon = " ", hl = "Function" },
 	["<D-i>"] = { name = "Lazygit", icon = "󰊢 ", cmd = "lazygit", w = 0.98, h = 0.95, hl = "String" },
@@ -132,7 +132,7 @@ api.nvim_create_autocmd("VimResized", {
 			local c = term.cfg
 			local ww, wh = math.floor(vim.o.columns * (c.w or 0.8)), math.floor(vim.o.lines * (c.h or 0.8))
 			api.nvim_win_set_config(term.win, {
-				relative = "editor", -- 必须保留此字段，否则会报你遇到的那个错
+				relative = "editor", -- 必须保留此字段，否则会报错
 				width = ww,
 				height = wh,
 				row = (vim.o.lines - wh) / 2,

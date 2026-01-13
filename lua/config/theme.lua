@@ -11,17 +11,17 @@ require("catppuccin").setup({
 				TreesitterContextLineNumber = { fg = colors.green, bg = colors.surface0 },
 
 				-- Telescope
-				TelescopeMatching = { fg = colors.red, bold = true, underline = true }, -- 匹配高亮：红色+加粗，提升命中感
-				TelescopeSelection = { bg = colors.surface1, fg = colors.lavender, bold = true }, -- 选中行：surface1 背景 + lavender 前景
 				TelescopeSelectionCaret = { fg = colors.red }, -- 选中 caret：红色箭头，定位更清晰
 				TelescopePromptPrefix = { fg = colors.red }, -- 提示符前缀：红色，与匹配色一致
+				TelescopeMatching = { fg = colors.red, bold = true, underline = true }, -- 匹配高亮：红色+加粗，提升命中感
+				TelescopeSelection = { bg = colors.surface1, fg = colors.lavender, bold = true }, -- 选中行：surface1 背景 + lavender 前景
 				TelescopePromptTitle = { fg = colors.base, bg = colors.red, bold = true }, -- Prompt 标题：红底，最高优先级
 				TelescopeResultsTitle = { fg = colors.base, bg = colors.lavender, bold = true }, -- Results 标题：lavender 区分面板
 				TelescopePreviewTitle = { fg = colors.base, bg = colors.green, bold = true }, -- Preview 标题：green 提示“预览区域”
 
 				-- Bufferline
-				BufferLineBufferSelected = { fg = colors.mauve, bg = colors.base, style = { "bold", "italic" } },
 				BufferLineIndicatorSelected = { link = "BufferLineBufferSelected" },
+				BufferLineBufferSelected = { fg = colors.mauve, bg = colors.base, style = { "bold", "italic" } },
 			}
 		end,
 	},

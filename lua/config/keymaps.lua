@@ -1,8 +1,7 @@
 -- 键盘映射 (Keymaps)
 local map = require("utils").map
-local utils = require("utils")
+require("utils").map_fullwidth_to_halfwidth()
 
-utils.map_fullwidth_to_halfwidth()
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -47,7 +46,6 @@ local static_maps = {
     { "n",   "<leader><CR>","<CMD>nohlsearch<CR>",               "清除搜索高亮" },
     { "n",   "<leader>rc",  "<CMD>edit $MYVIMRC<CR>",            "打开配置文件" },
     { "nv",  "U",           ":UndotreeToggle<CR>",               "撤销树" },
-    -- { "n",   "<leader>t",   "<cmd>Trouble diagnostics toggle<CR>","Trouble 面板" },
     { "nv",  "<D-o>",       "<CMD>CodeCompanionChat Toggle<CR>", "AI 聊天" },
 }
 
