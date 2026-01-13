@@ -12,7 +12,7 @@ end
 ---@type vim.lsp.Config
 return {
 	root_markers = { ".git", ".obsidian", ".moxide.toml" },
-	filetypes = { "markdown" },
+	filetypes = { "markdown", "codecompanion" },
 	cmd = { "markdown-oxide" },
 	on_attach = function(client, bufnr)
 		for _, cmd in ipairs({ "today", "tomorrow", "yesterday" }) do

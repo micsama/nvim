@@ -5,11 +5,14 @@ local gpt5_adapter = require("plugins.llm.gpt5")
 local deepseek_adapter = require("plugins.llm.deepseek")
 local qwen3_ollama_adapter = require("plugins.llm.ollamaqwen3")
 
+local v = os.getenv("CODECOMPANION_LLM")
+local env_llm = (v == "gpt5" or v == "qwen3_ollama") and v or "deepseek"
+
 require("codecompanion").setup({
 	opts = { language = "简体中文" },
 	interactions = {
-		chat = { adapter = "deepseek" },
-		inline = { adapter = "deepseek" },
+		chat = { adapter = env_llm },
+		inline = { adapter = env_llm },
 	},
 	-- 适配器配置
 	adapters = {
