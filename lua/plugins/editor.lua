@@ -4,63 +4,63 @@
 --  ██╔══╝  ██║  ██║██║   ██║   ██║   ██║██╔══██╗
 --  ███████╗██████╔╝██║   ██║   ╚██████╔╝██║  ██║
 --  ╚══════╝╚═════╝ ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
--- Editor Enhancement Plugins
--- ✨ Productivity Boosters & Workflow Optimizers
--- ============================================================================
--- 插件配置
+-- Editor Enhancements
+-- Productivity Boosters & Workflow Optimizers
 -- ============================================================================
 
--- 修复窗口 UI/行号/git标记等
+local map = require("utils").map
+
+-- ============================================================================
+-- 1) 命令 / 修复工具 (Commands & Fixers)
+-- ============================================================================
 vim.api.nvim_create_user_command("FixUI", function()
 	vim.cmd("setlocal number relativenumber signcolumn=yes cursorline list")
-end, {})
+end, { desc = "修复窗口 UI：行号 / signcolumn / cursorline / list" })
 
--- ## Undotree
--- 统一使用 Lua 变量来配置 Undotree 的全局选项
+-- ============================================================================
+-- 2) Undotree (Undo History UI)
+-- ============================================================================
 vim.g.undotree_DiffAutoOpen = 1
 vim.g.undotree_SetFocusWhenToggle = 1
 vim.g.undotree_ShortIndicators = 1
-vim.g.undotree_WindowLayout = 2 -- 布局：1=左侧，2=右侧
+vim.g.undotree_WindowLayout = 2 -- 1=左侧，2=右侧
 vim.g.undotree_DiffpanelHeight = 8
 vim.g.undotree_SplitWidth = 24
 
--- 使用 Lua 的 autocmd 来创建 Buffer 级的快捷键映射，替换 Vimscript 函数
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "undotree",
-	callback = function()
-		vim.keymap.set("n", "k", "<plug>UndotreeNextState", { buffer = true, silent = true })
-		vim.keymap.set("n", "j", "<plug>UndotreePreviousState", { buffer = true, silent = true })
-		vim.keymap.set("n", "K", "5<plug>UndotreeNextState", { buffer = true, silent = true })
-		vim.keymap.set("n", "J", "5<plug>UndotreePreviousState", { buffer = true, silent = true })
-	end,
 	desc = "Undotree 自定义快捷键",
+	callback = function()
+		map("n", "k", "<plug>UndotreeNextState", { buffer = true, silent = true })
+		map("n", "j", "<plug>UndotreePreviousState", { buffer = true, silent = true })
+		map("n", "K", "5<plug>UndotreeNextState", { buffer = true, silent = true })
+		map("n", "J", "5<plug>UndotreePreviousState", { buffer = true, silent = true })
+	end,
 })
 
--- ## 其他插件配置
-require("wildfire").setup({
-	surrounds = {
-		{ "(", ")" },
-		{ "{", "}" },
-		{ "<", ">" },
-		{ "[", "]" },
-	},
-	keymaps = {
-		init_selection = "<CR>",
-		node_incremental = "<CR>",
-		node_decremental = "<BS>",
-	},
-})
+-- ============================================================================
+-- 3) Editing Helpers (Text Objects / Writing)
+-- ============================================================================
+require("wildfire").setup({}) -- 默认配置
+require("Bullets").setup({}) -- 默认配置
 
-require("Bullets").setup({})
-
+-- ============================================================================
+-- 4) Noice (UI Layer)
+-- ============================================================================
 require("noice").setup({
+	cmdline = { enabled = true, view = "cmdline_popup" }, -- 只保留 cmdline UI
+	messages = { enabled = false },
+	popupmenu = { enabled = false },
+	notify = { enabled = false },
 	lsp = {
-		signature = { enabled = false }, -- 很重要，防止出现多个重叠的
-		override = {
-			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-			["vim.lsp.util.stylize_markdown"] = true,
-		},
+		progress = { enabled = true, throttle = 1000 / 15, format = "lsp_progress" },
+		message = { enabled = true },
+		hover = { enabled = false },
+		signature = { enabled = false },
 	},
 })
 
+-- ============================================================================
+-- 5) Clipboard History (Neoclip)
+-- ============================================================================
 require("neoclip").setup({ enable_persistent_history = true })
