@@ -1,22 +1,20 @@
--- ============================================================================
--- Neovim 配置: Mini.nvim 插件集合
--- ============================================================================
+-- ===========================================================================
+-- Mini.nvim 插件集合
+-- ===========================================================================
 
--- 获取通用工具函数（如：map）
 local map = require("utils.map").map
 
--- ----------------------------------------------------------------------------
--- 1. 编辑器核心功能增强 (mini.pairs, mini.surround, mini.completion)
--- ----------------------------------------------------------------------------
-
+-- =============================================================================
+-- 1) 编辑器核心功能增强
+-- =============================================================================
 require("mini.completion").setup({ fallback_action = "<C-x><C-f>" })
 
 require("mini.pairs").setup()
 require("mini.surround").setup()
 
--- ----------------------------------------------------------------------------
--- 2. 工作流与版本控制工具 (mini.diff, mini.files, mini.git)
--- ----------------------------------------------------------------------------
+-- =============================================================================
+-- 2) 工作流与版本控制工具
+-- =============================================================================
 
 -- require('mini.extra').setup() -- 暂时注释，功能复杂，后续处理
 require("mini.diff").setup({
@@ -40,9 +38,9 @@ require("mini.files").setup({
 	permanent_delete = false,
 })
 
--- ----------------------------------------------------------------------------
--- 2. yp, yP 来复制选择目标的
--- ----------------------------------------------------------------------------
+-- =============================================================================
+-- 3) MiniFiles 复制辅助
+-- =============================================================================
 local function yank(mod)
 	local p = vim.fn.fnamemodify(MiniFiles.get_fs_entry().path, mod)
 	vim.fn.setreg("+", p)
@@ -63,9 +61,9 @@ vim.api.nvim_create_autocmd("User", {
 
 require("mini.git").setup()
 
--- ----------------------------------------------------------------------------
--- 3. UI/美化/显示 (mini.icons, mini.notify, mini.starter, mini.cursorword)
--- ----------------------------------------------------------------------------
+-- =============================================================================
+-- 4) UI/美化/显示
+-- =============================================================================
 
 require("mini.icons").setup({
 	style = "glyph",
@@ -83,10 +81,11 @@ MiniIcons.tweak_lsp_kind()
 -- })
 
 require("mini.cursorword").setup()
--- ----------------------------------------------------------------------------
--- 4. 代码高亮与辅助 (mini.hipatterns, hlchunk, mini.misc)
--- ----------------------------------------------------------------------------
--- mini.hipatterns 配置
+
+-- =============================================================================
+-- 5) 代码高亮与辅助
+-- =============================================================================
+-- stylua: ignore start
 local hipatterns = require("mini.hipatterns")
 hipatterns.setup({
 	highlighters = {
@@ -99,8 +98,9 @@ hipatterns.setup({
 		hex_color = hipatterns.gen_highlighter.hex_color(),
 	},
 })
+-- stylua: ignore end
 
-require("hlchunk").setup({ chunk = { enable = true } })
+require("hlchunk").setup({ chunk = { delay = 100, enable = true } })
 
 require("mini.misc").setup()
 map("n", "<D-f>", function()
@@ -113,6 +113,7 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 	callback = function()
 		local ms = require("mini.snippets")
 		local gen_loader = ms.gen_loader
+		-- stylua: ignore start
 		ms.setup({
 			mappings = {
 				jump_next = "<tab>",
@@ -122,9 +123,11 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 				markdown_inline = { "markdown.json" },
 			} }) },
 		})
+		-- stylua: ignore end
 		ms.start_lsp_server() -- 这里比较奇怪 开了会报错
 
 		local map_multistep = require("mini.keymap").map_multistep
+		-- stylua: ignore start
 		map_multistep("i", "<Tab>", {
 			"minisnippets_next",
 			"minisnippets_expand",
@@ -137,5 +140,6 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 		map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
 		map_multistep("s", "<Tab>", { "minisnippets_next" })
 		map_multistep("s", "<S-Tab>", { "minisnippets_prev" })
+		-- stylua: ignore end
 	end,
 })

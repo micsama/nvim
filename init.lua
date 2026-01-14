@@ -5,8 +5,9 @@
 vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 
 -- 1. 加载核心配置
-require("config.default") -- 加载基础 Vim/Neovim 选项配置
+require("config.base") -- 加载基础 Vim/Neovim 选项配置
 require("config.keymaps") -- 加载全局键盘快捷键映射
+require("config.autocmds") -- 纯内置自动命令
 require("utils.floatty") -- 浮窗控制
 
 -- 2. GUI 客户端特定配置
@@ -72,9 +73,7 @@ vim.pack.add({
 })
 -- stylua: ignore end
 require("config.theme") -- 主题
-require("plugins.Ui") -- 用户界面和外观
 require("plugins.editor") -- 编辑器增强功能
-
-require("dzmfg") -- 包含延迟加载的插件
+require("plugins.ui") -- 用户界面和外观
 require("plugins.mini") -- 配置 mini家族的 核心插件
-
+require("config.deferred") -- 依赖插件的延迟加载

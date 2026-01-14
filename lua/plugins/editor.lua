@@ -1,24 +1,18 @@
---  ███████╗██████╗ ██╗████████╗ ██████╗ ██████╗
---  ██╔════╝██╔══██╗██║╚══██╔══╝██╔═══██╗██╔══██╗
---  █████╗  ██║  ██║██║   ██║   ██║   ██║██████╔╝
---  ██╔══╝  ██║  ██║██║   ██║   ██║   ██║██╔══██╗
---  ███████╗██████╔╝██║   ██║   ╚██████╔╝██║  ██║
---  ╚══════╝╚═════╝ ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
--- Editor Enhancements
--- Productivity Boosters & Workflow Optimizers
--- ============================================================================
+-- ===========================================================================
+-- 编辑器增强：编辑体验与效率工具
+-- ===========================================================================
 
 local map = require("utils.map").map
 
 -- ============================================================================
--- 1) 命令 / 修复工具 (Commands & Fixers)
+-- 1) 命令 / 修复工具
 -- ============================================================================
 vim.api.nvim_create_user_command("FixUI", function()
 	vim.cmd("setlocal number relativenumber signcolumn=yes cursorline list")
 end, { desc = "修复窗口 UI：行号 / signcolumn / cursorline / list" })
 
 -- ============================================================================
--- 2) Undotree (Undo History UI)
+-- 2) Undotree
 -- ============================================================================
 vim.g.undotree_DiffAutoOpen = 1
 vim.g.undotree_SetFocusWhenToggle = 1
@@ -45,27 +39,19 @@ require("wildfire").setup({}) -- 默认配置
 require("Bullets").setup({}) -- 默认配置
 
 -- ============================================================================
--- 4) Noice (UI Layer)
+-- 4) Treesitter Context
 -- ============================================================================
-require("noice").setup({
-	cmdline = { enabled = true, view = "cmdline_popup" }, -- 只保留 cmdline UI
-	messages = { enabled = false },
-	popupmenu = { enabled = false },
-	notify = { enabled = false },
-	lsp = {
-		progress = { enabled = true, throttle = 1000 / 15, format = "lsp_progress" },
-		message = { enabled = true },
-		hover = { enabled = false },
-		signature = { enabled = false },
-	},
-})
+require("treesitter-context").setup()
 
 -- ============================================================================
 -- 5) Clipboard History (Neoclip)
 -- ============================================================================
 require("neoclip").setup({ enable_persistent_history = true })
 
-require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
+-- ============================================================================
+-- 6) Bigfile / 性能保护
+-- ============================================================================
+-- stylua: ignore start
 require("faster").setup({
 	behaviours = {
 		bigfile = {
@@ -83,3 +69,4 @@ require("faster").setup({
 		},
 	},
 })
+-- stylua: ignore end

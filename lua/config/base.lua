@@ -1,3 +1,10 @@
+-- ===========================================================================
+-- 基础配置：选项 / 环境 / 终端配色
+-- ===========================================================================
+
+-- =============================================================================
+-- 1) 基础选项
+-- =============================================================================
 vim.opt.langmenu = "zh_CN.UTF-8"
 
 vim.opt.signcolumn = "yes" -- 始终显示标记列（用于LSP诊断、Git Gutter等）。
@@ -30,14 +37,20 @@ vim.o.formatoptions = vim.o.formatoptions:gsub("tc", "") -- 禁用自动换行(t
 vim.opt.list = true -- 显示不可见字符（如Tab/空格等）。
 vim.opt.listchars = { tab = "|\\ ", trail = "▫" } -- 设置不可见字符的显示样式: Tab为|和空格，行尾空格为▫。
 -- vim.opt.exrc = true -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。
-vim.opt.wildignore:append({ "*/__pycache__/*", "*/.git/*", "*/venv/*" }) --默认过滤掉一些冗余
--- 文件和备份配置
+vim.opt.wildignore:append({ "*/__pycache__/*", "*/.git/*", "*/venv/*" }) -- 默认过滤掉一些冗余
+
+-- =============================================================================
+-- 2) 文件与备份
+-- =============================================================================
 local config_dir = vim.fn.stdpath("config") .. "/tmp" -- 获取配置目录下的tmp子目录
 vim.o.backupdir = config_dir .. "/backup,." -- 备份文件保存位置
 vim.o.directory = config_dir .. "/backup,." -- 交换文件保存位置
 vim.o.undofile = true -- 启用撤销历史持久化
 vim.o.undodir = config_dir .. "/undo,." -- 撤销历史文件保存位置
--- =============================== 环境 ================================
+
+-- =============================================================================
+-- 3) 运行环境
+-- =============================================================================
 vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python" -- 优先使用虚拟环境中的 Python。
 
 -- 禁用不必要的提供程序，减少启动开销。
@@ -55,7 +68,10 @@ else
 		.. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
--- 终端颜色配置 (Dracula 近似值)
+-- =============================================================================
+-- 4) 终端颜色 (Dracula 近似值)
+-- =============================================================================
+-- stylua: ignore start
 local terminal_colors = {
 	"#000000", -- 0:  黑色 (Black)
 	"#FF5555", -- 1:  红色 (Red)
@@ -74,62 +90,8 @@ local terminal_colors = {
 	"#9AEDFE", -- 14: 亮青 (Bright Cyan)
 	"#FFFFFF", -- 15: 亮白 (Bright White)
 }
+-- stylua: ignore end
 
 for i, color in ipairs(terminal_colors) do
 	vim.g["terminal_color_" .. (i - 1)] = color -- 设置 terminal_color_0 到 terminal_color_15。
 end
-
--- =============================== 自动命令 (AuCommands) ================================
-
--- 创建 AutoCommand Group 并清除之前的命令
-vim.api.nvim_create_augroup("CustomSetupGroup", { clear = true })
-local custom_group = "CustomSetupGroup"
-
--- -- 自动切换工作目录到项目根目录 (使用 vim.fs.root 现代 API)
-vim.api.nvim_create_autocmd("BufEnter", {
-	group = custom_group,
-	callback = function(ctx)
-		-- 定义寻找项目根目录的标识文件/目录
-		local root_markers =
-			{ "pyproject.toml", ".luarc.json", ".git", "Makefile", ".venv", "Cargo.toml", "package.json", "go.mod" }
-		local root = vim.fs.root(ctx.buf, root_markers)
-		-- 如果找到根目录，且它不是当前目录，则切换当前窗口的目录
-		if root and root ~= "." and root ~= vim.fn.getcwd() then
-			vim.cmd.tcd(root)
-			vim.notify(root, nil, { title = "Workspace ->", icon = "󱉭" })
-		end
-	end,
-	desc = "Auto change working directory to project root",
-})
---
--- -- 恢复上次打开文件时的光标位置
-vim.api.nvim_create_autocmd("BufReadPost", {
-	group = custom_group,
-	pattern = "*",
-	callback = function()
-		-- 检查上次光标位置是否有效（行号大于1且小于文件总行数）
-		if vim.fn.line("'\"") > 1 and vim.fn.line("'\"") <= vim.fn.line("$") then
-			-- 跳转到上次光标位置 (''')
-			vim.cmd.normal({ 'g`"', bang = true })
-		end
-	end,
-	desc = "Restore cursor position when reopening files",
-})
-
--- 终端打开时自动进入插入模式
-vim.api.nvim_create_autocmd("TermOpen", {
-	group = custom_group,
-	pattern = "term://*",
-	command = "startinsert",
-	desc = "Automatically enter insert mode when opening terminal",
-})
-
--- 自动重新加载配置文件
-vim.api.nvim_create_augroup("NVIMRC", { clear = true })
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-	pattern = "init.lua,*/default.lua", -- 匹配 init.lua 或当前的 default.lua
-	group = "NVIMRC",
-	command = "source %",
-	desc = "Auto reload config file when modified",
-})

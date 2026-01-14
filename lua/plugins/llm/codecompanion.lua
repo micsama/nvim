@@ -1,6 +1,6 @@
--- ============================================================================
--- 导入各个LLM适配器模块
--- ============================================================================
+-- ===========================================================================
+-- LLM 配置：CodeCompanion
+-- ===========================================================================
 
 local gpt5_adapter = require("plugins.llm.gpt5")
 local qwen3_ollama_adapter = require("plugins.llm.ollamaqwen3")
@@ -17,6 +17,7 @@ local deepseek_adapter = require("codecompanion.adapters.http").extend("deepseek
 local v = os.getenv("CODECOMPANION_LLM")
 local env_llm = (v == "gpt5" or v == "qwen3_ollama") and v or "deepseek"
 
+-- stylua: ignore start
 require("codecompanion").setup({
 	opts = { language = "简体中文" },
 	interactions = {
@@ -33,3 +34,4 @@ require("codecompanion").setup({
 		},
 	},
 })
+-- stylua: ignore end

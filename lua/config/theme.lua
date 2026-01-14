@@ -1,3 +1,8 @@
+-- ===========================================================================
+-- 主题配置：Catppuccin
+-- ===========================================================================
+
+-- stylua: ignore start
 require("catppuccin").setup({
 	highlight_overrides = {
 		all = function(colors)
@@ -26,5 +31,6 @@ require("catppuccin").setup({
 		end,
 	},
 })
+-- stylua: ignore end
 
-vim.cmd.colorscheme("catppuccin-mocha") -- 应用 catppuccin-mocha  主题
+vim.cmd.colorscheme("catppuccin-mocha") -- 应用 catppuccin-mocha 主题

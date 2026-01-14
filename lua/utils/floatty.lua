@@ -1,9 +1,16 @@
+-- ===========================================================================
+-- 浮窗终端与工具入口
+-- ===========================================================================
+
 local M = {}
 local api, fn = vim.api, vim.fn
 local state = { terms = {}, last_id = nil, runner_cache = nil }
 
--- 1. 配置中心：统一管理配色与参数
-local runners = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s",rust="cargo run" }
+-- =============================================================================
+-- 1) 配置中心：统一管理配色与参数
+-- =============================================================================
+-- stylua: ignore start
+local runners = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s", rust = "cargo run" }
 
 -- Catppuccin Mocha 配色：Blue(Terminal), Green(Lazygit), Peach(Codex), Mauve(Runner)
 local apps = {
@@ -12,8 +19,11 @@ local apps = {
 	["<D-e>"] = { name = "Codex", icon = "󰚩 ", cmd = "codex", w = 0.9, h = 0.95, hl = "Number" },
 	["<D-r>"] = { name = "Runner", icon = "󰐊", is_runner = true, w = 0.75, h = 0.6, hl = "Constant" },
 }
+-- stylua: ignore end
 
--- 2. 辅助：元数据解析
+-- =============================================================================
+-- 2) 辅助：元数据解析
+-- =============================================================================
 local function get_meta()
 	local cwd = fn.getcwd()
 	return {
@@ -25,7 +35,9 @@ local function get_meta()
 	}
 end
 
--- 3. 辅助：窗口属性计算
+-- =============================================================================
+-- 3) 辅助：窗口属性计算
+-- =============================================================================
 local function apply_win_style(win, cfg, meta, title_override)
 	local title = title_override or string.format(" %s %s │ %s ", cfg.icon or "", cfg.name, meta.path)
 	local hl = cfg.hl or "FloatBorder"
@@ -35,7 +47,9 @@ local function apply_win_style(win, cfg, meta, title_override)
 	api.nvim_set_option_value("signcolumn", "no", { win = win })
 end
 
--- 4. 核心 Toggle 逻辑
+-- =============================================================================
+-- 4) 核心 Toggle 逻辑
+-- =============================================================================
 function M.toggle(cfg)
 	local meta = get_meta()
 
@@ -124,7 +138,9 @@ function M.toggle(cfg)
 	state.terms[id], state.last_id = term, id
 end
 
--- 5. 自动缩放
+-- =============================================================================
+-- 5) 自动缩放
+-- =============================================================================
 api.nvim_create_autocmd("VimResized", {
 	callback = function()
 		local term = state.terms[state.last_id]

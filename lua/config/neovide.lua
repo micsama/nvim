@@ -1,8 +1,10 @@
--- ===============================
+-- ===========================================================================
 -- Neovide GUI 客户端设置
--- ===============================
+-- ===========================================================================
 
--- 基础 UI / 字体配置
+-- =============================================================================
+-- 1) 基础 UI / 字体配置
+-- =============================================================================
 
 local map = require("utils.map").map
 
@@ -20,7 +22,9 @@ end
 
 vim.opt.linespace = 0 -- 消除行间距，使行高更紧凑
 
--- 窗口效果与行为
+-- =============================================================================
+-- 2) 窗口效果与行为
+-- =============================================================================
 vim.g.neovide_window_blurred = true -- 启用窗口模糊效果
 vim.g.neovide_floating_blur_amount_x = 1.5 -- 浮动窗口 X 轴模糊量
 vim.g.neovide_floating_blur_amount_y = 1.5 -- 浮动窗口 Y 轴模糊量
@@ -36,7 +40,9 @@ vim.g.neovide_input_macos_option_key_is_meta = "only_left" -- 仅将左 Option �
 vim.g.neovide_hide_mouse_when_typing = false -- 打字时自动隐藏鼠标
 vim.g.neovide_touch_deadzone = 8.0 -- 设置触摸板死区，防止意外滚动
 
--- 动画与光标视觉特效 (VFX)
+-- =============================================================================
+-- 3) 动画与光标视觉特效 (VFX)
+-- =============================================================================
 vim.g.neovide_scroll_animation_length = 0.3 -- 滚动动画时长 (秒)
 vim.g.neovide_position_animation_length = 0.18 -- 光标位置移动动画时长
 vim.g.neovide_cursor_animation_length = 0.07 -- 光标闪烁动画时长
@@ -48,6 +54,9 @@ vim.g.neovide_underline_stroke_scale = 1.0 -- 下划线笔触缩放比例
 
 vim.g.neovide_scale_factor = vim.g.neovide_scale_factor or 1.0
 
+-- =============================================================================
+-- 4) 快捷键与输入法状态
+-- =============================================================================
 map("n", "<D-=>", function()
 	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * 1.1
 end, "放大 UI")
@@ -77,7 +86,7 @@ vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdlineLeave" }, {
 	callback = set_ime,
 })
 
--- ✅ 终端模式
+-- 终端模式
 vim.api.nvim_create_autocmd({ "TermEnter", "TermLeave" }, {
 	group = ime_input,
 	pattern = "*",
