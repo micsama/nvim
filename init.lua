@@ -68,7 +68,6 @@ vim.pack.add({
     -- H. 文件类型特定(Filetype Specific)
     "https://github.com/kaymmm/bullets.nvim",                        -- Markdown 列表增强
     "https://github.com/MeanderingProgrammer/render-markdown.nvim",  -- Markdown 实时渲染/预览
-    "https://github.com/hat0uma/csvview.nvim",                       -- csv
 })
 -- stylua: ignore end
 -- initialize config

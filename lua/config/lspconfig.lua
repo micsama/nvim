@@ -116,10 +116,3 @@ end, "格式化文件")
 -- ============================================================================
 require("treesitter-context").setup()
 require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
-
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "<filetype>" },
-	callback = function()
-		vim.treesitter.start()
-	end,
-})

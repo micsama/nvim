@@ -40,7 +40,8 @@ local static_maps = {
     { "it",  "<D-j>",       "<C-\\><C-n>:-tabnext<CR>",          "插入: 上个标签" },
     { "it",  "<D-k>",       "<C-\\><C-n>:+tabnext<CR>",          "插入: 下个标签" },
     { "it",  "<D-t>",       "<C-\\><C-n>:tab new<CR>",           "插入: 新标签" },
-
+    { "n",   "<leader>ss",  "<CMD>mksession!<CR>",               "Save Session" },
+    { "n",   "<leader>sl",  "<CMD>source Session.vim<Cr>",       "Load Session" },
     -- 插件简短指令
     { "nv",  "<D-z>",       "<CMD>set wrap!<CR>",                "切换自动换行" },
     { "n",   "<leader><CR>","<CMD>nohlsearch<CR>",               "清除搜索高亮" },
@@ -68,6 +69,7 @@ local function_maps = {
     { "n", "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
 }
 -- stylua: ignore end
+
 
 vim.iter({ static_maps, function_maps }):flatten():each(function(m)
 	map(unpack(m))
