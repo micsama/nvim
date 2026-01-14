@@ -14,6 +14,11 @@ local map = require("utils").map
 -- 1) Diagnostics UI
 -- ============================================================================
 vim.diagnostic.config({
+	jump = {
+		on_jump = function(_, bufnr)
+			vim.diagnostic.open_float({ bufnr = bufnr, focus = false, scope = "cursor" })
+		end,
+	},
 	severity_sort = true,
 	signs = {
 		priority = 200,

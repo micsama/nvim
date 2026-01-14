@@ -5,9 +5,7 @@
 local M = require("codecompanion.adapters.http").extend("openai", {
 	name = "gpt5.2",
 	url = "https://www.fakercode.top/v1/chat/completions",
-	env = {
-		api_key = "CODEAPIKEY",
-	},
+	env = { api_key = "CODEAPIKEY" },
 	schema = {
 		model = { default = "gpt5.2" },
 	},

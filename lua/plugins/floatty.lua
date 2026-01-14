@@ -3,7 +3,7 @@ local api, fn = vim.api, vim.fn
 local state = { terms = {}, last_id = nil, runner_cache = nil }
 
 -- 1. 配置中心：统一管理配色与参数
-local runners = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s" }
+local runners = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s",rust="cargo run" }
 
 -- Catppuccin Mocha 配色：Blue(Terminal), Green(Lazygit), Peach(Codex), Mauve(Runner)
 local apps = {

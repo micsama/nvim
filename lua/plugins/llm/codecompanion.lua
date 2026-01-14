@@ -1,9 +1,18 @@
 -- ============================================================================
 -- 导入各个LLM适配器模块
 -- ============================================================================
+
 local gpt5_adapter = require("plugins.llm.gpt5")
-local deepseek_adapter = require("plugins.llm.deepseek")
 local qwen3_ollama_adapter = require("plugins.llm.ollamaqwen3")
+
+local deepseek_adapter = require("codecompanion.adapters.http").extend("deepseek", {
+	name = "deepseek",
+	url = "https://api.deepseek.com/chat/completions",
+	env = { api_key = "DEEPSEEK_API_KEY" },
+	schema = {
+		model = { default = "deepseek-chat" },
+	},
+})
 
 local v = os.getenv("CODECOMPANION_LLM")
 local env_llm = (v == "gpt5" or v == "qwen3_ollama") and v or "deepseek"

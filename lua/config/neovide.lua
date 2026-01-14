@@ -3,6 +3,9 @@
 -- ===============================
 
 -- 基础 UI / 字体配置
+
+local map = require("utils").map
+
 local IS_MACOS = vim.uv.os_uname().sysname == "Darwin"
 
 if IS_MACOS then
@@ -14,7 +17,6 @@ else
 
 	vim.g.neovide_title_text_color = "pink"
 end
-
 
 vim.opt.linespace = 0 -- 消除行间距，使行高更紧凑
 
@@ -44,17 +46,14 @@ vim.g.neovide_scroll_animation_far_lines = 1 -- 启用快速滚动时的平滑�
 vim.g.neovide_cursor_vfx_particle_density = 15.0 -- 光标特效粒子密度
 vim.g.neovide_underline_stroke_scale = 1.0 -- 下划线笔触缩放比例
 
--- 动态缩放功能与快捷键
-vim.g.neovide_scale_factor = 1.0 -- 默认缩放因子
-local function scale(delta)
-	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
-end
-vim.keymap.set("n", "<D-=>", function()
-	scale(1.1)
-end, { desc = "放大 Neovide 字体/UI" })
-vim.keymap.set("n", "<D-->", function()
-	scale(1 / 1.1)
-end, { desc = "缩小 Neovide 字体/UI" })
+vim.g.neovide_scale_factor = vim.g.neovide_scale_factor or 1.0
+
+map("n", "<D-=>", function()
+	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * 1.1
+end, "放大 UI")
+map("n", "<D-->", function()
+	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor / 1.1
+end, "缩小 UI")
 
 local function set_ime(args)
 	if args.event:match("Enter$") then
