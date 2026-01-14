@@ -14,7 +14,7 @@ if vim.g.neovide then
 	require("config.neovide") -- 仅在 Neovide 环境下加载 GUI 特有配置
 end
 
--- 3. 插件管理：使用 vim.pack.add 定义所有插件列表
+-- 3. 插件管理：使用 vim.pack.add 定义所有插件列表，方便统一管理，都放一起。
 -- stylua: ignore start
 vim.pack.add({
     -- 准备研究后续加入
