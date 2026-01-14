@@ -32,3 +32,4 @@ AGENTS.md
 lazy-lock.json
 nvim-pack-lock.json
 tmp/backup
+startup

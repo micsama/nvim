@@ -4,7 +4,7 @@
 
 -- 基础 UI / 字体配置
 
-local map = require("utils").map
+local map = require("utils.map").map
 
 local IS_MACOS = vim.uv.os_uname().sysname == "Darwin"
 

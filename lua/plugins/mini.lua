@@ -3,50 +3,16 @@
 -- ============================================================================
 
 -- 获取通用工具函数（如：map）
-local map = require("utils").map
+local map = require("utils.map").map
 
 -- ----------------------------------------------------------------------------
--- 1. 编辑器核心功能增强 (mini.pairs, mini.surround, mini.completion, mini.snippets)
+-- 1. 编辑器核心功能增强 (mini.pairs, mini.surround, mini.completion)
 -- ----------------------------------------------------------------------------
 
 require("mini.completion").setup({ fallback_action = "<C-x><C-f>" })
 
 require("mini.pairs").setup()
 require("mini.surround").setup()
-
--- mini.snippets 配置
-local ms = require("mini.snippets")
-local gen_loader = ms.gen_loader
-ms.setup({
-	mappings = {
-		jump_next = "<tab>",
-		jump_prev = "<s-tab>",
-	},
-	snippets = { gen_loader.from_lang({ lang_patterns = {
-		markdown_inline = { "markdown.json" },
-	} }) },
-})
-ms.start_lsp_server() -- 这里比较奇怪 开了会报错
-
-local map_multistep = require("mini.keymap").map_multistep
-
--- 【Tab 逻辑链】：代码片段跳转 -> 片段展开 -> 补全菜单 -> 增加缩进 -> 跳出括号
-map_multistep("i", "<Tab>", {
-	"minisnippets_next",
-	"minisnippets_expand",
-	"pmenu_next",
-	"increase_indent",
-	"jump_after_close",
-})
--- 【Shift-Tab 逻辑链】：代码片段回跳 -> 补全菜单 -> 减少缩进 -> 跳到左括号前
-map_multistep("i", "<S-Tab>", { "minisnippets_prev", "pmenu_prev", "decrease_indent", "jump_before_open" })
--- 【回车键 逻辑链】：确认补全项 -> 自动配对换行
-map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
--- 【退格键 逻辑链】：成对删除括号 -> 贪婪删除空格
-map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
--- 【选择模式】：确保在填写代码片段时 Tab 依然能跳转
-map_multistep("s", "<Tab>", { "minisnippets_next" })
-map_multistep("s", "<S-Tab>", { "minisnippets_prev" })
 
 -- ----------------------------------------------------------------------------
 -- 2. 工作流与版本控制工具 (mini.diff, mini.files, mini.git)
@@ -140,3 +106,36 @@ require("mini.misc").setup()
 map("n", "<D-f>", function()
 	require("mini.misc").zoom()
 end, "放大当前窗口")
+
+vim.api.nvim_create_autocmd("InsertEnter", {
+	group = vim.api.nvim_create_augroup("DzmfgMiniSnippets", { clear = true }),
+	once = true,
+	callback = function()
+		local ms = require("mini.snippets")
+		local gen_loader = ms.gen_loader
+		ms.setup({
+			mappings = {
+				jump_next = "<tab>",
+				jump_prev = "<s-tab>",
+			},
+			snippets = { gen_loader.from_lang({ lang_patterns = {
+				markdown_inline = { "markdown.json" },
+			} }) },
+		})
+		ms.start_lsp_server() -- 这里比较奇怪 开了会报错
+
+		local map_multistep = require("mini.keymap").map_multistep
+		map_multistep("i", "<Tab>", {
+			"minisnippets_next",
+			"minisnippets_expand",
+			"pmenu_next",
+			"increase_indent",
+			"jump_after_close",
+		})
+		map_multistep("i", "<S-Tab>", { "minisnippets_prev", "pmenu_prev", "decrease_indent", "jump_before_open" })
+		map_multistep("i", "<CR>", { "pmenu_accept", "minipairs_cr" })
+		map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
+		map_multistep("s", "<Tab>", { "minisnippets_next" })
+		map_multistep("s", "<S-Tab>", { "minisnippets_prev" })
+	end,
+})

@@ -8,7 +8,7 @@
 -- Productivity Boosters & Workflow Optimizers
 -- ============================================================================
 
-local map = require("utils").map
+local map = require("utils.map").map
 
 -- ============================================================================
 -- 1) 命令 / 修复工具 (Commands & Fixers)
@@ -64,3 +64,22 @@ require("noice").setup({
 -- 5) Clipboard History (Neoclip)
 -- ============================================================================
 require("neoclip").setup({ enable_persistent_history = true })
+
+require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
+require("faster").setup({
+	behaviours = {
+		bigfile = {
+			filesize = 10,
+			features_disabled = {
+				"illuminate", -- 引用高亮：大文件下频繁扫描，容易卡顿
+				"matchparen", -- 括号匹配：嵌套复杂时重绘/计算开销高
+				"lsp", -- LSP：诊断/语义分析在大文件下成本很高
+				"treesitter", -- Treesitter：AST 构建与查询开销大，优先保障流畅
+				"indent_blankline", -- 缩进线：大量虚拟文本影响渲染性能
+				"vimopts", -- 自动本地选项：避免隐式副作用（大文件以稳定为先）
+				-- "syntax",        -- 传统语法高亮：开启通常会明显拖慢
+				-- "filetype",      -- 文件类型检测：一般无需禁用，除非极端场景
+			},
+		},
+	},
+})

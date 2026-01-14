@@ -8,7 +8,7 @@
 -- Intelligent Code Completion & Analysis
 -- ============================================================================
 
-local map = require("utils").map
+local map = require("utils.map").map
 
 -- ============================================================================
 -- 1) Diagnostics UI
@@ -79,23 +79,6 @@ vim.lsp.enable({
 	"docker_language_server", -- Dockerfile：语法补全 + lint
 })
 
-require("faster").setup({
-	behaviours = {
-		bigfile = {
-			filesize = 10,
-			features_disabled = {
-				"illuminate",       -- 引用高亮：大文件下频繁扫描，容易卡顿
-				"matchparen",       -- 括号匹配：嵌套复杂时重绘/计算开销高
-				"lsp",              -- LSP：诊断/语义分析在大文件下成本很高
-				"treesitter",       -- Treesitter：AST 构建与查询开销大，优先保障流畅
-				"indent_blankline", -- 缩进线：大量虚拟文本影响渲染性能
-				"vimopts",          -- 自动本地选项：避免隐式副作用（大文件以稳定为先）
-				-- "syntax",        -- 传统语法高亮：开启通常会明显拖慢
-				-- "filetype",      -- 文件类型检测：一般无需禁用，除非极端场景
-			},
-		},
-	},
-})
 -- ============================================================================
 -- stylua: ignore end
 -- 3) LSP UX (Inlay Hints / Format)
@@ -115,4 +98,33 @@ end, "格式化文件")
 -- 4) Treesitter & Helpers
 -- ============================================================================
 require("treesitter-context").setup()
-require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
+
+-- ============================================================================
+-- 5. Telescope (Finder) + Keymaps
+-- ============================================================================
+local telescope, builtin = require("telescope"), require("telescope.builtin")
+telescope.setup({
+	defaults = {
+		path_display = { "filename_first" },
+		sorting_strategy = "ascending",
+		layout_config = { prompt_position = "top" }, -- ascending + top prompt
+	},
+})
+telescope.load_extension("fzf")
+
+-- stylua: ignore start
+local telescope_maps = {
+  -- 文件 / 搜索（高频）
+  { "nv", "<leader>ff", builtin.find_files,           "📁 查找文件" },
+  { "nv", "<leader>fr", builtin.oldfiles,             "🕒 最近文件" },
+  { "nv", "<leader>fg", builtin.live_grep,            "🔎 全局搜索" },
+  { "nv", "<leader>fw", builtin.grep_string,          "🔦 搜索光标词" },
+  { "nv", "<leader>f/", builtin.search_history,       "📜 搜索历史（/）" },
+  { "nv", "<leader>f:", builtin.command_history,      "⌨️ 指令历史" },
+  { "nv", "<leader>fs", builtin.treesitter,           "🌳 语法树符号" },
+  { "nv", "<leader>fy", "<CMD>Telescope neoclip<CR>", "📋 剪贴板历史" },
+  { "nv", "<leader>fn", "<CMD>Telescope notify<CR>",  "🔔 通知历史" },
+  { "nv", "<leader>fp", "<CMD>Telescope pickers<CR>", "🧰 Picker 历史" },
+}
+vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
+-- stylua: ignore end

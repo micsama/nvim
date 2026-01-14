@@ -1,7 +1,8 @@
 -- 键盘映射 (Keymaps)
-local map = require("utils").map
-require("utils").map_fullwidth_to_halfwidth()
+local map = require("utils.map").map
+require("utils.map").map_fullwidth_to_halfwidth()
 
+M = {}
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -51,25 +52,24 @@ local static_maps = {
 }
 
 local function_maps = {
-    -- LSP 直接引用 (LuaJIT 处理函数句柄非常高效)
-    { "n", "<leader>h",  vim.lsp.buf.hover,           "悬浮提示" },
-    { "n", "gd",         vim.lsp.buf.definition,      "跳转定义" },
-    { "n", "gi",         vim.lsp.buf.implementation,  "跳转实现" },
-    { "n", "go",         vim.lsp.buf.type_definition, "跳转类型定义" },
-    { "n", "gr",         vim.lsp.buf.references,      "查看引用" },
-    { "n", "<leader>rn", vim.lsp.buf.rename,          "变量重命名" },
-    { "n", "<leader>,",  vim.lsp.buf.code_action,     "代码操作" },
-    { "i", "<c-f>",      vim.lsp.buf.signature_help,  "函数签名帮助" },
+    { "n",   "<c-g>",      function() MiniGit.show_at_cursor() end,          "查看当前行git历史" },
+    { "n",   "H",          function() MiniDiff.toggle_overlay() end,         "切换 Hunk 预览" },
+    { "n",   "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end, "打开侧边文件树" },
+    { "n",   "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
+}
 
-    -- 匿名闭包逻辑 (这些行会比较长)
-    { "n", "<c-g>",      function() MiniGit.show_at_cursor() end,                            "查看当前行git历史" },
-    { "n", "H",          function() MiniDiff.toggle_overlay() end,                           "切换 Hunk 预览" },
-    { "n", "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end,                   "打开侧边文件树" },
-    { "n", "gD",         function() vim.cmd('tab split | lua vim.lsp.buf.definition()') end, "新标签打开定义" },
-    { "n", "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
+M.lsp_maps = {
+    { "n",   "<leader>h",  vim.lsp.buf.hover,           "悬浮提示" },
+    { "n",   "gd",         vim.lsp.buf.definition,      "跳转定义" },
+    { "n",   "gi",         vim.lsp.buf.implementation,  "跳转实现" },
+    { "n",   "go",         vim.lsp.buf.type_definition, "跳转类型定义" },
+    { "n",   "gr",         vim.lsp.buf.references,      "查看引用" },
+    { "n",   "<leader>rn", vim.lsp.buf.rename,          "变量重命名" },
+    { "n",   "<leader>,",  vim.lsp.buf.code_action,     "代码操作" },
+    { "i",   "<c-f>",      vim.lsp.buf.signature_help,  "函数签名帮助" },
+    { "n",   "gD",         function() vim.cmd('tab split | lua vim.lsp.buf.definition()') end, "新标签打开定义" },
 }
 -- stylua: ignore end
-
 
 vim.iter({ static_maps, function_maps }):flatten():each(function(m)
 	map(unpack(m))
@@ -99,3 +99,4 @@ end
 -- vim.keymap.del("x", "gra")
 -- vim.keymap.del("n", "gra")
 -- vim.keymap.del("n", "grn")
+return M
