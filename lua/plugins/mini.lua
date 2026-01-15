@@ -17,25 +17,13 @@ require("mini.surround").setup()
 -- =============================================================================
 
 -- require('mini.extra').setup() -- 暂时注释，功能复杂，后续处理
-require("mini.diff").setup({
+local mini_diff = require("mini.diff")
+mini_diff.setup({
 	source = {
-		require("mini.diff").gen_source.git(),
-		require("mini.diff").gen_source.save(),
+		mini_diff.gen_source.git(),
+		mini_diff.gen_source.save(),
 	},
 	view = { style = "sign", signs = { add = "▎", change = "░", delete = "█" } },
-})
-
-require("mini.files").setup({
-	mappings = { go_in_plus = "<CR>" },
-	content = {
-		filter = function(fs_entry)
-			if vim.startswith(fs_entry.name, ".DS") then
-				return false
-			end
-			return true
-		end,
-	},
-	permanent_delete = false,
 })
 
 -- =============================================================================
@@ -74,12 +62,6 @@ require("mini.icons").setup({
 MiniIcons.mock_nvim_web_devicons()
 MiniIcons.tweak_lsp_kind()
 
--- require("mini.notify").setup({
--- 	lsp_progress = {
--- 		enable = false,
--- 	},
--- })
-
 require("mini.cursorword").setup()
 
 -- =============================================================================
@@ -102,9 +84,8 @@ hipatterns.setup({
 
 require("hlchunk").setup({ chunk = { delay = 100, enable = true } })
 
-require("mini.misc").setup()
 map("n", "<D-f>", function()
-	require("mini.misc").zoom()
+	require("utils.zoom").toggle()
 end, "放大当前窗口")
 
 vim.api.nvim_create_autocmd("InsertEnter", {

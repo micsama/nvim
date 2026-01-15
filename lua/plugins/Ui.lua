@@ -8,27 +8,7 @@
 require("which-key").setup({ preset = "modern" })
 
 -- ============================================================================
--- 2) Bufferline (Tabs)
--- ============================================================================
-local function diagnostics_indicator(count, level)
-	local icon = level:match("error") and " " or " "
-	return (" %s%d"):format(icon, count)
-end
-
-require("bufferline").setup({
-	options = {
-		mode = "tabs",
-		numbers = "ordinal",
-		diagnostics = "nvim_lsp",
-		diagnostics_indicator = diagnostics_indicator,
-		indicator = { icon = "▎ ", style = "icon" },
-		tab_size = 12,
-		padding = 0,
-	},
-})
-
--- ============================================================================
--- 3) Notify (Notifications)
+-- 2) Notify (Notifications)
 -- ============================================================================
 require("notify").setup({
 	timeout = 1500,
@@ -38,7 +18,7 @@ require("notify").setup({
 vim.notify = require("notify")
 
 -- ============================================================================
--- 4) Lualine (Statusline)
+-- 3) Lualine (Statusline)
 -- ============================================================================
 local function short_cwd(max_len)
 	local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
@@ -62,7 +42,7 @@ require("lualine").setup({
 })
 
 -- ============================================================================
--- 5) Telescope (Finder) + Keymaps
+-- 4) Telescope (Finder) + Keymaps
 -- ============================================================================
 local map = require("utils.map").map
 local telescope, builtin = require("telescope"), require("telescope.builtin")
@@ -93,7 +73,7 @@ vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 -- stylua: ignore end
 
 -- ============================================================================
--- 6) Noice (UI Layer)
+-- 5) Noice (UI Layer)
 -- ============================================================================
 require("noice").setup({
 	cmdline = { enabled = true, view = "cmdline_popup" }, -- 只保留 cmdline UI
