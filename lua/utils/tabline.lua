@@ -1,93 +1,136 @@
 local M = {}
-local hl_cache = {}
+local hl_cache, diag_cache, cached_result = {}, {}, ""
+local dirty, scheduled = true, false
 local icons_ok, icons = pcall(require, "mini.icons")
 
-local DIAG_MAP = {
-	{ vim.diagnostic.severity.ERROR, "✘", "DiagnosticError" },
-	{ vim.diagnostic.severity.WARN, "󱓈", "DiagnosticWarn" },
-	{ vim.diagnostic.severity.INFO, "󰋽", "DiagnosticInfo" },
-	{ vim.diagnostic.severity.HINT, "󰛩", "DiagnosticHint" },
+local DIAG_MAP = { -- 诊断优先级：Error > Warn > Info > Hint
+	{ vim.diagnostic.severity.ERROR, " ✘ ", "DiagnosticError" },
+	{ vim.diagnostic.severity.WARN, " 󱓈 ", "DiagnosticWarn" },
+	{ vim.diagnostic.severity.INFO, " 󰋽 ", "DiagnosticInfo" },
+	{ vim.diagnostic.severity.HINT, " 󰛩 ", "DiagnosticHint" },
 }
 
--- 优化点：直接利用 tbl_extend 和 link=false 获取最终颜色，消除冗余赋值
-local function get_hl_id(fg_group, bg_group)
-	local key = fg_group .. "_" .. bg_group
-	if hl_cache[key] then
-		return hl_cache[key]
+local function mark_dirty() -- 合并调度，防止事件风暴
+	dirty = true
+	if not scheduled then
+		scheduled = true
+		vim.schedule(function()
+			scheduled = false
+			vim.cmd.redrawtabline()
+		end)
 	end
-
-	local fg_info = vim.api.nvim_get_hl(0, { name = fg_group, link = false })
-	local bg_info = vim.api.nvim_get_hl(0, { name = bg_group, link = false })
-
-	-- 0.12 最佳实践：直接合并，bg 覆盖 fg 的背景，保留所有其他属性（sp, underline, bold等）
-	local new_hl = vim.tbl_extend("force", fg_info, { bg = bg_info.bg })
-
-	if bg_group:find("Sel") then
-		new_hl.bold = true
-	end
-
-	local hl_name = "TabHL_" .. key
-	vim.api.nvim_set_hl(0, hl_name, new_hl)
-	hl_cache[key] = hl_name
-	return hl_name
 end
 
+local function get_hl(fg, bg) -- 缓存合成高亮组
+	local key = fg .. "_" .. bg
+	if not hl_cache[key] then
+		local hl = vim.tbl_extend("force", vim.api.nvim_get_hl(0, { name = fg, link = false }), {
+			bg = vim.api.nvim_get_hl(0, { name = bg, link = false }).bg,
+			bold = bg:find("Sel") and true or nil,
+		})
+		vim.api.nvim_set_hl(0, "TabHL_" .. key, hl)
+		hl_cache[key] = "TabHL_" .. key
+	end
+	return hl_cache[key]
+end
+
+-- 事件监听 ────────────────────────────────────────────────────────────────────
+local g = vim.api.nvim_create_augroup("Tabline", { clear = true })
+
 vim.api.nvim_create_autocmd("ColorScheme", {
+	group = g,
 	callback = function()
 		hl_cache = {}
+		mark_dirty()
 	end,
 })
 
-function M.render()
-	local tabs = vim.api.nvim_list_tabpages()
-	local current_tab = vim.api.nvim_get_current_tabpage()
+vim.api.nvim_create_autocmd(
+	{ "BufEnter", "BufWritePost", "BufModifiedSet", "TabEnter", "TabNew", "TabClosed" },
+	{ group = g, callback = mark_dirty }
+)
 
-	-- 移除 #tabs == 0 的冗余判断，Neovim 运行时至少有 1 个 tab
-	local res = { ("%%#%s#▎ %%#TabLine# "):format(get_hl_id("Special", "TabLine")) }
-	for i, tab in ipairs(tabs) do
-		local is_curr = (tab == current_tab)
-		local base_hl = is_curr and "TabLineSel" or "TabLine"
-		local win = vim.api.nvim_tabpage_get_win(tab)
-		local buf = vim.api.nvim_win_get_buf(win)
-
-		-- 1. 诊断获取 (移除 or 0，counts[key] 为 nil 时 if 自动判定为 false)
-		local diag_icon, diag_hl = "", base_hl
-		local counts = vim.diagnostic.count(buf)
+vim.api.nvim_create_autocmd("DiagnosticChanged", { -- 诊断变化时更新缓存
+	group = g,
+	callback = function(a)
+		diag_cache[a.buf] = nil
 		for _, d in ipairs(DIAG_MAP) do
-			if counts[d[1]] then
-				diag_icon, diag_hl = d[2], d[3]
+			if (vim.diagnostic.count(a.buf)[d[1]] or 0) > 0 then
+				diag_cache[a.buf] = { d[2], d[3] } -- { icon, hl_group }
 				break
 			end
 		end
+		mark_dirty()
+	end,
+})
 
-		-- 2. 文件信息
+vim.api.nvim_create_autocmd("BufDelete", {
+	group = g,
+	callback = function(a)
+		diag_cache[a.buf] = nil
+	end,
+})
+
+-- 渲染主函数 ──────────────────────────────────────────────────────────────────
+function M.render()
+	if not dirty then
+		return cached_result
+	end -- 缓存命中
+	dirty = false
+
+	local tabs, cur = vim.api.nvim_list_tabpages(), vim.api.nvim_get_current_tabpage()
+
+	local name_cnt = {} -- 预扫描：检测重复文件名
+	for _, tab in ipairs(tabs) do
+		local path = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(vim.api.nvim_tabpage_get_win(tab)))
+		local name = path ~= "" and vim.fn.fnamemodify(path, ":t") or "[No Name]"
+		name_cnt[name] = (name_cnt[name] or 0) + 1
+	end
+
+	local res = { ("%%#%s#▎ %%#TabLine# "):format(get_hl("Special", "TabLine")) }
+
+	for i, tab in ipairs(tabs) do
+		local sel = tab == cur
+		local hl = sel and "TabLineSel" or "TabLine"
+		local buf = vim.api.nvim_win_get_buf(vim.api.nvim_tabpage_get_win(tab))
 		local path = vim.api.nvim_buf_get_name(buf)
-		local icon, icon_hl = "", base_hl
+		local diag = diag_cache[buf] or { "", hl } -- { icon, hl_group }
+
+		local icon, icon_hl = "", hl -- 文件图标
 		if icons_ok and path ~= "" then
 			icon, icon_hl = icons.get("file", path)
 		end
 
-		-- 3. 文件名 (使用 strcharpart 确保中文截断不乱码)
-		local name = (path == "" and "[No Name]") or vim.fn.fnamemodify(path, ":t")
-		name = name:gsub("%%", "%%%%")
-		if #name > 16 then
-			name = vim.fn.strcharpart(name, 0, 15) .. "…"
+		local name = path ~= "" and vim.fn.fnamemodify(path, ":t") or "[No Name]" -- 文件名
+		if path ~= "" and name_cnt[name] > 1 then -- 重复时加父目录
+			local p = vim.fn.fnamemodify(path, ":p:h:t")
+			if p ~= "" and p ~= "." then
+				name = p .. "/" .. name
+			end
+		end
+		if #name > 20 then
+			name = vim.fn.strcharpart(name, 0, 19) .. "…"
 		end
 
-		-- 4. 组装 (减少变量创建，直接在 table 中 format)
-		table.insert(res, ("%%%dT"):format(i))
-		local prefix_fg = is_curr and "Special" or diag_hl
-		table.insert(res, ("%%#%s# %s%d "):format(get_hl_id(prefix_fg, base_hl), is_curr and "󰄲 " or "󰄱 ", i))
-		table.insert(res, ("%%#%s#%s "):format(get_hl_id(icon_hl, base_hl), icon))
-		table.insert(res, ("%%#%s#%s"):format(get_hl_id(diag_hl, base_hl), name))
-		table.insert(res, ("%%#%s#%s"):format(get_hl_id(diag_hl, base_hl), diag_icon))
-		-- 使用 get_option_value 替代 vim.bo，提升循环内的性能
-		local mod = vim.api.nvim_get_option_value("modified", { buf = buf }) and " ●" or ""
-		table.insert(res, ("%%#%s#%s ▕"):format(get_hl_id("DiagnosticOk", base_hl), mod))
+		res[#res + 1] = ("%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s ▕"):format(
+			i,
+			get_hl(sel and "Special" or "Comment", hl), -- prefix: 选中=Special, 否则=灰色
+			sel and "󰄲 " or "󰄱 ",
+			i,
+			get_hl(icon_hl, hl),
+			icon,
+			get_hl(diag[2], hl),
+			name:gsub("%%", "%%%%"),
+			get_hl(diag[2], hl),
+			diag[1],
+			get_hl("DiagnosticOk", hl),
+			vim.bo[buf].modified and " ●" or ""
+		)
 	end
 
-	table.insert(res, "%#TabLineFill#%T")
-	return table.concat(res)
+	res[#res + 1] = "%#TabLineFill#%T"
+	cached_result = table.concat(res)
+	return cached_result
 end
 
 return M
