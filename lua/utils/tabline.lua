@@ -4,10 +4,10 @@ local dirty, scheduled = true, false
 local icons_ok, icons = pcall(require, "mini.icons")
 
 local DIAG_MAP = { -- 诊断优先级：Error > Warn > Info > Hint
-	{ vim.diagnostic.severity.ERROR, " ✘ ", "DiagnosticError" },
-	{ vim.diagnostic.severity.WARN, " 󱓈 ", "DiagnosticWarn" },
-	{ vim.diagnostic.severity.INFO, " 󰋽 ", "DiagnosticInfo" },
-	{ vim.diagnostic.severity.HINT, " 󰛩 ", "DiagnosticHint" },
+	{ vim.diagnostic.severity.ERROR, " ✘", "DiagnosticError" },
+	{ vim.diagnostic.severity.WARN, " 󱓈", "DiagnosticWarn" },
+	{ vim.diagnostic.severity.INFO, " 󰋽", "DiagnosticInfo" },
+	{ vim.diagnostic.severity.HINT, " 󰛩", "DiagnosticHint" },
 }
 
 local function mark_dirty() -- 合并调度，防止事件风暴
@@ -87,7 +87,7 @@ function M.render()
 		name_cnt[name] = (name_cnt[name] or 0) + 1
 	end
 
-	local res = { ("%%#%s#▎ %%#TabLine# "):format(get_hl("Special", "TabLine")) }
+	local res = { ("%%#%s#▌%%#TabLine# "):format(get_hl("Special", "TabLine")) }
 
 	for i, tab in ipairs(tabs) do
 		local sel = tab == cur
@@ -114,7 +114,7 @@ function M.render()
 
 		res[#res + 1] = ("%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s ▕"):format(
 			i,
-			get_hl(sel and "Special" or "Comment", hl), -- prefix: 选中=Special, 否则=灰色
+			hl, -- prefix: 直接用 TabLine/TabLineSel，不再合成
 			sel and "󰄲 " or "󰄱 ",
 			i,
 			get_hl(icon_hl, hl),
@@ -124,7 +124,7 @@ function M.render()
 			get_hl(diag[2], hl),
 			diag[1],
 			get_hl("DiagnosticOk", hl),
-			vim.bo[buf].modified and " ●" or ""
+			vim.bo[buf].modified and " 󰷫" or ""
 		)
 	end
 

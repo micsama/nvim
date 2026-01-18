@@ -48,7 +48,6 @@ local static_maps = {
     -- 插件简短指令
     { "nv",  "<D-z>",       "<CMD>set wrap!<CR>",                "切换自动换行" },
     { "n",   "<leader><CR>","<CMD>nohlsearch<CR>",               "清除搜索高亮" },
-    { "n",   "<leader>rc",  "<CMD>edit $MYVIMRC<CR>",            "打开配置文件" },
     { "nv",  "U",           ":UndotreeToggle<CR>",               "撤销树" },
     { "nv",  "<D-o>",       "<CMD>CodeCompanionChat Toggle<CR>", "AI 聊天" },
 }
@@ -57,6 +56,7 @@ local function_maps = {
     { "n",   "<c-g>",      function() MiniGit.show_at_cursor() end,          "查看当前行git历史" },
     { "n",   "H",          function() MiniDiff.toggle_overlay() end,         "切换 Hunk 预览" },
     { "n",   "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end, "打开侧边文件树" },
+    { "n",   "<leader>rc", "<CMD>source ~/.config/nvim/Session.vim<CR>",     "加载 Session" },
     { "n",   "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
 }
 
@@ -88,7 +88,28 @@ vim.iter(vim.fn.range(1, 9)):each(function(i)
 end)
 
 -- 打开文件树后，定位到当前文件
+local mini_files_ready = false
+local function ensure_mini_files()
+	if mini_files_ready then
+		return
+	end
+	require("mini.files").setup({
+		mappings = { go_in_plus = "<CR>" },
+		content = {
+			filter = function(fs_entry)
+				if vim.startswith(fs_entry.name, ".DS") then
+					return false
+				end
+				return true
+			end,
+		},
+		permanent_delete = false,
+	})
+	mini_files_ready = true
+end
+
 function ToggleMiniFilesAtCurrentFile()
+	ensure_mini_files()
 	if not MiniFiles.close() then
 		local current_file = vim.api.nvim_buf_get_name(0)
 		local is_valid_file = current_file and current_file ~= "" and vim.fn.filereadable(current_file) == 1

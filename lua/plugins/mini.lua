@@ -67,22 +67,18 @@ require("mini.cursorword").setup()
 -- =============================================================================
 -- 5) 代码高亮与辅助
 -- =============================================================================
--- stylua: ignore start
 local hipatterns = require("mini.hipatterns")
-hipatterns.setup({
+hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 	highlighters = {
-		-- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 		fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
 		hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
 		todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
 		note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
-		-- Highlight hex color codes
-		hex_color = hipatterns.gen_highlighter.hex_color(),
+		hex_color = hipatterns.gen_highlighter.hex_color(), -- Highlight hex color codes
 	},
 })
--- stylua: ignore end
 
-require("hlchunk").setup({ chunk = { delay = 100, enable = true } })
+require("hlchunk").setup({ chunk = { delay = 110, enable = true } })
 
 map("n", "<D-f>", function()
 	require("utils.zoom").toggle()
@@ -94,7 +90,6 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 	callback = function()
 		local ms = require("mini.snippets")
 		local gen_loader = ms.gen_loader
-		-- stylua: ignore start
 		ms.setup({
 			mappings = {
 				jump_next = "<tab>",
@@ -104,11 +99,9 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 				markdown_inline = { "markdown.json" },
 			} }) },
 		})
-		-- stylua: ignore end
 		ms.start_lsp_server() -- 这里比较奇怪 开了会报错
 
 		local map_multistep = require("mini.keymap").map_multistep
-		-- stylua: ignore start
 		map_multistep("i", "<Tab>", {
 			"minisnippets_next",
 			"minisnippets_expand",
@@ -121,6 +114,5 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 		map_multistep("i", "<BS>", { "minipairs_bs", "hungry_bs" })
 		map_multistep("s", "<Tab>", { "minisnippets_next" })
 		map_multistep("s", "<S-Tab>", { "minisnippets_prev" })
-		-- stylua: ignore end
 	end,
 })

@@ -33,20 +33,21 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- ============================================================================
--- 3) Editing Helpers (Text Objects / Writing)
+-- 3) 延迟加载：首次进入 FileType
 -- ============================================================================
-require("wildfire").setup({}) -- 默认配置
-require("Bullets").setup({}) -- 默认配置
+vim.api.nvim_create_autocmd("FileType", {
+	once = true,
+	callback = function()
+		require("wildfire").setup({}) -- 默认配置
+		require("treesitter-context").setup()
+		require("neoclip").setup({ enable_persistent_history = true })
+	end,
+})
 
 -- ============================================================================
--- 4) Treesitter Context
+-- 4) Treesitter / LSP 工具
 -- ============================================================================
-require("treesitter-context").setup()
-
--- ============================================================================
--- 5) Clipboard History (Neoclip)
--- ============================================================================
-require("neoclip").setup({ enable_persistent_history = true })
+require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
 
 -- ============================================================================
 -- 6) Bigfile / 性能保护

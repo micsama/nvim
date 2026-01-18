@@ -2,7 +2,6 @@
 -- 主题配置：Catppuccin
 -- ===========================================================================
 
--- stylua: ignore start
 require("catppuccin").setup({
 	highlight_overrides = {
 		all = function(colors)
@@ -23,14 +22,15 @@ require("catppuccin").setup({
 				TelescopePromptTitle = { fg = colors.base, bg = colors.red, bold = true }, -- Prompt 标题：红底，最高优先级
 				TelescopeResultsTitle = { fg = colors.base, bg = colors.lavender, bold = true }, -- Results 标题：lavender 区分面板
 				TelescopePreviewTitle = { fg = colors.base, bg = colors.green, bold = true }, -- Preview 标题：green 提示“预览区域”
-
-				-- Bufferline
-				BufferLineIndicatorSelected = { link = "BufferLineBufferSelected" },
-				BufferLineBufferSelected = { fg = colors.mauve, bg = colors.base, style = { "bold", "italic" } },
+				-- TabLine
+				TabLineFill = { bg = colors.base },
+				-- TabLine = { fg = colors.overlay0, bg = colors.base },
+				TabLineSel = { fg = colors.mauve, bg = colors.surface1, bold = true, italic = true },
 			}
 		end,
 	},
 })
--- stylua: ignore end
+
+
 
 vim.cmd.colorscheme("catppuccin-mocha") -- 应用 catppuccin-mocha 主题

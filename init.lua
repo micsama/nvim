@@ -16,6 +16,11 @@ if vim.g.neovide then
 end
 
 -- 3. 插件管理：使用 vim.pack.add 定义所有插件列表，方便统一管理，都放一起。
+vim.g.pack_ft_markdown = {
+	"https://github.com/kaymmm/bullets.nvim",                        -- Markdown 列表增强
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim",  -- Markdown 实时渲染/预览
+}
+
 -- stylua: ignore start
 vim.pack.add({
     -- 准备研究后续加入
@@ -28,14 +33,13 @@ vim.pack.add({
     "https://github.com/nvim-mini/mini.nvim",                        -- mini.nvim(具体配置见mini.lua)
 
     -- A. 核心依赖 & 基础工具 (Core Dependencies & Utilities)
-    "https://github.com/nvim-lua/plenary.nvim",                      -- Lua 基础工具库，许多插件依赖
+    "https://github.com/nvim-lua/plenary.nvim",                      -- Lua 基础工具库，许多插件依赖(6个月没更新)
     "https://github.com/kkharji/sqlite.lua",                         -- SQLite 数据库支持 (如 Neoclip 依赖)
     "https://github.com/MunifTanjim/nui.nvim",                       -- 强大的 Neovim UI 组件库
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
     "https://github.com/catppuccin/nvim",                            -- 主题色
     "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
-    "https://github.com/akinsho/bufferline.nvim",                    -- 标签页/缓冲区行 (Tab/Buffer Line)
     "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
     "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
 
@@ -54,7 +58,6 @@ vim.pack.add({
     "https://github.com/pteroctopus/faster.nvim",                    -- 大型文件优化处理
 
     -- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
-    -- "https://github.com/ingur/floatty.nvim",                       -- 集成终端，并支持lazygit等工作(已经被我改造！)
     "https://github.com/olimorris/codecompanion.nvim",               -- LLM/AI 代码伴侣工具
 
     -- G. 调试 (DAP) 及其依赖
@@ -67,9 +70,6 @@ vim.pack.add({
     -- 'https://github.com/mfussenegger/nvim-dap-python',            -- Python 调试配置
     -- 'https://github.com/nvim-telescope/telescope-dap.nvim',        -- Telescope DAP 扩展
 
-    -- H. 文件类型特定(Filetype Specific)
-    "https://github.com/kaymmm/bullets.nvim",                        -- Markdown 列表增强
-    "https://github.com/MeanderingProgrammer/render-markdown.nvim",  -- Markdown 实时渲染/预览
 })
 -- stylua: ignore end
 require("config.theme") -- 主题

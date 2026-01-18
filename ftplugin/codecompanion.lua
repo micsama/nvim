@@ -2,10 +2,7 @@
 -- ftplugin: codecompanion
 -- ===========================================================================
 
-require("render-markdown").setup({
-	file_types = { "markdown", "codecompanion", "vimwiki" },
-	completions = { lsp = { enabled = true } },
-})
+vim.cmd("runtime! ftplugin/markdown.lua")
 
 vim.api.nvim_create_autocmd("InsertCharPre", {
 	buffer = 0, -- 仅对当前 CodeCompanion 缓冲区生效
