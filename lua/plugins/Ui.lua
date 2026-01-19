@@ -6,6 +6,7 @@ local map = require("utils.map").map
 -- 1) Which-Key (Keymap Helper)
 -- ============================================================================
 require("which-key").setup({ preset = "modern" })
+require("hlchunk").setup({ chunk = { delay = 110, enable = true } })
 
 -- ============================================================================
 -- 2) Notify (Notifications)

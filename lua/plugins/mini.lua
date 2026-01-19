@@ -91,7 +91,6 @@ hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 	},
 })
 
-require("hlchunk").setup({ chunk = { delay = 110, enable = true } })
 
 map("n", "<D-f>", function()
 	require("utils.zoom").toggle()

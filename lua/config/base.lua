@@ -30,6 +30,7 @@ vim.opt.smartindent = false -- 禁用智能缩进（通常由LSP或插件提供�
 vim.opt.ignorecase = true -- 搜索时忽略大小写。
 vim.opt.smartcase = true -- 如果搜索包含大写字母，则启用大小写敏感。
 vim.opt.completeopt = "menuone,noselect" -- 补全菜单：总是显示菜单，但不自动选择/插入。
+vim.opt.sessionoptions = { "curdir", "tabpages", "winsize", "help", "globals", "terminal" }
 vim.opt.updatetime = 100 -- 触发LSP和CursorHold事件的时间间隔（毫秒）。
 vim.opt.inccommand = "split" -- 实时预览命令效果（如替换命令）到分割窗口。
 vim.opt.shortmess:append("c") -- 缩短某些消息显示（如补全菜单）。

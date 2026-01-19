@@ -3,7 +3,7 @@ local H = {}
 local icons_ok, icons = pcall(require, "mini.icons")
 
 -- 常量定义
-local ICONS = { SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫 ▕", SEPARATOR = " ▕" }
+local ICONS = { SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫▕", SEPARATOR = " ▕" }
 
 -- 按严重程度排序，确保 ERROR 优先
 local DIAG_ORDER = {
@@ -143,7 +143,7 @@ function M.render()
 	end
 
 	-- 预分配结果表
-	local res = { "%#Special#▌%#TabLine# " }
+	local res = { "%#Special#▌%#TabLine# " }
 	for i = first, last do
 		local d = items[i].data
 		res[#res + 1] = string.format(
