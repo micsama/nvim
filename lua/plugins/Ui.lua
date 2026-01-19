@@ -1,7 +1,7 @@
 -- ===========================================================================
 -- UI 与外观：状态栏 / 标签页 / 通知 / 查找器
 -- ===========================================================================
-
+local map = require("utils.map").map
 -- ============================================================================
 -- 1) Which-Key (Keymap Helper)
 -- ============================================================================
@@ -44,7 +44,6 @@ require("lualine").setup({
 -- ============================================================================
 -- 4) Telescope (Finder) + Keymaps
 -- ============================================================================
-local map = require("utils.map").map
 local telescope, builtin = require("telescope"), require("telescope.builtin")
 telescope.setup({
 	defaults = {
@@ -59,6 +58,7 @@ telescope.load_extension("fzf")
 local telescope_maps = {
   -- 文件 / 搜索（高频）
   { "nv", "<leader>ff", builtin.find_files,           "📁 查找文件" },
+  { "nv", "<leader>fb", builtin.buffers,              "📁 查找Buffer" },
   { "nv", "<leader>fr", builtin.oldfiles,             "🕒 最近文件" },
   { "nv", "<leader>fg", builtin.live_grep,            "🔎 全局搜索" },
   { "nv", "<leader>fw", builtin.grep_string,          "🔦 搜索光标词" },

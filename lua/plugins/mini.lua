@@ -29,6 +29,19 @@ mini_diff.setup({
 -- =============================================================================
 -- 3) MiniFiles 复制辅助
 -- =============================================================================
+require("mini.files").setup({
+	mappings = { go_in_plus = "<CR>" },
+	content = {
+		filter = function(fs_entry)
+			if vim.startswith(fs_entry.name, ".DS") then
+				return false
+			end
+			return true
+		end,
+	},
+	permanent_delete = false,
+})
+
 local function yank(mod)
 	local p = vim.fn.fnamemodify(MiniFiles.get_fs_entry().path, mod)
 	vim.fn.setreg("+", p)

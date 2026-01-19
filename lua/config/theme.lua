@@ -22,15 +22,13 @@ require("catppuccin").setup({
 				TelescopePromptTitle = { fg = colors.base, bg = colors.red, bold = true }, -- Prompt 标题：红底，最高优先级
 				TelescopeResultsTitle = { fg = colors.base, bg = colors.lavender, bold = true }, -- Results 标题：lavender 区分面板
 				TelescopePreviewTitle = { fg = colors.base, bg = colors.green, bold = true }, -- Preview 标题：green 提示“预览区域”
-				-- TabLine
-				TabLineFill = { bg = colors.base },
+
 				-- TabLine = { fg = colors.overlay0, bg = colors.base },
+				TabLineFill = { bg = colors.base },
 				TabLineSel = { fg = colors.mauve, bg = colors.surface1, bold = true, italic = true },
 			}
 		end,
 	},
 })
-
-
 
 vim.cmd.colorscheme("catppuccin-mocha") -- 应用 catppuccin-mocha 主题

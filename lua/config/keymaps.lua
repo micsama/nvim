@@ -38,8 +38,8 @@ local static_maps = {
     { "nv",  "<D-t>",       "<CMD>tab new<CR>",                  "新标签页" },
     { "nv",  "<D-k>",       "<CMD>tabnext<CR>",                  "下一个标签页" },
     { "nv",  "<D-j>",       "<CMD>tabprevious<CR>",              "上一个标签页" },
-    { "n",   "<D-s-j>",     "<CMD>tabmove -1<CR>",               "标签页左移" },
-    { "n",   "<D-s-k>",     "<CMD>tabmove +1<CR>",               "标签页右移" },
+    { "n",   "<D-s-j>",     "<CMD>tabmove -1<CR>", "标签页左移" },
+    { "n",   "<D-s-k>",     "<CMD>tabmove +1<CR>", "标签页右移" },
     { "it",  "<D-j>",       "<C-\\><C-n>:-tabnext<CR>",          "插入: 上个标签" },
     { "it",  "<D-k>",       "<C-\\><C-n>:+tabnext<CR>",          "插入: 下个标签" },
     { "it",  "<D-t>",       "<C-\\><C-n>:tab new<CR>",           "插入: 新标签" },
@@ -87,29 +87,7 @@ vim.iter(vim.fn.range(1, 9)):each(function(i)
 	end, "切换到标签页 " .. i)
 end)
 
--- 打开文件树后，定位到当前文件
-local mini_files_ready = false
-local function ensure_mini_files()
-	if mini_files_ready then
-		return
-	end
-	require("mini.files").setup({
-		mappings = { go_in_plus = "<CR>" },
-		content = {
-			filter = function(fs_entry)
-				if vim.startswith(fs_entry.name, ".DS") then
-					return false
-				end
-				return true
-			end,
-		},
-		permanent_delete = false,
-	})
-	mini_files_ready = true
-end
-
 function ToggleMiniFilesAtCurrentFile()
-	ensure_mini_files()
 	if not MiniFiles.close() then
 		local current_file = vim.api.nvim_buf_get_name(0)
 		local is_valid_file = current_file and current_file ~= "" and vim.fn.filereadable(current_file) == 1

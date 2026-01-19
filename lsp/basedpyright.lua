@@ -19,7 +19,7 @@ return {
 	settings = {
 		basedpyright = {
 			analysis = {
-				typeCheckingMode = "basic", -- 开启基础类型检查（平衡准确性与干扰）
+				typeCheckingMode = "standard", -- 开启基础类型检查（平衡准确性与干扰）
 				autoSearchPaths = true, -- 自动搜索第三方库路径
 				useLibraryCodeForTypes = true, -- 从库代码推断类型（在无 type hints 时很有用）
 				diagnosticMode = "openFilesOnly", -- 仅分析已打开的文件，避免全量扫描消耗资源
