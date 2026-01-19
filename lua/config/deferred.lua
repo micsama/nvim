@@ -11,7 +11,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		-- 进入 UI 后再尝试加载目录 Session，并延迟初始化 LSP
 		local path = vim.fn.argv(0)
 		local s = path and path .. "/Session.vim"
-		if s and vim.uv.fs_stat(path).type == "directory" and vim.uv.fs_stat(s) then
+		local path_stat = path and vim.uv.fs_stat(path)
+		if s and path_stat and path_stat.type == "directory" and vim.uv.fs_stat(s) then
 			vim.cmd.source(s)
 		end
 		require("config.lsp")
