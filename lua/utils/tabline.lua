@@ -1,11 +1,13 @@
+-- my tabline for neovim v0.12
 local M = {}
 local H = {}
 local icons_ok, icons = pcall(require, "mini.icons")
 
 -- 常量定义
-local ICONS = { SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫▕", SEPARATOR = " ▕" }
+local ICONS =
+	{ SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫▕", SEPARATOR = " ▕", DUPLICATE = "  " }
 
--- 按严重程度排序，确保 ERROR 优先
+-- 按严重程度排序
 local DIAG_ORDER = {
 	{ vim.diagnostic.severity.ERROR, " ✘", "DiagnosticError" },
 	{ vim.diagnostic.severity.WARN, " 󱓈", "DiagnosticWarn" },
@@ -17,13 +19,13 @@ local state = {
 	hl_cache = {},
 	diag_cache = {},
 	name_cnt = {},
+	buf_cnt = {},
 	scroll_offset = 0,
 	timer = vim.uv.new_timer(),
-	last_tab_count = 0,
 }
 
 local function get_hl(fg, bg, is_bold)
-	local key = fg .. "_" .. bg
+	local key = fg .. "_" .. bg .. (is_bold and "_b" or "")
 	if not state.hl_cache[key] then
 		local fg_def = vim.api.nvim_get_hl(0, { name = fg, link = false })
 		local bg_def = vim.api.nvim_get_hl(0, { name = bg, link = false })
@@ -34,19 +36,17 @@ local function get_hl(fg, bg, is_bold)
 	return state.hl_cache[key]
 end
 
-local function update_name_cnt(tabs)
-	-- 只在 tab 数量变化时更新
-	if #tabs == state.last_tab_count then
-		return
-	end
-	state.last_tab_count = #tabs
-
+local function update_tab_stats(tabs)
 	state.name_cnt = {}
+	state.buf_cnt = {}
 	for _, t in ipairs(tabs) do
-		local buf = vim.api.nvim_win_get_buf(vim.api.nvim_tabpage_get_win(t))
+		local win = vim.api.nvim_tabpage_get_win(t)
+		local buf = vim.api.nvim_win_get_buf(win)
 		local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
 		name = name == "" and "[No Name]" or name
+
 		state.name_cnt[name] = (state.name_cnt[name] or 0) + 1
+		state.buf_cnt[buf] = (state.buf_cnt[buf] or 0) + 1
 	end
 end
 
@@ -77,8 +77,8 @@ function H.prepare_tab_data(i, tab, cur)
 
 	local indicator = is_sel and ICONS.SELECTED or ICONS.UNSELECTED
 	local modified_icon = vim.bo[buf].modified and ICONS.MODIFIED or ICONS.SEPARATOR
+	local dup_icon = (state.buf_cnt[buf] or 0) > 1 and ICONS.DUPLICATE or ""
 
-	-- 高亮规则：选中 tab 用 TabLineSel，诊断色仅影响未选中 tab 的文件名
 	local d = {
 		id = i,
 		base_hl = base_hl,
@@ -90,16 +90,15 @@ function H.prepare_tab_data(i, tab, cur)
 		diag_hl = get_hl(diag_data[2], base_hl, is_sel),
 		diag_icon = diag_data[1],
 		modified_hl = get_hl("DiagnosticOk", base_hl, is_sel),
-		modified_icon = modified_icon,
+		modified_content = dup_icon .. modified_icon,
 	}
 
-	-- 预计算宽度：指示符(2) + 空格 + id(1-2) + 空格 + icon(1-2) + 空格 + name + diag + modified
 	local width = 4
 		+ (i >= 10 and 2 or 1)
 		+ vim.fn.strdisplaywidth(icon)
 		+ vim.fn.strdisplaywidth(name)
 		+ vim.fn.strdisplaywidth(diag_data[1])
-		+ vim.fn.strdisplaywidth(modified_icon)
+		+ vim.fn.strdisplaywidth(d.modified_content)
 
 	return d, width
 end
@@ -107,9 +106,8 @@ end
 function M.render()
 	local tabs = vim.api.nvim_list_tabpages()
 	local cur = vim.api.nvim_get_current_tabpage()
-	update_name_cnt(tabs)
+	update_tab_stats(tabs)
 
-	-- 一次遍历完成 items 构建和 cur_idx 查找
 	local items, cur_idx = {}, 1
 	for i, t in ipairs(tabs) do
 		local d, w = H.prepare_tab_data(i, t, cur)
@@ -142,7 +140,6 @@ function M.render()
 		end
 	end
 
-	-- 预分配结果表
 	local res = { "%#Special#▌%#TabLine# " }
 	for i = first, last do
 		local d = items[i].data
@@ -159,7 +156,7 @@ function M.render()
 			d.diag_hl,
 			d.diag_icon,
 			d.modified_hl,
-			d.modified_icon
+			d.modified_content
 		)
 	end
 
@@ -178,7 +175,6 @@ local function async_update_diag(buf)
 			local counts = vim.diagnostic.count(buf)
 			state.diag_cache[buf] = nil
 
-			-- 按优先级遍历诊断
 			for _, item in ipairs(DIAG_ORDER) do
 				if (counts[item[1]] or 0) > 0 then
 					state.diag_cache[buf] = { item[2], item[3] }
@@ -206,19 +202,10 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 
--- 清理已删除 buffer 的诊断缓存
 vim.api.nvim_create_autocmd("BufDelete", {
 	group = g,
 	callback = function(a)
 		state.diag_cache[a.buf] = nil
-	end,
-})
-
--- tab 关闭时重置计数缓存，确保下次正确更新
-vim.api.nvim_create_autocmd("TabClosed", {
-	group = g,
-	callback = function()
-		state.last_tab_count = 0
 	end,
 })
 

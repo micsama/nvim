@@ -17,7 +17,7 @@ local runners = {
 }
 
 local apps = {
-	{ key = "<D-g>", id = "TERM", name = "Terminal", icon = " ", hl = "Function" },
+	{ key = "<D-g>", name = "Terminal", icon = " ", hl = "Function" },
 	{ key = "<D-i>", name = "Lazygit", icon = "󰊢 ", cmd = "lazygit", w = 0.98, h = 0.95, hl = "String" },
 	{ key = "<D-e>", name = "Codex", icon = "󰚩 ", cmd = "codex", w = 0.9, h = 0.95, hl = "Number" },
 	{ key = "<D-r>", name = "Runner", icon = "󰐊 ", is_runner = true, w = 0.75, h = 0.6, hl = "Constant" },
@@ -154,7 +154,6 @@ function M.toggle(cfg)
 					end)
 				end,
 			})
-			-- vim.wo.wrap = true
 		end)
 	end
 
