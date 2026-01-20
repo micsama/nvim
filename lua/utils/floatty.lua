@@ -3,7 +3,6 @@
 -- ===========================================================================
 
 local M = {}
-local api, fn = vim.api, vim.fn
 local map = require("utils.map").map
 
 local ID_SEP = "\0"
@@ -33,23 +32,24 @@ local function make_id(key, cwd)
 end
 
 local function get_meta()
-	local cwd = fn.getcwd()
+	local cwd = vim.fn.getcwd()
 	return {
 		cwd = cwd,
-		path = fn.fnamemodify(cwd, ":~"),
-		file = fn.expand("%:."),
+		path = vim.fn.fnamemodify(cwd, ":~"),
+		file = vim.fn.expand("%:."),
 		ft = vim.bo.filetype,
 		is_term = vim.bo.buftype == "terminal",
 	}
 end
 
 local function apply_win_style(win, hl, title)
-	if not api.nvim_win_is_valid(win) then
+	if not vim.api.nvim_win_is_valid(win) then
 		return
 	end
-	api.nvim_win_set_config(win, { title = title, title_pos = "center" })
+	vim.api.nvim_win_set_config(win, { title = title, title_pos = "center" })
 	vim.wo[win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(hl, hl)
 	vim.wo[win].signcolumn = "no"
+	vim.wo[win].wrap = true
 end
 
 local function format_duration(start_time)
@@ -89,22 +89,22 @@ function M.toggle(cfg)
 	-- 互斥：关闭其他浮窗
 	if state.last_id and state.last_id ~= id then
 		local last = state.terms[state.last_id]
-		if last and api.nvim_win_is_valid(last.win or -1) then
-			api.nvim_win_close(last.win, true)
+		if last and vim.api.nvim_win_is_valid(last.win or -1) then
+			vim.api.nvim_win_close(last.win, true)
 		end
 	end
 
 	-- 切换显隐
-	if term.win and api.nvim_win_is_valid(term.win) then
-		api.nvim_win_close(term.win, true)
+	if term.win and vim.api.nvim_win_is_valid(term.win) then
+		vim.api.nvim_win_close(term.win, true)
 		state.last_id = nil
 		return
 	end
 
 	-- 创建 Buffer
-	local needs_launch = not (term.buf and api.nvim_buf_is_valid(term.buf))
+	local needs_launch = not (term.buf and vim.api.nvim_buf_is_valid(term.buf))
 	if needs_launch then
-		term.buf = api.nvim_create_buf(false, true)
+		term.buf = vim.api.nvim_create_buf(false, true)
 	end
 
 	-- 计算窗口尺寸
@@ -112,7 +112,7 @@ function M.toggle(cfg)
 	local ww, wh = math.floor(vim.o.columns * w), math.floor(vim.o.lines * h)
 
 	-- 创建浮窗
-	term.win = api.nvim_open_win(term.buf, true, {
+	term.win = vim.api.nvim_open_win(term.buf, true, {
 		relative = "editor",
 		width = ww,
 		height = wh,
@@ -130,11 +130,11 @@ function M.toggle(cfg)
 	if needs_launch then
 		local start_time = vim.uv.hrtime() / 1e9
 		local final_cmd = cfg.is_runner
-				and ("sh -c %s"):format(fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
+				and ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
 			or cmd
 
-		api.nvim_buf_call(term.buf, function()
-			fn.jobstart(final_cmd, {
+		vim.api.nvim_buf_call(term.buf, function()
+			vim.fn.jobstart(final_cmd, {
 				term = true,
 				cwd = meta.cwd,
 				on_exit = function(_, code)
@@ -146,14 +146,15 @@ function M.toggle(cfg)
 						apply_win_style(term.win, hl, title)
 
 						vim.defer_fn(function()
-							if term.buf and api.nvim_buf_is_valid(term.buf) then
-								api.nvim_buf_delete(term.buf, { force = true })
+							if term.buf and vim.api.nvim_buf_is_valid(term.buf) then
+								vim.api.nvim_buf_delete(term.buf, { force = true })
 							end
 							state.terms[id] = nil
 						end, 100)
 					end)
 				end,
 			})
+			-- vim.wo.wrap = true
 		end)
 	end
 
@@ -164,10 +165,10 @@ end
 -- =============================================================================
 -- 自动缩放
 -- =============================================================================
-api.nvim_create_autocmd("VimResized", {
+vim.api.nvim_create_autocmd("VimResized", {
 	callback = function()
 		local term = state.terms[state.last_id]
-		if not (term and term.cfg and api.nvim_win_is_valid(term.win or -1)) then
+		if not (term and term.cfg and vim.api.nvim_win_is_valid(term.win or -1)) then
 			return
 		end
 
@@ -175,7 +176,7 @@ api.nvim_create_autocmd("VimResized", {
 		local ww = math.floor(vim.o.columns * (c.w or 0.8))
 		local wh = math.floor(vim.o.lines * (c.h or 0.8))
 
-		api.nvim_win_set_config(term.win, {
+		vim.api.nvim_win_set_config(term.win, {
 			relative = "editor",
 			width = ww,
 			height = wh,

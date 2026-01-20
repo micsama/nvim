@@ -13,6 +13,7 @@ require("catppuccin").setup({
 				["@punctuation.bracket"] = { fg = colors.subtext1 },
 				TreesitterContext = { bg = colors.surface0 },
 				TreesitterContextLineNumber = { fg = colors.green, bg = colors.surface0 },
+				DiffChange = { bg = "#6b5a39" }, -- 同步明度，采用暗棕橙色 (Dark Amber)
 
 				-- Telescope
 				TelescopeSelectionCaret = { fg = colors.red }, -- 选中 caret：红色箭头，定位更清晰
