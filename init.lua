@@ -15,13 +15,14 @@ if vim.g.neovide then
 	require("config.neovide") -- 仅在 Neovide 环境下加载 GUI 特有配置
 end
 
--- 3. 插件管理：使用 vim.pack.add 定义所有插件列表，方便统一管理，都放一起。
-vim.g.pack_ft_markdown = {
-	"https://github.com/kaymmm/bullets.nvim",                        -- Markdown 列表增强
-	"https://github.com/MeanderingProgrammer/render-markdown.nvim",  -- Markdown 实时渲染/预览
-}
 
 -- stylua: ignore start
+
+-- 3. 插件管理：使用 vim.pack.add 定义所有插件列表，方便统一管理，都放一起。
+vim.g.pack_ft_markdown = {
+	"https://github.com/kaymmm/bullets.nvim",                          -- Markdown 列表增强
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim",    -- Markdown 实时渲染/预览
+}
 vim.pack.add({
     -- 准备研究后续加入
     -- "https://github.com/debugloop/telescope-undo.nvim",
@@ -68,7 +69,7 @@ vim.pack.add({
     -- 'https://github.com/theHamsta/nvim-dap-virtual-text',         -- DAP 调试虚拟文本显示
     -- 'https://github.com/jay-babu/mason-nvim-dap.nvim',            -- Mason DAP 自动安装
     -- 'https://github.com/mfussenegger/nvim-dap-python',            -- Python 调试配置
-    -- 'https://github.com/nvim-telescope/telescope-dap.nvim',        -- Telescope DAP 扩展
+    -- 'https://github.com/nvim-telescope/telescope-dap.nvim',       -- Telescope DAP 扩展
 
 })
 -- stylua: ignore end

@@ -35,7 +35,7 @@ local static_maps = {
     { "n",   "<down>",      "<CMD>res -5<CR>",                   "减小窗口高度" },
     { "n",   "<left>",      "<CMD>vertical resize-5<CR>",        "减小窗口宽度" },
     { "n",   "<right>",     "<CMD>vertical resize+5<CR>",        "增加窗口宽度" },
-    { "nv",  "<D-t>",       "<CMD>tab new<CR>",                  "新标签页" },
+    { "nv",  "<D-t>",       "<CMD>tab split<CR>",                "新标签页" },
     { "nv",  "<D-k>",       "<CMD>tabnext<CR>",                  "下一个标签页" },
     { "nv",  "<D-j>",       "<CMD>tabprevious<CR>",              "上一个标签页" },
     { "n",   "<D-s-j>",     "<CMD>tabmove -1<CR>", "标签页左移" },
@@ -94,6 +94,8 @@ function ToggleMiniFilesAtCurrentFile()
 		MiniFiles.open(is_valid_file and current_file or nil)
 	end
 end
+
+
 
 -- 清理未使用的或冲突的默认映射
 -- vim.keymap.del("n", "grr")

@@ -5,7 +5,7 @@ local icons_ok, icons = pcall(require, "mini.icons")
 
 -- 常量定义
 local ICONS =
-	{ SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫▕", SEPARATOR = " ▕", DUPLICATE = "  " }
+	{ SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫▕", SEPARATOR = " ▕", DUPLICATE = " " }
 
 -- 按严重程度排序
 local DIAG_ORDER = {

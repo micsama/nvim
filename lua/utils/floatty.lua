@@ -64,7 +64,8 @@ local function build_runner_cfg(base_cfg, meta)
 	end
 	return vim.tbl_extend("force", base_cfg, {
 		cmd = cmd_tpl:format(meta.file),
-		id = make_id("RUNNER", meta.file), -- 按文件区分，避免缓存污染
+		id = make_id("RUNNER", meta.cwd),
+		file = meta.path .. "/" .. meta.file, -- 改这行
 	})
 end
 
@@ -74,11 +75,14 @@ end
 function M.toggle(cfg)
 	local meta = get_meta()
 
-	-- Runner 预处理
-	if cfg.is_runner and not meta.is_term then
-		cfg = build_runner_cfg(cfg, meta)
-		if not cfg then
-			return
+	if cfg.is_runner then
+		if meta.is_term then
+			cfg = { id = make_id("RUNNER", meta.cwd) }
+		else
+			cfg = build_runner_cfg(cfg, meta)
+			if not cfg then
+				return
+			end
 		end
 	end
 
@@ -104,6 +108,7 @@ function M.toggle(cfg)
 	-- 创建 Buffer
 	local needs_launch = not (term.buf and vim.api.nvim_buf_is_valid(term.buf))
 	if needs_launch then
+		term.file = cfg.file
 		term.buf = vim.api.nvim_create_buf(false, true)
 	end
 
@@ -123,7 +128,7 @@ function M.toggle(cfg)
 		zindex = 50,
 	})
 
-	local default_title = (" %s%s │ %s "):format(cfg.icon or "", cfg.name, meta.path)
+	local default_title = (" %s%s │ %s "):format(cfg.icon or "", cfg.name, term.file or meta.path)
 	apply_win_style(term.win, cfg.hl or "FloatBorder", default_title)
 
 	-- 启动进程
