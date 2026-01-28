@@ -1,212 +1,230 @@
--- my tabline for neovim v0.12
 local M = {}
-local H = {}
-local icons_ok, icons = pcall(require, "mini.icons")
+local api = vim.api
 
--- 常量定义
-local ICONS =
-	{ SELECTED = "󰄲 ", UNSELECTED = "󰄱 ", MODIFIED = " 󰷫▕", SEPARATOR = " ▕", DUPLICATE = " " }
+-- 1. 外部依赖检测 (mini.icons)
+local has_icons, mini_icons = pcall(require, "mini.icons")
+local get_icon = has_icons and mini_icons.get or function(_, _) return "", "" end
 
--- 按严重程度排序
-local DIAG_ORDER = {
-	{ vim.diagnostic.severity.ERROR, " ✘", "DiagnosticError" },
-	{ vim.diagnostic.severity.WARN, " 󱓈", "DiagnosticWarn" },
-	{ vim.diagnostic.severity.INFO, " 󰋽", "DiagnosticInfo" },
-	{ vim.diagnostic.severity.HINT, " 󰛩", "DiagnosticHint" },
+-- 2. 视觉常量 (Unicode 安全)
+local ICONS = {
+	SELECTED   = "󰄲 ",
+	UNSELECTED = "󰄱 ",
+	MODIFIED   = " 󰷫▕",
+	SEPARATOR  = " ▕",
+	CWD        = " ",
+	DIAG = {
+		[vim.diagnostic.severity.ERROR] = { icon = " ✘", hl = "DiagnosticError" },
+		[vim.diagnostic.severity.WARN]  = { icon = " 󱓈", hl = "DiagnosticWarn" },
+		[vim.diagnostic.severity.INFO]  = { icon = " 󰋽", hl = "DiagnosticInfo" },
+		[vim.diagnostic.severity.HINT]  = { icon = " 󰛩", hl = "DiagnosticHint" },
+	},
 }
 
+-- 3. 状态管理 (M4 Mac 优化：最小化内存分配)
 local state = {
-	hl_cache = {},
+	hl_cache   = {},
 	diag_cache = {},
-	name_cnt = {},
-	buf_cnt = {},
-	scroll_offset = 0,
-	timer = vim.uv.new_timer(),
+	scroll_off = 0,
+	timer      = vim.uv.new_timer(),
+	cwd_cache  = { raw = nil, render = "", width = 0 },
 }
 
-local function get_hl(fg, bg, is_bold)
-	local key = fg .. "_" .. bg .. (is_bold and "_b" or "")
-	if not state.hl_cache[key] then
-		local fg_def = vim.api.nvim_get_hl(0, { name = fg, link = false })
-		local bg_def = vim.api.nvim_get_hl(0, { name = bg, link = false })
-		local name = "TabHL_" .. key
-		vim.api.nvim_set_hl(0, name, { fg = fg_def.fg, bg = bg_def.bg, bold = is_bold })
-		state.hl_cache[key] = name
-	end
-	return state.hl_cache[key]
+-- --- 核心引擎 ---
+
+-- 高亮合成器：修复了 link 解析，确保颜色从 Catppuccin 正确继承
+local function get_compound_hl(fg_name, bg_name, is_bold)
+	local key = fg_name .. (bg_name or "") .. (is_bold and "_B" or "")
+	if state.hl_cache[key] then return state.hl_cache[key] end
+
+	local name = "TabHL_" .. key:gsub("[^%w_]", "_")
+	local fg_def = api.nvim_get_hl(0, { name = fg_name, link = false })
+	local bg_def = api.nvim_get_hl(0, { name = bg_name, link = false })
+
+	api.nvim_set_hl(0, name, {
+		fg = fg_def.fg,
+		bg = bg_def.bg,
+		bold = is_bold,
+	})
+
+	state.hl_cache[key] = name
+	return name
 end
 
-local function update_tab_stats(tabs)
-	state.name_cnt = {}
-	state.buf_cnt = {}
-	for _, t in ipairs(tabs) do
-		local win = vim.api.nvim_tabpage_get_win(t)
-		local buf = vim.api.nvim_win_get_buf(win)
-		local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
-		name = name == "" and "[No Name]" or name
-
-		state.name_cnt[name] = (state.name_cnt[name] or 0) + 1
-		state.buf_cnt[buf] = (state.buf_cnt[buf] or 0) + 1
+-- CWD 组件：生成亮底黑字色块 (Pill Style)
+local function get_cwd_component(max_chars)
+	local current_raw = vim.fn.getcwd()
+	if state.cwd_cache.raw == current_raw then
+		return state.cwd_cache.render, state.cwd_cache.width
 	end
+
+	local name = vim.fn.fnamemodify(current_raw, ":t")
+	if name == "" then name = "/" end
+
+	-- Unicode 安全截断
+	if api.nvim_strwidth(name) > max_chars then
+		name = vim.fn.strcharpart(name, 0, max_chars - 1) .. "…"
+	end
+
+	-- 这里的空格构成了亮色块的内边距 (Padding)
+	local text = " " .. ICONS.CWD .. name .. " "
+	state.cwd_cache.raw = current_raw
+	state.cwd_cache.render = text
+	state.cwd_cache.width = api.nvim_strwidth(text)
+
+	return text, state.cwd_cache.width
 end
 
-function H.prepare_tab_data(i, tab, cur)
-	local win = vim.api.nvim_tabpage_get_win(tab)
-	local buf = vim.api.nvim_win_get_buf(win)
-	local path = vim.api.nvim_buf_get_name(buf)
-	local is_sel = tab == cur
+-- Tab 项工厂
+local function make_tab_item(tabid, idx, is_sel, name_counts)
+	local win = api.nvim_tabpage_get_win(tabid)
+	local buf = api.nvim_win_get_buf(win)
+	local path = api.nvim_buf_get_name(buf)
+
 	local base_hl = is_sel and "TabLineSel" or "TabLine"
+	local diag = state.diag_cache[buf]
 
-	local diag_data = state.diag_cache[buf] or { "", base_hl }
-
-	local icon, icon_hl = "", base_hl
-	if icons_ok and path ~= "" then
-		icon, icon_hl = icons.get("file", path)
+	-- 文件名处理与重名消解 (Ambiguity Resolution)
+	local filename = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
+	if path ~= "" and (name_counts[filename] or 0) > 1 then
+		local parent = vim.fn.fnamemodify(path, ":p:h:t")
+		if parent ~= "" and parent ~= "." then filename = parent .. "/" .. filename end
 	end
 
-	local name = path ~= "" and vim.fn.fnamemodify(path, ":t") or "[No Name]"
-	if path ~= "" and (state.name_cnt[name] or 0) > 1 then
-		local p = vim.fn.fnamemodify(path, ":p:h:t")
-		if p ~= "" and p ~= "." then
-			name = p .. "/" .. name
-		end
+	if api.nvim_strwidth(filename) > 20 then
+		filename = vim.fn.strcharpart(filename, 0, 19) .. "…"
 	end
-	if #name > 20 then
-		name = vim.fn.strcharpart(name, 0, 19) .. "…"
-	end
+	local label = filename:gsub("%%", "%%%%")
 
-	local indicator = is_sel and ICONS.SELECTED or ICONS.UNSELECTED
-	local modified_icon = vim.bo[buf].modified and ICONS.MODIFIED or ICONS.SEPARATOR
-	local dup_icon = (state.buf_cnt[buf] or 0) > 1 and ICONS.DUPLICATE or ""
+	local icon_txt, icon_hl = get_icon("file", path)
+	if not icon_hl then icon_hl = base_hl end
+	local mod_txt = api.nvim_get_option_value("modified", { buf = buf }) and ICONS.MODIFIED or ICONS.SEPARATOR
 
-	local d = {
-		id = i,
-		base_hl = base_hl,
-		indicator = indicator,
-		icon_hl = get_hl(icon_hl, base_hl, is_sel),
-		icon = icon,
-		name_hl = is_sel and base_hl or get_hl(diag_data[2], base_hl, false),
-		name = name:gsub("%%", "%%%%"),
-		diag_hl = get_hl(diag_data[2], base_hl, is_sel),
-		diag_icon = diag_data[1],
-		modified_hl = get_hl("DiagnosticOk", base_hl, is_sel),
-		modified_content = dup_icon .. modified_icon,
-	}
+	-- 动态高亮计算
+	local diag_icon = diag and diag.icon or ""
+	local diag_hl = diag and diag.hl or base_hl
+	local final_icon_hl = get_compound_hl(icon_hl, base_hl, is_sel)
+	local final_name_hl = is_sel and base_hl or (diag and get_compound_hl(diag_hl, base_hl, false) or base_hl)
+	local final_diag_hl = diag and get_compound_hl(diag_hl, base_hl, is_sel) or base_hl
+	local final_mod_hl = get_compound_hl("DiagnosticOk", base_hl, is_sel)
 
-	local width = 4
-		+ (i >= 10 and 2 or 1)
-		+ vim.fn.strdisplaywidth(icon)
-		+ vim.fn.strdisplaywidth(name)
-		+ vim.fn.strdisplaywidth(diag_data[1])
-		+ vim.fn.strdisplaywidth(d.modified_content)
+	local width = 4 + (idx >= 10 and 2 or 1) + api.nvim_strwidth(icon_txt) +
+	              api.nvim_strwidth(filename) + api.nvim_strwidth(diag_icon) + api.nvim_strwidth(mod_txt)
 
-	return d, width
+	local render_str = string.format(
+		"%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s",
+		tabid, base_hl, is_sel and ICONS.SELECTED or ICONS.UNSELECTED, idx,
+		final_icon_hl, icon_txt, final_name_hl, label, final_diag_hl, diag_icon, final_mod_hl, mod_txt
+	)
+
+	return { width = width, render_str = render_str }
 end
+
+-- --- Main Render Pipeline ---
 
 function M.render()
-	local tabs = vim.api.nvim_list_tabpages()
-	local cur = vim.api.nvim_get_current_tabpage()
-	update_tab_stats(tabs)
+	local tabs = api.nvim_list_tabpages()
+	local cur_tab = api.nvim_get_current_tabpage()
+	local cur_idx = 1
 
-	local items, cur_idx = {}, 1
+	-- 1. 组件准备
+	local cwd_str, cwd_w = get_cwd_component(15)
+
+	-- 2. 预分析 (Pass 1)
+	local name_stats = {}
 	for i, t in ipairs(tabs) do
-		local d, w = H.prepare_tab_data(i, t, cur)
-		items[i] = { data = d, width = w }
-		if t == cur then
-			cur_idx = i
-		end
+		if t == cur_tab then cur_idx = i end
+		local win = api.nvim_tabpage_get_win(t)
+		local buf = api.nvim_win_get_buf(win)
+		local path = api.nvim_buf_get_name(buf)
+		local name = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
+		name_stats[name] = (name_stats[name] or 0) + 1
 	end
 
-	local avail = vim.o.columns - 4
+	-- 3. 布局项生成 (Pass 2)
+	local items = {}
+	for i, t in ipairs(tabs) do
+		items[i] = make_tab_item(t, i, t == cur_tab, name_stats)
+	end
 
-	local function get_range(off)
-		local w, last = 0, off + 1
-		for i = off + 1, #items do
-			if w + items[i].width > avail then
+	-- 4. 滑动窗口计算 (Pass 3)
+	-- 这里的 4 代表装饰符宽度 "▌ "，+1 用于间隙
+	local avail_width = vim.o.columns - 4 - cwd_w - 1
+
+	local start_idx = state.scroll_off + 1
+	if cur_idx < start_idx then start_idx = cur_idx end
+
+	local end_idx = start_idx
+	local current_w = 0
+	for i = start_idx, #items do
+		current_w = current_w + items[i].width
+		if current_w > avail_width then break end
+		end_idx = i
+	end
+
+	if cur_idx > end_idx then
+		local w = 0
+		end_idx = cur_idx
+		for i = cur_idx, 1, -1 do
+			w = w + items[i].width
+			if w > avail_width then
+				start_idx = i + 1
 				break
 			end
-			w, last = w + items[i].width, i
-		end
-		return off + 1, last
-	end
-
-	local first, last = get_range(state.scroll_offset)
-	if cur_idx < first then
-		state.scroll_offset = cur_idx - 1
-	elseif cur_idx > last then
-		while cur_idx > last and state.scroll_offset < #tabs do
-			state.scroll_offset = state.scroll_offset + 1
-			first, last = get_range(state.scroll_offset)
+			start_idx = i
 		end
 	end
+	state.scroll_off = start_idx - 1
 
-	local res = { "%#Special#▌%#TabLine# " }
-	for i = first, last do
-		local d = items[i].data
-		res[#res + 1] = string.format(
-			"%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s",
-			d.id,
-			d.base_hl,
-			d.indicator,
-			d.id,
-			d.icon_hl,
-			d.icon,
-			d.name_hl,
-			d.name,
-			d.diag_hl,
-			d.diag_icon,
-			d.modified_hl,
-			d.modified_content
-		)
+	-- 5. 拼接渲染 (Pass 4)
+	local res = {
+		"%#Special#▌ ",       -- 1. 装饰
+		"%#TabProject#" .. cwd_str, -- 2. 项目名 (亮底黑字)
+		"%#TabLine# ",             -- 3. 过渡空隙
+	}
+	for i = start_idx, end_idx do
+		if items[i] then table.insert(res, items[i].render_str) end
 	end
+	table.insert(res, "%#TabLineFill#%T")
 
-	return table.concat(res) .. "%#TabLineFill#%T"
+	return table.concat(res)
 end
 
-local function async_update_diag(buf)
+-- --- 异步与事件监听 ---
+
+local function update_diag(buf)
+	if not api.nvim_buf_is_valid(buf) then return end
+	local counts = vim.diagnostic.count(buf)
+	local new_data = nil
+	if (counts[vim.diagnostic.severity.ERROR] or 0) > 0 then new_data = ICONS.DIAG[vim.diagnostic.severity.ERROR]
+	elseif (counts[vim.diagnostic.severity.WARN] or 0) > 0 then new_data = ICONS.DIAG[vim.diagnostic.severity.WARN]
+	elseif (counts[vim.diagnostic.severity.INFO] or 0) > 0 then new_data = ICONS.DIAG[vim.diagnostic.severity.INFO]
+	elseif (counts[vim.diagnostic.severity.HINT] or 0) > 0 then new_data = ICONS.DIAG[vim.diagnostic.severity.HINT] end
+
+	if state.diag_cache[buf] ~= new_data then
+		state.diag_cache[buf] = new_data
+		vim.cmd.redrawtabline()
+	end
+end
+
+local function debounced_diag_update(buf)
 	state.timer:stop()
-	state.timer:start(
-		50,
-		0,
-		vim.schedule_wrap(function()
-			if not vim.api.nvim_buf_is_valid(buf) then
-				return
-			end
-			local counts = vim.diagnostic.count(buf)
-			state.diag_cache[buf] = nil
-
-			for _, item in ipairs(DIAG_ORDER) do
-				if (counts[item[1]] or 0) > 0 then
-					state.diag_cache[buf] = { item[2], item[3] }
-					break
-				end
-			end
-			vim.cmd.redrawtabline()
-		end)
-	)
+	state.timer:start(50, 0, vim.schedule_wrap(function() update_diag(buf) end))
 end
 
-local g = vim.api.nvim_create_augroup("Tabline", { clear = true })
-
-vim.api.nvim_create_autocmd({ "DiagnosticChanged", "BufEnter" }, {
-	group = g,
-	callback = function(a)
-		async_update_diag(a.buf)
-	end,
+local grp = api.nvim_create_augroup("TablineCore", { clear = true })
+api.nvim_create_autocmd({ "DiagnosticChanged", "BufEnter" }, {
+	group = grp,
+	callback = function(args) debounced_diag_update(args.buf) end,
 })
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-	group = g,
-	callback = function()
-		state.hl_cache = {}
-	end,
+-- 当颜色方案改变时清空合成高亮缓存
+api.nvim_create_autocmd("ColorScheme", {
+	group = grp,
+	callback = function() state.hl_cache = {} end,
 })
-
-vim.api.nvim_create_autocmd("BufDelete", {
-	group = g,
-	callback = function(a)
-		state.diag_cache[a.buf] = nil
-	end,
+-- 清理缓存防止内存泄漏
+api.nvim_create_autocmd("BufDelete", {
+	group = grp,
+	callback = function(args) state.diag_cache[args.buf] = nil end,
 })
 
 return M
