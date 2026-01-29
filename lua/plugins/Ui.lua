@@ -26,22 +26,6 @@ local function short_cwd(max_len)
 	return (#dir > max_len) and (dir:sub(1, max_len) .. "...") or dir
 end
 
-require("lualine").setup({
-	sections = {
-		lualine_a = { {
-			function()
-				return short_cwd(10)
-			end,
-			icon = "󰉖",
-		}, "filename" },
-		lualine_b = { "branch" },
-		lualine_c = { "diff", "diagnostics" },
-		lualine_x = { "filesize", "filetype" },
-		lualine_y = { "progress" },
-		lualine_z = { "location" },
-	},
-})
-
 -- ============================================================================
 -- 4) Telescope (Finder) + Keymaps
 -- ============================================================================

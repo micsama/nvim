@@ -40,7 +40,7 @@ vim.pack.add({
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
     -- "https://github.com/catppuccin/nvim",                            -- 主题色
-    "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
+    -- "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
     "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
     "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
 
@@ -78,3 +78,5 @@ require("plugins.ui") -- 用户界面和外观
 require("plugins.mini") -- 配置 mini家族的 核心插件
 require("config.deferred") -- 依赖插件的延迟加载
 require("config.theme") -- 主题
+require("component.statusline").setup()
+vim.o.tabline = "%!v:lua.require('component.tabline').render()"
