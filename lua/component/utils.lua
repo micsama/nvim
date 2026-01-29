@@ -89,7 +89,7 @@ M.icons = {
 		[vim.diagnostic.severity.INFO] = { icon = " 󰋽", hl = "DiagnosticInfo" },
 		[vim.diagnostic.severity.HINT] = { icon = " 󰛩", hl = "DiagnosticHint" },
 	},
-	misc = { file = " ", ronly = "" },
+	misc = { ronly = "" },
 }
 
 -- =============================================================================

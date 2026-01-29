@@ -3,6 +3,7 @@
 -- ===========================================================================
 local map = require("utils.map").map
 require("utils.map").map_fullwidth_to_halfwidth()
+require("utils.map").map_smart_zh_period()
 
 M = {}
 vim.g.mapleader = " "

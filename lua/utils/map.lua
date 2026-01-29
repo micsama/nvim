@@ -37,6 +37,24 @@ local FULLWIDTH_TO_HALFWIDTH_MAP = {
 }
 -- stylua: ignore end
 
+local function smart_zh_period()
+	local line = vim.api.nvim_get_current_line()
+	local col = vim.api.nvim_win_get_cursor(0)[2]
+	if col <= 0 then
+		return "。"
+	end
+
+	local prev = line:sub(col, col)
+	if prev == "." then
+		return "<BS>。"
+	end
+	if prev:match("%d") then
+		return "."
+	end
+
+	return "。"
+end
+
 --- 创建一个键位映射
 --- @param mode string|table: 模式 (如 'n', 'v', 'i', 't', 'nv' 或 {'n', 'v'})
 --- @param lhs string: 触发键位 (如 '<leader>w', '<D-g>')
@@ -78,6 +96,14 @@ function M.map_fullwidth_to_halfwidth()
 			silent = false,
 		})
 	end
+end
+
+function M.map_smart_zh_period()
+	M.map("i", "。", smart_zh_period, {
+		desc = "数字前中文句号 -> 英文点；数字+英文点 -> 中文句号",
+		expr = true,
+		silent = true,
+	})
 end
 
 return M

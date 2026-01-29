@@ -2,6 +2,7 @@
 local M = {}
 local api = vim.api
 local utils = require("component.utils") -- 引入公共组件
+local icons = utils.icons
 
 -- 状态管理
 local state = {
@@ -30,7 +31,7 @@ local function get_cwd_component(max_chars)
 		name = vim.fn.strcharpart(name, 0, max_chars - 1) .. "…"
 	end
 
-	local text = " " .. utils.icons.CWD .. name .. " "
+	local text = " " .. icons.CWD .. name .. " "
 	state.cwd_cache.raw = current_raw
 	state.cwd_cache.render = text
 	state.cwd_cache.width = api.nvim_strwidth(text)
@@ -66,13 +67,13 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
 	end
 
 	-- 3. 状态标识
-	local mod_txt = api.nvim_get_option_value("modified", { buf = buf }) and utils.icons.MODIFIED
-		or utils.icons.SEPARATOR
+	local mod_txt = api.nvim_get_option_value("modified", { buf = buf }) and icons.MODIFIED
+		or icons.SEPARATOR
 
 	-- 逻辑：同路径 -> 显示副本图标
 	local dup_txt = ""
 	if path ~= "" and (path_counts[path] or 0) > 1 then
-		dup_txt = utils.icons.DUPLICATE
+		dup_txt = icons.DUPLICATE
 	end
 
 	-- 4. 动态高亮计算
@@ -97,7 +98,7 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
 		"%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s%s",
 		tabid,
 		base_hl,
-		is_sel and utils.icons.SELECTED or utils.icons.UNSELECTED,
+		is_sel and icons.SELECTED or icons.UNSELECTED,
 		idx,
 		final_icon_hl,
 		icon_txt,
@@ -223,13 +224,13 @@ local function update_diag(buf)
 	local counts = vim.diagnostic.count(buf)
 	local new_data = nil
 	if (counts[vim.diagnostic.severity.ERROR] or 0) > 0 then
-		new_data = utils.icons.diag[1]
+		new_data = icons.diag[1]
 	elseif (counts[vim.diagnostic.severity.WARN] or 0) > 0 then
-		new_data = utils.icons.diag[2]
+		new_data = icons.diag[2]
 	elseif (counts[vim.diagnostic.severity.INFO] or 0) > 0 then
-		new_data = utils.icons.diag[3]
+		new_data = icons.diag[3]
 	elseif (counts[vim.diagnostic.severity.HINT] or 0) > 0 then
-		new_data = utils.icons.diag[4]
+		new_data = icons.diag[4]
 	end
 
 	if state.diag_cache[buf] ~= new_data then

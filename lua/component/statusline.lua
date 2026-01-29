@@ -2,6 +2,7 @@
 local M = {}
 local api = vim.api
 local utils = require("component.utils")
+local icons = utils.icons
 local data = require("component.stldata")
 
 -- ============================================================================
@@ -66,23 +67,15 @@ function C.file_info(buf, mode_hl, is_active)
 
 	local render_str = ""
 	if is_active then
-		-- 这里的逻辑：背景用 Mode 的背景(通常是 statusline 的背景)，或者 Mode 的前景？
-		-- 根据需求 "文件名配色和 Mode 配合"：
-		-- 方案 A: 文件名背景色 = Mode颜色 (很醒目)
-		-- 方案 B: 文件名文字颜色 = Mode颜色 (较优雅)
-
-		-- 这里实现方案 A (背景色跟随 Mode，类似 Powerline):
-		-- 我们需要创建一个 HL: fg = IconColor, bg = ModeColor
-
 		local combined_hl = utils.get_compound_hl(icon_hl_name, mode_hl, { bold = true })
 		render_str = string.format("%%#%s# %s %%#%s#%s ", combined_hl, icon, mode_hl, name)
 	else
 		render_str = string.format("%%#StatusLineNC# %s %s ", icon, name)
 	end
 
-	-- Modified 标记
-	if api.nvim_get_option_value("modified", { buf = buf }) then
-		render_str = render_str .. "%#Special# " .. utils.icons.misc.file .. " "
+	-- Readonly 标记
+	if api.nvim_get_option_value("readonly", { buf = buf }) then
+		render_str = render_str .. "%#DiagnosticWarn# " .. icons.misc.ronly .. " "
 	end
 
 	return render_str
@@ -100,18 +93,18 @@ function C.git(buf)
 	-- 拼接 Diff 字符串
 	local diff_str = ""
 	if info.added > 0 then
-		diff_str = diff_str .. "%#GitSignsAdd# " .. utils.icons.git.added .. info.added
+		diff_str = diff_str .. "%#GitSignsAdd# " .. icons.git.added .. info.added
 	end
 	if info.changed > 0 then
-		diff_str = diff_str .. "%#GitSignsChange# " .. utils.icons.git.changed .. info.changed
+		diff_str = diff_str .. "%#GitSignsChange# " .. icons.git.changed .. info.changed
 	end
 	if info.deleted > 0 then
-		diff_str = diff_str .. "%#GitSignsDelete# " .. utils.icons.git.deleted .. info.deleted
+		diff_str = diff_str .. "%#GitSignsDelete# " .. icons.git.deleted .. info.deleted
 	end
 
 	return string.format(
 		" %%#GitSignsBranch#%s %s%%#Comment#%s %s",
-		utils.icons.git.branch,
+		icons.git.branch,
 		info.branch,
 		user_str,
 		diff_str
@@ -127,10 +120,10 @@ function C.lsp(buf)
 
 	local res = ""
 	if info.err > 0 then
-		res = res .. "%#DiagnosticError#" .. utils.icons.diag[1].icon .. info.err
+		res = res .. "%#DiagnosticError#" .. icons.diag[1].icon .. info.err
 	end
 	if info.warn > 0 then
-		res = res .. "%#DiagnosticWarn#" .. utils.icons.diag[2].icon .. info.warn
+		res = res .. "%#DiagnosticWarn#" .. icons.diag[2].icon .. info.warn
 	end
 	return res .. " "
 end
