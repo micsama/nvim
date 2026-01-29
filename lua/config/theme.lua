@@ -1,35 +1,68 @@
 -- ===========================================================================
--- 主题配置：Catppuccin
+-- 主题配置：基于 vim.iter 的动态高亮加载
 -- ===========================================================================
+vim.o.background = "dark"
 
-require("catppuccin").setup({
-	highlight_overrides = {
-		all = function(colors)
-			return {
-				-- Core / Editor
-				["@variable"] = { link = "@variable.parameter" }, -- 变量高亮：与参数风格对齐，降低噪声
-				["LineNr"] = { fg = colors.overlay0 }, -- 行号：弱化到 overlay0，避免抢内容视线
-				["CursorLineNr"] = { fg = colors.mauve, bold = true }, -- 当前行号：强调定位（mauve + bold）
-				["@punctuation.bracket"] = { fg = colors.subtext1 },
-				TreesitterContext = { bg = colors.surface0 },
-				TreesitterContextLineNumber = { fg = colors.green, bg = colors.surface0 },
-				DiffChange = { bg = "#6b5a39" }, -- 同步明度，采用暗棕橙色 (Dark Amber)
+local function apply_theme_overrides()
+	-- 1. 辅助函数：动态抓取当前主题的颜色
+	local function get_color(name, attr)
+		local hl = vim.api.nvim_get_hl(0, { name = name, link = false })
+		return hl[attr]
+	end
 
-				-- Telescope
-				TelescopeSelectionCaret = { fg = colors.red }, -- 选中 caret：红色箭头，定位更清晰
-				TelescopePromptPrefix = { fg = colors.red }, -- 提示符前缀：红色，与匹配色一致
-				TelescopeMatching = { fg = colors.red, bold = true, underline = true }, -- 匹配高亮：红色+加粗，提升命中感
-				TelescopeSelection = { bg = colors.surface1, fg = colors.lavender, bold = true }, -- 选中行：surface1 背景 + lavender 前景
-				TelescopePromptTitle = { fg = colors.base, bg = colors.red, bold = true }, -- Prompt 标题：红底，最高优先级
-				TelescopeResultsTitle = { fg = colors.base, bg = colors.lavender, bold = true }, -- Results 标题：lavender 区分面板
-				TelescopePreviewTitle = { fg = colors.base, bg = colors.green, bold = true }, -- Preview 标题：green 提示“预览区域”
+	-- 2. 准备颜色变量 (从当前加载的 catppuccin 中实时提取)
+	local cp = {
+		base     = get_color("Normal", "bg"),
+		mauve    = get_color("Keyword", "fg"),
+		red      = get_color("Error", "fg"),
+		green    = get_color("String", "fg"),
+		lavender = get_color("CursorLineNr", "fg"),
+		overlay0 = get_color("Conceal", "fg"),
+		surface0 = get_color("Pmenu", "bg"),
+		surface1 = get_color("Visual", "bg"),
+		crust    = get_color("StatusLine", "bg"),
+		subtext1 = get_color("Special", "fg"),
+	}
 
-				-- TabLine = { fg = colors.overlay0, bg = colors.base },
-				TabLineFill = { bg = colors.base },
-				TabLineSel = { fg = colors.mauve, bg = colors.surface1, bold = true, italic = true },
-			}
-		end,
-	},
+	-- 3. 定义高亮组列表 (声明式结构)
+	local highlight_groups = { 
+		-- { "组名", { 配置参数 } }
+		{ "@variable",                   { link = "@variable.parameter" } },
+		{ "LineNr",                      { fg = cp.overlay0 } },
+		{ "CursorLineNr",                { fg = cp.mauve, bold = true } },
+		{ "@punctuation.bracket",        { fg = cp.subtext1 } },
+		{ "TreesitterContext",           { bg = cp.surface0 } },
+		{ "TreesitterContextLineNumber", { fg = cp.green, bg = cp.surface0 } },
+		{ "DiffChange",                  { bg = "#6b5a39" } }, -- 依然保留这一个特殊硬编码
+
+		-- Telescope
+		{ "TelescopeSelectionCaret",     { fg = cp.red } },
+		{ "TelescopePromptPrefix",       { fg = cp.red } },
+		{ "TelescopeMatching",           { fg = cp.red, bold = true, underline = true } },
+		{ "TelescopeSelection",          { bg = cp.surface1, fg = cp.lavender, bold = true } },
+		{ "TelescopePromptTitle",        { fg = cp.base, bg = cp.red, bold = true } },
+		{ "TelescopeResultsTitle",       { fg = cp.base, bg = cp.lavender, bold = true } },
+		{ "TelescopePreviewTitle",       { fg = cp.base, bg = cp.green, bold = true } },
+
+		-- TabLine
+		{ "TabLineFill",                 { bg = cp.base } },
+		{ "TabLineSel", { fg = cp.mauve, bg = cp.surface1, bold = true, italic = true } },
+		{ "TabProject", { fg = cp.crust, bg = cp.mauve, bold = true } },
+
+	}
+
+	-- 4. 使用 vim.iter 进行循环加载
+	vim.iter(highlight_groups):each(function(group)
+		vim.api.nvim_set_hl(0, group[1], {})
+		vim.api.nvim_set_hl(0, group[1], group[2])
+	end)
+end
+
+-- 5. 绑定自动命令
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "catppuccin",
+	callback = apply_theme_overrides,
 })
 
-vim.cmd.colorscheme("catppuccin-mocha") -- 应用 catppuccin-mocha 主题
+-- 应用主题
+vim.cmd.colorscheme("catppuccin")

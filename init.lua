@@ -39,7 +39,7 @@ vim.pack.add({
     "https://github.com/MunifTanjim/nui.nvim",                       -- 强大的 Neovim UI 组件库
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
-    "https://github.com/catppuccin/nvim",                            -- 主题色
+    -- "https://github.com/catppuccin/nvim",                            -- 主题色
     "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
     "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
     "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
@@ -73,8 +73,8 @@ vim.pack.add({
 
 })
 -- stylua: ignore end
-require("config.theme") -- 主题
 require("plugins.editor") -- 编辑器增强功能
 require("plugins.ui") -- 用户界面和外观
 require("plugins.mini") -- 配置 mini家族的 核心插件
 require("config.deferred") -- 依赖插件的延迟加载
+require("config.theme") -- 主题
