@@ -9,6 +9,9 @@ local state = {
 	scroll_off = 0,
 	timer = vim.uv.new_timer(),
 	cwd_cache = { raw = nil, render = "", width = 0 },
+	-- 核心缓存：[tabid] = bufid
+	-- 渲染时只读此缓存，避免读取到 Session 加载过程中的中间态
+	tab_bufs = {},
 }
 
 -- CWD 组件
@@ -35,21 +38,15 @@ local function get_cwd_component(max_chars)
 	return text, state.cwd_cache.width
 end
 
--- Tab 项工厂
-local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts)
-	local win = api.nvim_tabpage_get_win(tabid)
-	local buf = api.nvim_win_get_buf(win)
-	local path = api.nvim_buf_get_name(buf)
-
+-- Tab 项工厂 (直接接收 buf 和 path)
+local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, path)
 	local base_hl = is_sel and "TabLineSel" or "TabLine"
 	local diag = state.diag_cache[buf]
 
 	-- 1. 计算显示名称
 	local filename = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
-	
-	-- 核心逻辑修正：
-	-- 如果文件名重复 (name_counts > 1) 且 路径不重复 (path_counts == 1)
-	-- 说明是不同目录下的同名文件，此时才显示 parent
+
+	-- 逻辑：同名不同路径 -> 显示 Parent
 	if path ~= "" and (name_counts[filename] or 0) > 1 and (path_counts[path] or 0) == 1 then
 		local parent = vim.fn.fnamemodify(path, ":p:h:t")
 		if parent ~= "" and parent ~= "." then
@@ -68,11 +65,11 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts)
 		icon_hl = base_hl
 	end
 
-	-- 3. 状态标识 (Modified / Duplicate)
+	-- 3. 状态标识
 	local mod_txt = api.nvim_get_option_value("modified", { buf = buf }) and utils.icons.MODIFIED
 		or utils.icons.SEPARATOR
-	
-	-- 检测同一文件多开 (Duplicate)
+
+	-- 逻辑：同路径 -> 显示副本图标
 	local dup_txt = ""
 	if path ~= "" and (path_counts[path] or 0) > 1 then
 		dup_txt = utils.icons.DUPLICATE
@@ -83,7 +80,8 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts)
 	local diag_hl = diag and diag.hl or base_hl
 
 	local final_icon_hl = utils.get_compound_hl(icon_hl, base_hl, is_sel)
-	local final_name_hl = is_sel and base_hl or (diag and utils.get_compound_hl(diag_hl, base_hl, false) or base_hl)
+	local final_name_hl = is_sel and base_hl
+		or (diag and utils.get_compound_hl(diag_hl, base_hl, false) or base_hl)
 	local final_diag_hl = diag and utils.get_compound_hl(diag_hl, base_hl, is_sel) or base_hl
 	local final_mod_hl = utils.get_compound_hl("DiagnosticOk", base_hl, is_sel)
 
@@ -95,7 +93,6 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts)
 		+ api.nvim_strwidth(dup_txt)
 		+ api.nvim_strwidth(mod_txt)
 
-	-- 5. 渲染字符串拼接
 	local render_str = string.format(
 		"%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s%s",
 		tabid,
@@ -122,30 +119,58 @@ function M.render()
 	local cur_idx = 1
 	local cwd_str, cwd_w = get_cwd_component(15)
 
+	-- 1. 数据收集 (基于缓存)
 	local name_stats = {}
 	local path_stats = {}
-	
+	local tab_data = {} -- [i] = {buf, path}
+
+	-- 垃圾回收：清理已不存在的 tab 缓存
+	local active_tabs = {}
+	for _, t in ipairs(tabs) do
+		active_tabs[t] = true
+	end
+	for t, _ in pairs(state.tab_bufs) do
+		if not active_tabs[t] then
+			state.tab_bufs[t] = nil
+		end
+	end
+
 	for i, t in ipairs(tabs) do
 		if t == cur_tab then
 			cur_idx = i
 		end
-		local win = api.nvim_tabpage_get_win(t)
-		local buf = api.nvim_win_get_buf(win)
+
+		-- 读缓存 (Read Cache)
+		local buf = state.tab_bufs[t]
+
+		-- 惰性初始化 (Lazy Init):
+		-- 如果缓存缺失(首次加载/Session恢复后首次渲染)，则查询 API 并写入缓存。
+		-- 这保证了初始状态可见，且由于只在缺失时查询，不会受到后续 Session 加载过程中的干扰。
+		if not buf or not api.nvim_buf_is_valid(buf) then
+			local win = api.nvim_tabpage_get_win(t)
+			buf = api.nvim_win_get_buf(win)
+			state.tab_bufs[t] = buf
+		end
+
 		local path = api.nvim_buf_get_name(buf)
-		
+		tab_data[i] = { buf = buf, path = path }
+
+		-- 统计信息
 		local name = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
 		name_stats[name] = (name_stats[name] or 0) + 1
-		
 		if path ~= "" then
 			path_stats[path] = (path_stats[path] or 0) + 1
 		end
 	end
 
+	-- 2. 生成 Items
 	local items = {}
 	for i, t in ipairs(tabs) do
-		items[i] = make_tab_item(t, i, t == cur_tab, name_stats, path_stats)
+		local d = tab_data[i]
+		items[i] = make_tab_item(t, i, t == cur_tab, name_stats, path_stats, d.buf, d.path)
 	end
 
+	-- 3. 布局计算 (滑动窗口)
 	local avail_width = vim.o.columns - 4 - cwd_w - 1
 	local start_idx = state.scroll_off + 1
 	if cur_idx < start_idx then
@@ -190,6 +215,7 @@ function M.render()
 	return table.concat(res)
 end
 
+-- 诊断更新
 local function update_diag(buf)
 	if not api.nvim_buf_is_valid(buf) then
 		return
@@ -223,13 +249,35 @@ local function debounced_diag_update(buf)
 	)
 end
 
+-- 更新当前 Tab 的缓存
+local function update_current_tab_cache()
+	local tab = api.nvim_get_current_tabpage()
+	local buf = api.nvim_get_current_buf()
+	state.tab_bufs[tab] = buf
+	-- 触发重绘以应用更新
+	vim.cmd.redrawtabline()
+end
+
 local grp = api.nvim_create_augroup("TablineCore", { clear = true })
-api.nvim_create_autocmd({ "DiagnosticChanged", "BufEnter" }, {
+
+-- 核心事件：仅在用户主动操作 (BufEnter/TabEnter) 时更新缓存
+api.nvim_create_autocmd({ "BufEnter", "TabEnter" }, {
+	group = grp,
+	callback = function(args)
+		update_current_tab_cache()
+		if args.buf then
+			debounced_diag_update(args.buf)
+		end
+	end,
+})
+
+api.nvim_create_autocmd("DiagnosticChanged", {
 	group = grp,
 	callback = function(args)
 		debounced_diag_update(args.buf)
 	end,
 })
+
 api.nvim_create_autocmd("ColorScheme", {
 	group = grp,
 	callback = function()
