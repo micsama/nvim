@@ -8,14 +8,16 @@ local uv = vim.uv
 -- ============================================================================
 M.profiler = {
 	enabled = true, -- 全局开关
-	stats = {},     -- 存储统计数据
+	stats = {}, -- 存储统计数据
 }
 
 -- 环形缓冲区大小
 local RING_SIZE = 100
 
 function M.profiler.wrap(name, fn)
-	if not M.profiler.enabled then return fn end
+	if not M.profiler.enabled then
+		return fn
+	end
 
 	-- 初始化该组件的统计数据
 	if not M.profiler.stats[name] then
@@ -25,12 +27,12 @@ function M.profiler.wrap(name, fn)
 		if empty_samples[#empty_samples] == "" then
 			table.remove(empty_samples)
 		end
-		
+
 		M.profiler.stats[name] = {
 			count_5s = 0,
-			samples = empty_samples, 
+			samples = empty_samples,
 			head = 1,
-			last_check = uv.hrtime()
+			last_check = uv.hrtime(),
 		}
 	end
 
@@ -81,17 +83,23 @@ local user_cache = {} -- root -> name
 
 -- 读取文件获取 user.name (毫秒级，带缓存)
 local function fetch_git_user(root)
-	if not root or root == "" then return nil end
-	if user_cache[root] ~= nil then return user_cache[root] end
+	if not root or root == "" then
+		return nil
+	end
+	if user_cache[root] ~= nil then
+		return user_cache[root]
+	end
 
 	local function read_config(path)
 		local f = io.open(path, "r")
-		if not f then return nil end
+		if not f then
+			return nil
+		end
 		local content = f:read("*a")
 		f:close()
-		local user_block = content:match('%[user%](.-)%[') or content:match('%[user%](.*)')
+		local user_block = content:match("%[user%](.-)%[") or content:match("%[user%](.*)")
 		if user_block then
-			return user_block:match('name%s*=%s*([^\n]+)')
+			return user_block:match("name%s*=%s*([^\n]+)")
 		end
 		return nil
 	end
@@ -99,7 +107,9 @@ local function fetch_git_user(root)
 	local name = read_config(root .. "/.git/config")
 	if not name then
 		local home = os.getenv("HOME")
-		if home then name = read_config(home .. "/.gitconfig") end
+		if home then
+			name = read_config(home .. "/.gitconfig")
+		end
 	end
 
 	user_cache[root] = name and vim.trim(name) or false
@@ -108,10 +118,14 @@ end
 
 M.git_info = M.profiler.wrap("git_info", function(buf)
 	-- 安全检测：确保 buffer 有效
-	if not api.nvim_buf_is_valid(buf) then return nil end
+	if not api.nvim_buf_is_valid(buf) then
+		return nil
+	end
 
 	local summary = vim.b[buf].minigit_summary
-	if not summary or not summary.head_name then return nil end
+	if not summary or not summary.head_name then
+		return nil
+	end
 
 	local user = fetch_git_user(summary.root)
 	local diff = vim.b[buf].minidiff_summary
@@ -126,11 +140,15 @@ M.git_info = M.profiler.wrap("git_info", function(buf)
 end)
 
 M.lsp_info = M.profiler.wrap("lsp_info", function(buf)
-	if not api.nvim_buf_is_valid(buf) then return nil end
+	if not api.nvim_buf_is_valid(buf) then
+		return nil
+	end
 	local counts = vim.diagnostic.count(buf)
 	local err = counts[vim.diagnostic.severity.ERROR] or 0
 	local warn = counts[vim.diagnostic.severity.WARN] or 0
-	if err == 0 and warn == 0 then return nil end
+	if err == 0 and warn == 0 then
+		return nil
+	end
 	return { err = err, warn = warn }
 end)
 

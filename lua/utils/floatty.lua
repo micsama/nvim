@@ -104,6 +104,10 @@ function M.toggle(raw, choice)
 		if active_term and active_term.raw_source == raw then
 			vim.api.nvim_win_close(active_term.win, true)
 			state.last_id = nil
+			-- 关闭浮窗后检查外部改动，刷新底层 buffer
+			vim.schedule(function()
+				vim.cmd("checktime")
+			end)
 			return -- 结束，不做任何事
 		end
 	end

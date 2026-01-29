@@ -70,30 +70,3 @@ else
 		.. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
--- =============================================================================
--- 4) 终端颜色 (Dracula 近似值)
--- =============================================================================
--- stylua: ignore start
-local terminal_colors = {
-	"#000000", -- 0:  黑色 (Black)
-	"#FF5555", -- 1:  红色 (Red)
-	"#50FA7B", -- 2:  绿色 (Green)
-	"#F1FA8C", -- 3:  黄色 (Yellow)
-	"#BD93F9", -- 4:  蓝色 (Blue)
-	"#FF79C6", -- 5:  品红 (Magenta)
-	"#8BE9FD", -- 6:  青色 (Cyan)
-	"#BFBFBF", -- 7:  白色 (White)
-	"#4D4D4D", -- 8:  亮黑 (Bright Black)
-	"#FF6E67", -- 9:  亮红 (Bright Red)
-	"#5AF78E", -- 10: 亮绿 (Bright Green)
-	"#F4F99D", -- 11: 亮黄 (Bright Yellow)
-	"#CAA9FA", -- 12: 亮蓝 (Bright Blue)
-	"#FF92D0", -- 13: 亮品红 (Bright Magenta)
-	"#9AEDFE", -- 14: 亮青 (Bright Cyan)
-	"#FFFFFF", -- 15: 亮白 (Bright White)
-}
--- stylua: ignore end
-
-for i, color in ipairs(terminal_colors) do
-	vim.g["terminal_color_" .. (i - 1)] = color -- 设置 terminal_color_0 到 terminal_color_15。
-end
