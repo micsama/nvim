@@ -8,8 +8,6 @@ local data = require("component.stldata")
 -- ============================================================================
 -- 1. 配色映射 (Mode -> Highlight Group)
 -- ============================================================================
--- 请确保这些高亮组在你的主题中已定义，或者链接到现有组
--- 这里使用默认的 link 策略作为 Fallback
 local mode_map = {
 	["n"] = "StatusLineNormal",
 	["i"] = "StatusLineInsert",
@@ -22,19 +20,54 @@ local mode_map = {
 }
 
 local function setup_highlights()
-	-- 定义基础高亮，你可以根据你的配色方案修改这里
 	local function link(name, target)
 		if #api.nvim_get_hl(0, { name = name }) == 0 then
 			api.nvim_set_hl(0, name, { link = target })
 		end
 	end
 
-	-- 示例链接 (用户可自定义)
-	link("StatusLineNormal", "String") -- 绿色/蓝色
-	link("StatusLineInsert", "Function") -- 蓝色/黄色
-	link("StatusLineVisual", "Statement") -- 紫色
-	link("StatusLineCmd", "Comment")
-	link("StatusLineReplace", "Error")
+	-- 这里的颜色将决定胶囊的背景色
+	link("StatusLineNormal", "TabProject") -- 普通模式跟 Tabline CWD 一致 (通常是 mauve/purple)
+	link("StatusLineInsert", "String") -- 插入模式 (绿色)
+	link("StatusLineVisual", "Statement") -- 可视模式 (紫色/粉色)
+	link("StatusLineCmd", "Function") -- 命令模式 (蓝色)
+	link("StatusLineReplace", "Error") -- 替换模式 (红色)
+end
+
+-- 缓存动态生成的胶囊高亮
+local capsule_hl_cache = {}
+
+local function get_capsule_hl(mode_hl)
+	if capsule_hl_cache[mode_hl] then
+		return capsule_hl_cache[mode_hl]
+	end
+
+	-- 获取颜色的真实值
+	-- mode_hl (如 String) 通常提供 FG 颜色，我们将其用作胶囊的 BG
+	local mode_def = api.nvim_get_hl(0, { name = mode_hl, link = false })
+	local stl_def = api.nvim_get_hl(0, { name = "StatusLine", link = false })
+
+	-- 确保能取到颜色，取不到就 fallback
+	local mode_fg = mode_def.fg or mode_def.bg -- 优先取 FG，因为大多数 Syntax Group 是 FG
+	local stl_bg = stl_def.bg or "#1e1e2e" -- Statusline 背景色
+
+	-- 如果 mode_hl 本身就是 TabProject 这种已经定义好 bg 的，那逻辑可能要反过来
+	-- TabProject: fg=Crust, bg=Mauve。这种情况下我们直接用它的 bg。
+	if mode_hl == "TabProject" or mode_hl == "StatusLineNormal" then
+		mode_fg = mode_def.bg or mode_fg
+	end
+
+	local body_name = "StlCapsule_" .. mode_hl
+	local tail_name = "StlCapsuleTail_" .. mode_hl
+
+	-- 1. 胶囊主体: bg=模式色, fg=深色(StatusLine背景)
+	api.nvim_set_hl(0, body_name, { fg = stl_bg, bg = mode_fg, bold = true })
+
+	-- 2. 胶囊尾部 (半圆): fg=模式色, bg=StatusLine背景
+	api.nvim_set_hl(0, tail_name, { fg = mode_fg, bg = stl_bg })
+
+	capsule_hl_cache[mode_hl] = { body = body_name, tail = tail_name }
+	return capsule_hl_cache[mode_hl]
 end
 
 -- ============================================================================
@@ -43,54 +76,39 @@ end
 
 local C = {}
 
--- 模式指示器
-function C.mode(mode_hl)
-	local mode_code = api.nvim_get_mode().mode
-	local mode_label = mode_code:upper()
-	return string.format("%%#%s# ▎ %-3s ", mode_hl, mode_label)
-end
-
--- 文件名 (背景色跟随 Mode)
-function C.file_info(buf, mode_hl, is_active)
+-- 胶囊式文件信息 (替代原有的 mode + file_info)
+function C.file_capsule(buf, mode_hl, is_active)
 	local path = api.nvim_buf_get_name(buf)
 	local name = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
+	local icon = utils.get_icon("file", path)
 
-	-- 获取文件图标和原始颜色
-	local icon, icon_hl_name = utils.get_icon("file", path)
-	if not icon_hl_name then
-		icon_hl_name = "StatusLine"
+	if not is_active then
+		return string.format("%%#StatusLineNC# %s %s ", icon, name)
 	end
 
-	-- 魔法：合成图标色与模式背景色
-	-- 如果 is_active，我们希望背景是 ModeColor，前景是 IconColor
-	-- 如果 inactive，全灰
+	-- 获取动态胶囊高亮
+	local hls = get_capsule_hl(mode_hl)
 
-	local render_str = ""
-	if is_active then
-		local combined_hl = utils.get_compound_hl(icon_hl_name, mode_hl, { bold = true })
-		render_str = string.format("%%#%s# %s %%#%s#%s ", combined_hl, icon, mode_hl, name)
-	else
-		render_str = string.format("%%#StatusLineNC# %s %s ", icon, name)
-	end
+	-- 构造胶囊: [Icon Name]
+	local render_str = string.format("%%#%s# %s %s %%#%s#", hls.body, icon, name, hls.tail)
 
-	-- Readonly 标记
+	-- Readonly 标记 (跟在胶囊后面，或者放在胶囊里面？)
+	-- 既然是胶囊，锁最好放在胶囊里面，也就是半圆之前
 	if api.nvim_get_option_value("readonly", { buf = buf }) then
-		render_str = render_str .. "%#DiagnosticWarn# " .. icons.misc.ronly .. " "
+		-- 插入到半圆之前，保持 body 高亮
+		render_str = string.format("%%#%s# %s %s %s %%#%s#", hls.body, icon, name, icons.misc.ronly, hls.tail)
 	end
 
 	return render_str
 end
 
--- Git (分支 + User + Diff)
 function C.git(buf)
-	local info = data.git_info(buf) -- 调用 data 层
+	local info = data.git_info(buf)
 	if not info then
 		return ""
 	end
 
 	local user_str = (info.user and info.user ~= false) and ("(" .. info.user .. ")") or ""
-
-	-- 拼接 Diff 字符串
 	local diff_str = ""
 	if info.added > 0 then
 		diff_str = diff_str .. "%#GitSignsAdd# " .. icons.git.added .. info.added
@@ -111,13 +129,11 @@ function C.git(buf)
 	)
 end
 
--- LSP 诊断
 function C.lsp(buf)
 	local info = data.lsp_info(buf)
 	if not info then
 		return ""
 	end
-
 	local res = ""
 	if info.err > 0 then
 		res = res .. "%#DiagnosticError#" .. icons.diag[1].icon .. info.err
@@ -128,11 +144,21 @@ function C.lsp(buf)
 	return res .. " "
 end
 
--- 右侧信息
 function C.ruler(buf)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
-	-- 简单的行:列 百分比
-	return string.format("%%#StatusLine# %s %%l:%%c %%%%p ", ft)
+	local win = vim.g.statusline_winid or 0
+	local row = api.nvim_win_get_cursor(win)[1]
+	local total = api.nvim_buf_line_count(buf)
+	local progress
+
+	if row <= 1 then
+		progress = icons.misc.top
+	elseif row >= total then
+		progress = icons.misc.bottom
+	else
+		progress = string.format("%d%%%%", math.floor((row / total) * 100))
+	end
+	return string.format("%%#StatusLine# %s %%l:%%c %s ", ft, progress)
 end
 
 -- ============================================================================
@@ -144,21 +170,20 @@ function M.render()
 	local buf = api.nvim_win_get_buf(win)
 	local is_active = win == api.nvim_get_current_win()
 
-	-- 1. 获取当前模式对应的 "基准色"
 	local mode = api.nvim_get_mode().mode
 	local mode_hl = mode_map[mode] or "StatusLineNormal"
 
 	if not is_active then
 		return table.concat({
-			C.file_info(buf, "StatusLineNC", false),
+			C.file_capsule(buf, "StatusLineNC", false),
 			"%=",
 			C.ruler(buf),
 		})
 	end
 
 	return table.concat({
-		C.mode(mode_hl),
-		C.file_info(buf, mode_hl, true),
+		-- 移除单独的 Mode，直接渲染胶囊
+		C.file_capsule(buf, mode_hl, true),
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
@@ -173,21 +198,20 @@ end
 function M.setup()
 	setup_highlights()
 
-	vim.o.laststatus = 3 -- 推荐全局
+	vim.o.laststatus = 3
 	vim.o.statusline = "%!v:lua.require('component.statusline').render()"
 
 	local grp = api.nvim_create_augroup("StlCore", { clear = true })
 
-	-- 监听配色改变，重置缓存
 	api.nvim_create_autocmd("ColorScheme", {
 		group = grp,
 		callback = function()
 			utils.reset_hl_cache()
+			capsule_hl_cache = {} -- 清空本地高亮缓存
 			setup_highlights()
 		end,
 	})
 
-	-- 监听 mini.git / diff 更新
 	api.nvim_create_autocmd("User", {
 		pattern = { "MiniGitUpdated", "MiniDiffUpdated" },
 		group = grp,
@@ -196,7 +220,13 @@ function M.setup()
 		end,
 	})
 
-	-- 注册 Profiler 命令
+	api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "WinEnter", "BufEnter" }, {
+		group = grp,
+		callback = function()
+			vim.cmd.redrawstatus()
+		end,
+	})
+
 	api.nvim_create_user_command("StatusLineStats", function()
 		require("component.stldata").profiler.print_stats()
 	end, {})
