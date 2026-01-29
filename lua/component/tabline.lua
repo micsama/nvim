@@ -27,7 +27,7 @@ local function get_cwd_component(max_chars)
         name = vim.fn.strcharpart(name, 0, max_chars - 1) .. "…"
     end
 
-    local text = " " .. icons.CWD .. name .. " "
+    local text = " " .. icons.CWD .. name .. "▕"
     state.cwd_cache.raw = current_raw
     state.cwd_cache.render = text
     state.cwd_cache.width = api.nvim_strwidth(text)
@@ -53,10 +53,8 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
     end
     local label = filename:gsub("%%", "%%%%")
 
-    local icon_txt, icon_hl = utils.get_icon("file", path)
-    if not icon_hl then
-        icon_hl = base_hl
-    end
+    -- 使用统一工具获取带背景色的 Icon
+    local icon_txt, final_icon_hl = utils.get_file_icon_with_bg(buf, base_hl, is_sel)
 
     local mod_txt = api.nvim_get_option_value("modified", { buf = buf }) and icons.MODIFIED or icons.SEPARATOR
 
@@ -68,7 +66,6 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
     local diag_icon = diag and diag.icon or ""
     local diag_hl = diag and diag.hl or base_hl
 
-    local final_icon_hl = utils.get_compound_hl(icon_hl, base_hl, is_sel)
     local final_name_hl = is_sel and base_hl or (diag and utils.get_compound_hl(diag_hl, base_hl, false) or base_hl)
     local final_diag_hl = diag and utils.get_compound_hl(diag_hl, base_hl, is_sel) or base_hl
     local final_mod_hl = utils.get_compound_hl("DiagnosticOk", base_hl, is_sel)

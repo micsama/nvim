@@ -6,7 +6,7 @@ local icons = utils.icons
 local data = require("component.stldata")
 
 -- ============================================================================
--- 1. 配色映射 (Mode -> Highlight Group)
+-- 1. 配置
 -- ============================================================================
 local mode_map = {
 	["n"] = "StatusLineNormal",
@@ -19,62 +19,30 @@ local mode_map = {
 	["t"] = "StatusLineInsert",
 }
 
-local function setup_highlights()
-	local function link(name, target)
-		if #api.nvim_get_hl(0, { name = name }) == 0 then
-			api.nvim_set_hl(0, name, { link = target })
-		end
-	end
-
-	-- 胶囊背景色映射：
-	-- 我们将 StatusLine 的模式状态 Link 到现有的语义高亮组
-	-- theme.lua 已经定义了 TabProject (Magenta/Mauve)，我们复用它作为 Normal 模式的颜色
-	link("StatusLineNormal", "TabProject") -- Normal: 紫色背景 (与 Tabline Project 一致)
-	link("StatusLineInsert", "String") -- Insert: 绿色 (语义: 字符串/新增)
-	link("StatusLineVisual", "Statement") -- Visual: 紫色/粉色 (语义: 关键字/选中)
-	link("StatusLineCmd", "Function") -- Command: 蓝色 (语义: 函数/操作)
-	link("StatusLineReplace", "Error") -- Replace: 红色 (语义: 错误/危险)
-
-	-- Git 状态部分直接使用 MiniDiff 定义好的高亮，无需手动 set_hl
-	-- 如果需要微调，可以在 theme.lua 中统一修改 MiniDiffSign*
-end
-
--- 缓存动态生成的胶囊高亮
+-- 缓存动态生成的胶囊高亮组 (Body & Tail)
 local capsule_hl_cache = {}
 
+---根据当前模式高亮组，合成胶囊专用的 Body 和 Tail 高亮
+---@param mode_hl string 基础高亮组名 (如 "StatusLineInsert")
+---@return table { body: string, tail: string }
 local function get_capsule_hl(mode_hl)
 	if capsule_hl_cache[mode_hl] then
 		return capsule_hl_cache[mode_hl]
 	end
 
-	-- 动态获取颜色 (Level 2: 消费端逻辑)
-	-- 我们需要构建一个胶囊：
-	-- Body: fg=StatusLineBG, bg=ModeColor
-	-- Tail: fg=ModeColor, bg=StatusLineBG
-
+	-- 获取基础高亮定义
 	local mode_def = api.nvim_get_hl(0, { name = mode_hl, link = false })
 	local stl_def = api.nvim_get_hl(0, { name = "StatusLine", link = false })
 
-	-- 智能取色逻辑：
-	-- 1. ModeColor: 如果是 TabProject 这种 "UI组" (通常定义了bg)，取 bg。如果是 Syntax组 (如 String)，取 fg。
-	local mode_color = mode_def.fg
-	if mode_hl == "TabProject" or mode_hl == "StatusLineNormal" or mode_def.bg then
-		-- 如果有 bg 且不仅仅是默认黑色，优先用 bg
-		if mode_def.bg then
-			mode_color = mode_def.bg
-		end
-	end
-	-- Fallback
-	if not mode_color then
-		mode_color = "#89b4fa" -- Blue
-	end
-
-	-- 2. StatusLineBG: 必须取 bg
+	-- 1. 模式主色: 优先取 bg (针对 TabProject 类)，否则取 fg (针对 String 类)
+	local mode_color = mode_def.bg or mode_def.fg or "#89b4fa"
+	-- 2. 状态栏背景色
 	local stl_bg = stl_def.bg or "#1e1e2e"
 
 	local body_name = "StlCapsule_" .. mode_hl
 	local tail_name = "StlCapsuleTail_" .. mode_hl
 
+	-- 合成：Body(fg=背景, bg=主色) | Tail(fg=主色, bg=背景)
 	api.nvim_set_hl(0, body_name, { fg = stl_bg, bg = mode_color, bold = true })
 	api.nvim_set_hl(0, tail_name, { fg = mode_color, bg = stl_bg })
 
@@ -88,88 +56,66 @@ end
 
 local C = {}
 
+-- 胶囊式文件信息: [ Name ] (移除 Icon)
 function C.file_capsule(buf, mode_hl, is_active)
 	local path = api.nvim_buf_get_name(buf)
 	local name = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
-	local icon = utils.get_icon("file", path)
-
+	
 	if not is_active then
-		return string.format("%%#StatusLineNC# %s %s ", icon, name)
+		return string.format("%%#StatusLineNC# %s ", name)
 	end
 
 	local hls = get_capsule_hl(mode_hl)
-	local render_str = string.format("%%#%s# %s %s %%#%s#%s", hls.body, icon, name, hls.tail, icons.R_ROUND)
+	local readonly = api.nvim_get_option_value("readonly", { buf = buf }) and (" " .. icons.misc.ronly) or ""
 
-	if api.nvim_get_option_value("readonly", { buf = buf }) then
-		render_str = string.format("%%#%s# %s %s %s %%#%s#%s", hls.body, icon, name, icons.misc.ronly, hls.tail, icons.R_ROUND)
-	end
-
-	return render_str
+	return string.format("%%#%s# %s%s %%#%s#%s", hls.body, name, readonly, hls.tail, icons.R_ROUND)
 end
 
 function C.git(buf)
 	local info = data.git_info(buf)
-	if not info then
-		return ""
-	end
+	if not info then return "" end
 
-	-- 用户名高亮：如果是自己(micsama)，用 Function(Blue)，否则用 Warn(Yellow)
 	local user_hl = (info.user == "micsama") and "Function" or "DiagnosticWarn"
-	local user_str = (info.user and info.user ~= false) and (string.format("%%#%s#(%s)", user_hl, info.user)) or ""
+	local user_str = (info.user and info.user ~= false) and (string.format(" %%#%s#(%s)", user_hl, info.user)) or ""
 	
 	local diff_str = ""
-	if info.added > 0 then
-		diff_str = diff_str .. "%#MiniDiffSignAdd# " .. icons.git.added .. info.added
-	end
-	if info.changed > 0 then
-		diff_str = diff_str .. "%#MiniDiffSignChange# " .. icons.git.changed .. info.changed
-	end
-	if info.deleted > 0 then
-		diff_str = diff_str .. "%#MiniDiffSignDelete# " .. icons.git.deleted .. info.deleted
-	end
+	if info.added > 0 then diff_str = diff_str .. " %#MiniDiffSignAdd#" .. icons.git.added .. info.added end
+	if info.changed > 0 then diff_str = diff_str .. " %#MiniDiffSignChange#" .. icons.git.changed .. info.changed end
+	if info.deleted > 0 then diff_str = diff_str .. " %#MiniDiffSignDelete#" .. icons.git.deleted .. info.deleted end
 
-	return string.format(
-		" %%#String#%s %s%%#Comment# %s %s",
-		icons.git.branch,
-		info.branch,
-		user_str,
-		diff_str
-	)
+	return string.format(" %%#String#%s %s%%#Comment#%s%s", icons.git.branch, info.branch, user_str, diff_str)
 end
 
 function C.lsp(buf)
 	local info = data.lsp_info(buf)
-	if not info then
-		return ""
-	end
+	if not info then return "" end
 	local res = ""
-	if info.err > 0 then
-		res = res .. "%#DiagnosticError#" .. icons.diag[1].icon .. info.err
-	end
-	if info.warn > 0 then
-		res = res .. "%#DiagnosticWarn#" .. icons.diag[2].icon .. info.warn
-	end
+	if info.err > 0 then res = res .. " %#DiagnosticError#" .. icons.diag[1].icon .. info.err end
+	if info.warn > 0 then res = res .. " %#DiagnosticWarn#" .. icons.diag[2].icon .. info.warn end
 	return res .. " "
 end
 
-function C.ruler(buf)
+function C.ruler(buf, is_active, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
 	local win = vim.g.statusline_winid or 0
-	
-	-- 保护：如果是浮动窗口或无效窗口，光标获取可能会失败
 	local success, cursor = pcall(api.nvim_win_get_cursor, win)
 	local row = success and cursor[1] or 1
 	local total = api.nvim_buf_line_count(buf)
 	
-	local progress
-	if row <= 1 then
-		progress = icons.misc.top
-	elseif row >= total then
-		progress = icons.misc.bottom
-	else
-		progress = string.format("%d%%%%", math.floor((row / total) * 100))
-	end
-	return string.format("%%#StatusLine# %s %%l:%%c %s ", ft, progress)
+	local progress = (row <= 1) and icons.misc.top or (row >= total and icons.misc.bottom or string.format("%d%%%%", math.floor((row / total) * 100)))
+	
+	-- Icon 逻辑: 使用 utils 统一处理
+	local base_bg = is_active and "StatusLine" or "StatusLineNC"
+	local icon, icon_hl = utils.get_file_icon_with_bg(buf, base_bg)
+	local icon_str = (icon ~= "") and string.format("%%#%s#%s ", icon_hl, icon) or ""
+
+	local capsule_mode_hl = is_active and (mode_hl or "StatusLineNormal") or "StatusLineNC"
+	local hls = get_capsule_hl(capsule_mode_hl)
+	local progress_str = string.format("%%#%s# %s ", hls.body, progress)
+	local cursor_str = string.format("%%#%s# %%l:%%c", hls.tail)
+	local sep_str = string.format("%%#%s#%s", hls.tail, icons.L_ROUND)
+
+	return string.format("%%#%s# %s%s %s %s%s", base_bg, icon_str, ft, cursor_str, sep_str, progress_str)
 end
 
 -- ============================================================================
@@ -185,11 +131,7 @@ function M.render()
 	local mode_hl = mode_map[mode] or "StatusLineNormal"
 
 	if not is_active then
-		return table.concat({
-			C.file_capsule(buf, "StatusLineNC", false),
-			"%=",
-			C.ruler(buf),
-		})
+		return table.concat({ C.file_capsule(buf, "StatusLineNC", false), "%=", C.ruler(buf, false, "StatusLineNC") })
 	end
 
 	return table.concat({
@@ -197,7 +139,7 @@ function M.render()
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
-		C.ruler(buf),
+		C.ruler(buf, true, mode_hl),
 	})
 end
 
@@ -206,35 +148,29 @@ end
 -- ============================================================================
 
 function M.setup()
-	setup_highlights()
-
 	vim.o.laststatus = 3
 	vim.o.statusline = "%!v:lua.require('component.statusline').render()"
 
 	local grp = api.nvim_create_augroup("StlCore", { clear = true })
 
+	-- 主题切换时，只需清空本地的高亮缓存即可
 	api.nvim_create_autocmd("ColorScheme", {
 		group = grp,
 		callback = function()
 			utils.reset_hl_cache()
 			capsule_hl_cache = {}
-			setup_highlights()
 		end,
 	})
 
 	api.nvim_create_autocmd("User", {
 		pattern = { "MiniGitUpdated", "MiniDiffUpdated" },
 		group = grp,
-		callback = function()
-			vim.cmd.redrawstatus()
-		end,
+		callback = function() vim.cmd.redrawstatus() end,
 	})
 
 	api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "WinEnter", "BufEnter" }, {
 		group = grp,
-		callback = function()
-			vim.cmd.redrawstatus()
-		end,
+		callback = function() vim.cmd.redrawstatus() end,
 	})
 
 	api.nvim_create_user_command("StatusLineStats", function()

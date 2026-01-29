@@ -2,13 +2,12 @@
 -- 主题配置：基于静态 Palette 的高亮修正
 -- ===========================================================================
 local utils = require("component.utils")
+-- 1. 获取静态调色板
 local p = utils.palette
 
 vim.o.background = "dark"
 
 local function apply_theme_overrides()
-	-- 1. 获取静态调色板
-
 	-- 2. 定义高亮组列表
 	local highlight_groups = {
 		-- Treesitter & Syntax
@@ -22,7 +21,7 @@ local function apply_theme_overrides()
 		{ "CursorLineNr", { fg = p.magenta, bold = true } },
 		{ "Visual", { bg = p.surface1 } },
 
-		-- Telescope (使用 Palette 定制)
+		-- Telescope
 		{ "TelescopeSelectionCaret", { fg = p.red } },
 		{ "TelescopePromptPrefix", { fg = p.red } },
 		{ "TelescopeMatching", { fg = p.red, bold = true, underline = true } },
@@ -31,10 +30,17 @@ local function apply_theme_overrides()
 		{ "TelescopeResultsTitle", { fg = p.crust, bg = p.blue, bold = true } },
 		{ "TelescopePreviewTitle", { fg = p.crust, bg = p.green, bold = true } },
 
-		-- TabLine (核心 UI)
+		-- TabLine
 		{ "TabLineFill", { bg = p.base } },
 		{ "TabLineSel", { fg = p.magenta, bg = p.surface1, bold = true, italic = true } },
 		{ "TabProject", { fg = p.crust, bg = p.magenta, bold = true } },
+
+		-- StatusLine 模式胶囊基础色 (收归此处管理)
+		{ "StatusLineNormal", { link = "TabProject" } },
+		{ "StatusLineInsert", { fg = p.green, bold = true } },
+		{ "StatusLineVisual", { fg = p.magenta, bold = true } },
+		{ "StatusLineCmd", { fg = p.blue, bold = true } },
+		{ "StatusLineReplace", { fg = p.red, bold = true } },
 
 		-- MiniDiff (Git Signs)
 		{ "MiniDiffSignAdd", { fg = p.green } },
@@ -58,7 +64,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 -- 5. 应用默认主题
 pcall(vim.cmd.colorscheme, "catppuccin")
 
--- 6. 初始化终端颜色 (全局变量，只需设置一次)
+-- 6. 初始化终端颜色
 local colors = {
 	p.mantle, -- 0 Black
 	p.red, -- 1 Red
