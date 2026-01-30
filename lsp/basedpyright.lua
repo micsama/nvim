@@ -1,6 +1,14 @@
 -- ===========================================================================
 -- LSP: basedpyright
 -- ===========================================================================
+local function use_venv()
+	local path = vim.fn.getcwd() .. "/.venv/bin/python3"
+	for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0, name = "basedpyright" })) do
+		client.config.settings.python = { pythonPath = path }
+		client:notify("workspace/didChangeConfiguration", { settings = nil })
+	end
+	print("Activated: " .. path)
+end
 
 ---@type vim.lsp.Config
 return {
@@ -28,7 +36,7 @@ return {
 		},
 	},
 
-	on_attach = function(client, _)
+	on_attach = function(client, bufnr)
 		local caps = client.server_capabilities
 		caps.completionProvider = nil -- 补全建议
 		caps.definitionProvider = nil -- 跳转到定义 (Go to Definition)
@@ -39,5 +47,9 @@ return {
 		caps.signatureHelpProvider = nil -- 函数签名提示（输入括号时的参数提醒）
 		caps.codeActionProvider = nil -- 代码修复建议 (Code Actions)
 		caps.executeCommandProvider = nil -- 执行特定的 LSP 命令
+
+		vim.api.nvim_buf_create_user_command(bufnr, "Venv", use_venv, {
+			desc = "Reconfigure basedpyright with the provided python path",
+		})
 	end,
 }

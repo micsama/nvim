@@ -38,7 +38,7 @@ local function apply_theme_overrides()
 		-- StatusLine 模式胶囊基础色 (收归此处管理)
 		{ "StatusLineNormal", { link = "TabProject" } },
 		{ "StatusLineInsert", { fg = p.green, bold = true } },
-		{ "StatusLineVisual", { fg = p.magenta, bold = true } },
+		{ "StatusLineVisual", { fg = p.yellow, bold = true } },
 		{ "StatusLineCmd", { fg = p.blue, bold = true } },
 		{ "StatusLineReplace", { fg = p.red, bold = true } },
 
@@ -46,6 +46,12 @@ local function apply_theme_overrides()
 		{ "MiniDiffSignAdd", { fg = p.green } },
 		{ "MiniDiffSignChange", { fg = p.yellow } },
 		{ "MiniDiffSignDelete", { fg = p.red } },
+
+		-- Diagnostics
+		{ "DiagnosticError", { fg = p.red } },
+		{ "DiagnosticWarn", { fg = p.yellow } },
+		{ "DiagnosticInfo", { fg = p.blue } },
+		{ "DiagnosticHint", { fg = p.cyan } },
 	}
 
 	-- 3. 应用高亮
@@ -83,6 +89,8 @@ local colors = {
 	p.cyan, -- 14 Bright Cyan
 	p.text, -- 15 Bright White
 }
+
+
 
 for i, color in ipairs(colors) do
 	vim.g["terminal_color_" .. (i - 1)] = color
