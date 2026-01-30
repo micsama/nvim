@@ -198,7 +198,7 @@ function M.render()
 
     -- 5. 拼接输出
     local res = {
-        "%#Special#▌ ",
+        "%#Special#▌ ",
         "%#TabProject#" .. cwd_str,
         "%#TabLine# ",
     }

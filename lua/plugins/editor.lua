@@ -56,7 +56,7 @@ require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
 require("faster").setup({
 	behaviours = {
 		bigfile = {
-			filesize = 10,
+			filesize = 4,
 			features_disabled = {
 				"illuminate", -- 引用高亮：大文件下频繁扫描，容易卡顿
 				"matchparen", -- 括号匹配：嵌套复杂时重绘/计算开销高
