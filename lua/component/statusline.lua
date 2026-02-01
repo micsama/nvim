@@ -95,7 +95,7 @@ function C.lsp(buf)
 	return res .. " "
 end
 
-function C.ruler(buf, is_active)
+function C.ruler(buf, is_active, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
 	local win = vim.g.statusline_winid or 0
 	local success, cursor = pcall(api.nvim_win_get_cursor, win)
@@ -109,7 +109,13 @@ function C.ruler(buf, is_active)
 	local icon, icon_hl = utils.get_file_icon_with_bg(buf, base_bg)
 	local icon_str = (icon ~= "") and string.format("%%#%s#%s ", icon_hl, icon) or ""
 
-	return string.format("%%#%s# %s%s %%l:%%c %s ", base_bg, icon_str, ft, progress)
+	local capsule_mode_hl = is_active and (mode_hl or "StatusLineNormal") or "StatusLineNC"
+	local hls = get_capsule_hl(capsule_mode_hl)
+	local progress_str = string.format("%%#%s# %s ", hls.body, progress)
+	local cursor_str = string.format("%%#%s# %%l:%%c", hls.tail)
+	local sep_str = string.format("%%#%s#%s", hls.tail, icons.L_ROUND)
+
+	return string.format("%%#%s# %s%s %s %s%s", base_bg, icon_str, ft, cursor_str, sep_str, progress_str)
 end
 
 -- ============================================================================
@@ -125,7 +131,7 @@ function M.render()
 	local mode_hl = mode_map[mode] or "StatusLineNormal"
 
 	if not is_active then
-		return table.concat({ C.file_capsule(buf, "StatusLineNC", false), "%=", C.ruler(buf, false) })
+		return table.concat({ C.file_capsule(buf, "StatusLineNC", false), "%=", C.ruler(buf, false, "StatusLineNC") })
 	end
 
 	return table.concat({
@@ -133,7 +139,7 @@ function M.render()
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
-		C.ruler(buf, true),
+		C.ruler(buf, true, mode_hl),
 	})
 end
 

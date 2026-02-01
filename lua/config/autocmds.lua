@@ -10,6 +10,11 @@ local custom_group = "CustomSetupGroup"
 vim.api.nvim_create_autocmd("BufEnter", {
 	group = custom_group,
 	callback = function(ctx)
+		-- 只处理真实文件 buffer
+		local name = vim.api.nvim_buf_get_name(ctx.buf)
+		if vim.bo[ctx.buf].buftype ~= "" or name == "" then
+			return
+		end
 		-- 定义寻找项目根目录的标识文件/目录
 		local root_markers =
 			{ "pyproject.toml", ".luarc.json", ".git", "Makefile", ".venv", "Cargo.toml", "package.json", "go.mod" }
