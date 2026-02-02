@@ -103,27 +103,40 @@ end
 
 ---合成高亮组：混合指定的前景、背景及样式
 function M.get_compound_hl(fg_name, bg_name, attr)
+
 	local is_bold = (attr == true) or (type(attr) == "table" and attr.bold)
+
 	local is_italic = (type(attr) == "table" and attr.italic)
 
 	local key = string.format("%s_%s_%s_%s", fg_name, bg_name or "NONE", tostring(is_bold), tostring(is_italic))
-	if hl_cache[key] then
-		return hl_cache[key]
-	end
+
+	if hl_cache[key] then return hl_cache[key] end
+
+
 
 	local name = "CmpHL_" .. key:gsub("[^%w_]", "_")
+
 	local fg_def = api.nvim_get_hl(0, { name = fg_name, link = false })
 	local bg_def = bg_name and api.nvim_get_hl(0, { name = bg_name, link = false }) or {}
 
+
+
 	api.nvim_set_hl(0, name, {
+
 		fg = fg_def.fg,
+
 		bg = bg_def.bg,
+
 		bold = is_bold,
+
 		italic = is_italic,
+
 	})
 
 	hl_cache[key] = name
+
 	return name
+
 end
 
 ---获取融合了指定背景色的文件图标及其高亮组
