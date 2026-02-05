@@ -30,6 +30,7 @@ local APPS = {
 		choices = {
 			{ name = "Codex", cmd = "codex" },
 			{ name = "Gemini", cmd = "gemini" },
+			{ name = "Claude", cmd = "claude" },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},

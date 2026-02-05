@@ -102,7 +102,7 @@ function M.render()
     local tabs = api.nvim_list_tabpages()
     local cur_tab = api.nvim_get_current_tabpage()
     local cur_idx = 1
-    local cwd_str, cwd_w = get_cwd_component(15)
+    local cwd_str, cwd_w = get_cwd_component(20)
 
     -- 1. 缓存维护：构建活跃 tabid 集合 + 检测全失效 + 单个清理（合并为一次遍历）
     local active_tabs = {}

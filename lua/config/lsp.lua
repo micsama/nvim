@@ -63,7 +63,7 @@ vim.lsp.enable({
 	"ruff",                   -- Python：超快 lint + formatter（替代 flake8/isort 等）
 	"basedpyright",           -- Python：强类型检查（比官方 pyright 更激进）
 
-	"tombi",                  -- TOML：TOML 校验与格式化（Taplo/TOML 生态）
+	"taplo",                  -- TOML：TOML 校验与格式化（Taplo/TOML 生态）
 	"rust_analyzer",          -- Rust：官方推荐的语言服务器
 
 	"biome",                  -- JS/TS/JSON：lint + format + code actions（Rome 继任）

@@ -91,7 +91,6 @@ hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 	},
 })
 
-
 map("n", "<D-f>", function()
 	require("utils.zoom").toggle()
 end, "放大当前窗口")
@@ -116,9 +115,9 @@ vim.api.nvim_create_autocmd("InsertEnter", {
 		local map_multistep = require("mini.keymap").map_multistep
 		map_multistep("i", "<Tab>", {
 			"minisnippets_next",
-			"minisnippets_expand",
 			"pmenu_next",
 			"increase_indent",
+			"minisnippets_expand",
 			"jump_after_close",
 		})
 		map_multistep("i", "<S-Tab>", { "minisnippets_prev", "pmenu_prev", "decrease_indent", "jump_before_open" })

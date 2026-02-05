@@ -96,6 +96,8 @@ function ToggleMiniFilesAtCurrentFile()
 	end
 end
 
+vim.keymap.set("v", "*", [[y/\V<C-R>=escape(@", '/\')<CR><CR>]])
+vim.keymap.set("v", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]])
 
 
 -- 清理未使用的或冲突的默认映射
