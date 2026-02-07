@@ -68,7 +68,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 
 -- 5. 应用默认主题
-pcall(vim.cmd.colorscheme, "catppuccin")
+vim.cmd.colorscheme "catppuccin-mocha"
 
 -- 6. 初始化终端颜色
 local colors = {

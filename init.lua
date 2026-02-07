@@ -39,7 +39,7 @@ vim.pack.add({
     "https://github.com/MunifTanjim/nui.nvim",                       -- 强大的 Neovim UI 组件库
 
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
-    -- "https://github.com/catppuccin/nvim",                            -- 主题色
+    "https://github.com/catppuccin/nvim",                            -- 主题色
     -- "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
     -- "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
     "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
