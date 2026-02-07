@@ -1,96 +1,75 @@
--- ===========================================================================
--- 主题配置：基于静态 Palette 的高亮修正
--- ===========================================================================
-local utils = require("component.utils")
--- 1. 获取静态调色板
-local p = utils.palette
-
 vim.o.background = "dark"
+require("catppuccin").setup({
+	flavour = "mocha",
+	custom_highlights = function(colors)
+		return {
+			-- Treesitter & Syntax
+			["@variable"] = { link = "@variable.parameter" },
+			["@punctuation.bracket"] = { fg = colors.overlay0 },
+			TreesitterContext = { bg = colors.mantle },
+			TreesitterContextLineNumber = { fg = colors.green, bg = colors.mantle },
 
-local function apply_theme_overrides()
-	-- 2. 定义高亮组列表
-	local highlight_groups = {
-		-- Treesitter & Syntax
-		{ "@variable", { link = "@variable.parameter" } },
-		{ "@punctuation.bracket", { fg = p.overlay } },
-		{ "TreesitterContext", { bg = p.mantle } },
-		{ "TreesitterContextLineNumber", { fg = p.green, bg = p.mantle } },
+			-- UI 基础
+			LineNr = { fg = colors.surface1 },
+			CursorLineNr = { fg = colors.mauve, bold = true },
+			Visual = { bg = colors.surface1 },
 
-		-- UI 基础
-		{ "LineNr", { fg = p.surface1 } },
-		{ "CursorLineNr", { fg = p.magenta, bold = true } },
-		{ "Visual", { bg = p.surface1 } },
+			-- Telescope
+			TelescopeSelectionCaret = { fg = colors.red },
+			TelescopePromptPrefix = { fg = colors.red },
+			TelescopeMatching = { fg = colors.red, bold = true, underline = true },
+			TelescopeSelection = { bg = colors.surface1, fg = colors.mauve, bold = true },
+			TelescopePromptTitle = { fg = colors.crust, bg = colors.red, bold = true },
+			TelescopeResultsTitle = { fg = colors.crust, bg = colors.blue, bold = true },
+			TelescopePreviewTitle = { fg = colors.crust, bg = colors.green, bold = true },
 
-		-- Telescope
-		{ "TelescopeSelectionCaret", { fg = p.red } },
-		{ "TelescopePromptPrefix", { fg = p.red } },
-		{ "TelescopeMatching", { fg = p.red, bold = true, underline = true } },
-		{ "TelescopeSelection", { bg = p.surface1, fg = p.magenta, bold = true } },
-		{ "TelescopePromptTitle", { fg = p.crust, bg = p.red, bold = true } },
-		{ "TelescopeResultsTitle", { fg = p.crust, bg = p.blue, bold = true } },
-		{ "TelescopePreviewTitle", { fg = p.crust, bg = p.green, bold = true } },
+			-- TabLine / StatusLine
+			TabLineFill = { bg = colors.base },
+			TabLineSel = { fg = colors.mauve, bg = colors.surface1, bold = true, italic = true },
+			TabProject = { fg = colors.crust, bg = colors.mauve, bold = true },
 
-		-- TabLine
-		{ "TabLineFill", { bg = p.base } },
-		{ "TabLineSel", { fg = p.magenta, bg = p.surface1, bold = true, italic = true } },
-		{ "TabProject", { fg = p.crust, bg = p.magenta, bold = true } },
+			StatusLineNormal = { link = "TabProject" },
+			StatusLineInsert = { fg = colors.green, bold = true },
+			StatusLineVisual = { fg = colors.yellow, bold = true },
+			StatusLineCmd = { fg = colors.blue, bold = true },
+			StatusLineReplace = { fg = colors.red, bold = true },
 
-		-- StatusLine 模式胶囊基础色 (收归此处管理)
-		{ "StatusLineNormal", { link = "TabProject" } },
-		{ "StatusLineInsert", { fg = p.green, bold = true } },
-		{ "StatusLineVisual", { fg = p.yellow, bold = true } },
-		{ "StatusLineCmd", { fg = p.blue, bold = true } },
-		{ "StatusLineReplace", { fg = p.red, bold = true } },
+			-- MiniDiff
+			-- MiniDiffSignAdd = { fg = colors.green },
+			-- MiniDiffSignChange = { fg = colors.yellow },
+			-- MiniDiffSignDelete = { fg = colors.red },
 
-		-- MiniDiff (Git Signs)
-		{ "MiniDiffSignAdd", { fg = p.green } },
-		{ "MiniDiffSignChange", { fg = p.yellow } },
-		{ "MiniDiffSignDelete", { fg = p.red } },
-
-		-- Diagnostics
-		{ "DiagnosticError", { fg = p.red } },
-		{ "DiagnosticWarn", { fg = p.yellow } },
-		{ "DiagnosticInfo", { fg = p.blue } },
-		{ "DiagnosticHint", { fg = p.cyan } },
-	}
-
-	-- 3. 应用高亮
-	for _, group in ipairs(highlight_groups) do
-		vim.api.nvim_set_hl(0, group[1], group[2])
-	end
-end
-
--- 4. 绑定自动命令
-local grp = vim.api.nvim_create_augroup("ThemeOverrides", { clear = true })
-vim.api.nvim_create_autocmd("ColorScheme", {
-	group = grp,
-	callback = apply_theme_overrides,
+			-- Diagnostics
+			-- DiagnosticError = { fg = colors.red },
+			-- DiagnosticWarn = { fg = colors.yellow },
+			-- DiagnosticInfo = { fg = colors.blue },
+			-- DiagnosticHint = { fg = colors.sky },
+		}
+	end,
 })
 
--- 5. 应用默认主题
-vim.cmd.colorscheme "catppuccin-mocha"
+vim.cmd.colorscheme("catppuccin")
 
--- 6. 初始化终端颜色
+-- 终端颜色同步到 Catppuccin
+local p = require("catppuccin.palettes").get_palette("mocha")
 local colors = {
 	p.mantle, -- 0 Black
 	p.red, -- 1 Red
 	p.green, -- 2 Green
 	p.yellow, -- 3 Yellow
 	p.blue, -- 4 Blue
-	p.magenta, -- 5 Magenta
-	p.cyan, -- 6 Cyan
+	p.mauve, -- 5 Magenta
+	p.sky, -- 6 Cyan
 	p.text, -- 7 White
 	p.surface1, -- 8 Bright Black
 	p.red, -- 9 Bright Red
 	p.green, -- 10 Bright Green
 	p.yellow, -- 11 Bright Yellow
 	p.blue, -- 12 Bright Blue
-	p.magenta, -- 13 Bright Magenta
-	p.cyan, -- 14 Bright Cyan
+	p.mauve, -- 13 Bright Magenta
+	p.sky, -- 14 Bright Cyan
 	p.text, -- 15 Bright White
 }
-
-
 
 for i, color in ipairs(colors) do
 	vim.g["terminal_color_" .. (i - 1)] = color
