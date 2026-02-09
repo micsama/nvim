@@ -2,12 +2,18 @@
 -- LSP: basedpyright
 -- ===========================================================================
 local function use_venv()
-	local path = vim.fn.getcwd() .. "/.venv/bin/python3"
-	for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0, name = "basedpyright" })) do
-		client.config.settings.python = { pythonPath = path }
-		client:notify("workspace/didChangeConfiguration", { settings = nil })
+	local paths = { vim.uv.cwd() .. "/.venv/bin/python3", vim.env.HOME .. "/.venv/bin/python3" }
+	for _, path in ipairs(paths) do
+		if vim.fn.executable(path) == 1 then
+			for _, client in ipairs(vim.lsp.get_clients({ name = "basedpyright" })) do
+				client.config.settings.python = { pythonPath = path }
+				client:notify("workspace/didChangeConfiguration", { settings = nil })
+			end
+			return vim.notify("Activated: " .. path, vim.log.levels.INFO, { title = "Venv" })
+		end
 	end
-	print("Activated: " .. path)
+
+	vim.notify("No venv found", vim.log.levels.WARN, { title = "Venv" })
 end
 
 ---@type vim.lsp.Config
