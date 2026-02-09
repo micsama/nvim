@@ -36,6 +36,7 @@ vim.opt.inccommand = "split" -- 实时预览命令效果（如替换命令）到
 vim.opt.shortmess:append("c") -- 缩短某些消息显示（如补全菜单）。
 vim.o.formatoptions = vim.o.formatoptions:gsub("tc", "") -- 禁用自动换行(t)和文本注释自动换行(c)。
 vim.o.showtabline = 2
+vim.o.background = "dark"
 vim.opt.list = true -- 显示不可见字符（如Tab/空格等）。
 vim.opt.listchars = { tab = "|\\ ", trail = "▫" } -- 设置不可见字符的显示样式: Tab为|和空格，行尾空格为▫。
 -- vim.opt.exrc = true -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。

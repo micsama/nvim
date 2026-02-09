@@ -1,4 +1,4 @@
-vim.o.background = "dark"
+-- ~/.config/nvim/lua/component/tabline.lua
 require("catppuccin").setup({
 	flavour = "mocha",
 	custom_highlights = function(colors)
@@ -33,22 +33,11 @@ require("catppuccin").setup({
 			StatusLineVisual = { fg = colors.yellow, bold = true },
 			StatusLineCmd = { fg = colors.blue, bold = true },
 			StatusLineReplace = { fg = colors.red, bold = true },
-
-			-- MiniDiff
-			-- MiniDiffSignAdd = { fg = colors.green },
-			-- MiniDiffSignChange = { fg = colors.yellow },
-			-- MiniDiffSignDelete = { fg = colors.red },
-
-			-- Diagnostics
-			-- DiagnosticError = { fg = colors.red },
-			-- DiagnosticWarn = { fg = colors.yellow },
-			-- DiagnosticInfo = { fg = colors.blue },
-			-- DiagnosticHint = { fg = colors.sky },
 		}
 	end,
 })
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("catppuccin-mocha")
 
 -- 终端颜色同步到 Catppuccin
 local p = require("catppuccin.palettes").get_palette("mocha")

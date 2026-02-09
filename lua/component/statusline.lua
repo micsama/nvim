@@ -2,19 +2,21 @@
 local M = {}
 local api = vim.api
 local utils = require("component.utils")
-local icons = utils.icons
-local p = utils.palette
+local diag_icons = utils.icons.diag
 local data = require("component.stldata")
+
+local R_ROUND = ""
+local L_ROUND = ""
+local GIT_BRANCH = ""
+local GIT_ADD = "+"
+local GIT_CHANGE = "~"
+local GIT_DELETE = "-"
 
 local capsule_hl_cache = {}
 
-local mode_tone = {
-	StatusLineNormal = p.magenta,
-	StatusLineInsert = p.green,
-	StatusLineVisual = p.yellow,
-	StatusLineCmd = p.blue,
-	StatusLineReplace = p.red,
-}
+local function hl(name)
+	return api.nvim_get_hl(0, { name = name, link = false })
+end
 
 local function current_mode_group()
 	local mode = api.nvim_get_mode().mode
@@ -42,17 +44,24 @@ local function get_capsule_hl(mode_hl, is_active)
 	end
 
 	local stl_name = is_active and "StatusLine" or "StatusLineNC"
-	local stl_bg = api.nvim_get_hl(0, { name = stl_name, link = false }).bg
+	local stl_bg = hl(stl_name).bg
 	local body_name = "StlCapsule_" .. key
 	local tail_name = "StlCapsuleTail_" .. key
 
 	if is_active then
-		local tone = mode_tone[mode_hl]
+		local tone
+		if mode_hl == "StatusLineNormal" then
+			tone = hl("TabProject").bg
+		else
+			tone = hl(mode_hl).fg
+		end
 		api.nvim_set_hl(0, body_name, { fg = stl_bg, bg = tone, bold = true })
 		api.nvim_set_hl(0, tail_name, { fg = tone, bg = stl_bg })
 	else
-		api.nvim_set_hl(0, body_name, { fg = p.text, bg = p.surface1, bold = true })
-		api.nvim_set_hl(0, tail_name, { fg = p.surface1, bg = stl_bg })
+		local nc = hl("StatusLineNC")
+		local tab_sel_bg = hl("TabLineSel").bg
+		api.nvim_set_hl(0, body_name, { fg = nc.fg, bg = tab_sel_bg, bold = true })
+		api.nvim_set_hl(0, tail_name, { fg = tab_sel_bg, bg = stl_bg })
 	end
 
 	capsule_hl_cache[key] = { body = body_name, tail = tail_name }
@@ -98,7 +107,12 @@ local function format_file_path(buf, win)
 	local tab = api.nvim_win_get_tabpage(win)
 	local tab_cwd = vim.fn.getcwd(-1, api.nvim_tabpage_get_number(tab))
 	local rel = vim.fs.relpath(tab_cwd, path)
-	local display = rel and ("./" .. rel) or vim.fn.fnamemodify(path, ":~")
+	local display
+	if rel then
+		display = "./" .. rel
+	else
+		display = vim.fn.fnamemodify(path, ":~")
+	end
 	local file = vim.fn.fnamemodify(display, ":t")
 	local dir = vim.fn.fnamemodify(display, ":h")
 
@@ -116,14 +130,14 @@ function C.file_capsule(buf, win, mode_hl, is_active)
 	local file, dir = format_file_path(buf, win)
 	local hls = get_capsule_hl(mode_hl, is_active)
 	local file_hl = utils.get_compound_hl(hls.body, hls.body, true)
-	local readonly = api.nvim_get_option_value("readonly", { buf = buf }) and (" " .. icons.misc.ronly) or ""
+	local readonly = api.nvim_get_option_value("readonly", { buf = buf }) and " " or ""
 	local path_part = string.format("%%#%s#%s", file_hl, file)
 
 	if dir ~= "" then
 		path_part = string.format("%s %%#%s#│ %s", path_part, hls.body, dir)
 	end
 
-	return string.format("%%#%s# %s%s %%#%s#%s", hls.body, path_part, readonly, hls.tail, icons.R_ROUND)
+	return string.format("%%#%s# %s%s %%#%s#%s", hls.body, path_part, readonly, hls.tail, R_ROUND)
 end
 
 function C.git(buf)
@@ -135,11 +149,17 @@ function C.git(buf)
 	local user_hl = (info.user == "micsama") and "Function" or "DiagnosticWarn"
 	local user_str = (info.user and info.user ~= false) and string.format(" %%#%s#(%s)", user_hl, info.user) or ""
 	local diff_str = ""
-	if info.added > 0 then diff_str = diff_str .. " %#MiniDiffSignAdd#" .. icons.git.added .. info.added end
-	if info.changed > 0 then diff_str = diff_str .. " %#MiniDiffSignChange#" .. icons.git.changed .. info.changed end
-	if info.deleted > 0 then diff_str = diff_str .. " %#MiniDiffSignDelete#" .. icons.git.deleted .. info.deleted end
+	if info.added > 0 then
+		diff_str = diff_str .. " %#MiniDiffSignAdd#" .. GIT_ADD .. info.added
+	end
+	if info.changed > 0 then
+		diff_str = diff_str .. " %#MiniDiffSignChange#" .. GIT_CHANGE .. info.changed
+	end
+	if info.deleted > 0 then
+		diff_str = diff_str .. " %#MiniDiffSignDelete#" .. GIT_DELETE .. info.deleted
+	end
 
-	return string.format(" %%#String#%s %s%%#Comment#%s%s", icons.git.branch, info.branch, user_str, diff_str)
+	return string.format(" %%#String#%s %s%%#Comment#%s%s", GIT_BRANCH, info.branch, user_str, diff_str)
 end
 
 function C.lsp(buf)
@@ -148,8 +168,12 @@ function C.lsp(buf)
 		return ""
 	end
 	local res = ""
-	if info.err > 0 then res = res .. " %#DiagnosticError#" .. icons.diag[1].icon .. info.err end
-	if info.warn > 0 then res = res .. " %#DiagnosticWarn#" .. icons.diag[2].icon .. info.warn end
+	if info.err > 0 then
+		res = res .. " %#DiagnosticError#" .. diag_icons[1].icon .. info.err
+	end
+	if info.warn > 0 then
+		res = res .. " %#DiagnosticWarn#" .. diag_icons[2].icon .. info.warn
+	end
 	return res .. " "
 end
 
@@ -157,9 +181,8 @@ function C.ruler(buf, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
 	local row = api.nvim_win_get_cursor(vim.g.statusline_winid)[1]
 	local total = api.nvim_buf_line_count(buf)
-	local progress = (row <= 1)
-			and icons.misc.top
-		or (row >= total and icons.misc.bottom or string.format("%d%%%%", math.floor((row / total) * 100)))
+	local progress = (row <= 1) and "󰘣"
+		or (row >= total and "󰘡" or string.format("%d%%%%", math.floor((row / total) * 100)))
 
 	local icon, icon_hl = utils.get_file_icon_with_bg(buf, "StatusLine")
 	local icon_str = (icon ~= "") and string.format("%%#%s#%s ", icon_hl, icon) or ""
@@ -167,7 +190,7 @@ function C.ruler(buf, mode_hl)
 	local hls = get_capsule_hl(mode_hl, true)
 	local progress_str = string.format("%%#%s# %s ", hls.body, progress)
 	local cursor_str = string.format("%%#%s# %%l:%%c", hls.tail)
-	local sep_str = string.format("%%#%s#%s", hls.tail, icons.L_ROUND)
+	local sep_str = string.format("%%#%s#%s", hls.tail, L_ROUND)
 
 	return string.format("%%#StatusLine# %s%s %s %s%s", icon_str, ft, cursor_str, sep_str, progress_str)
 end
@@ -207,14 +230,17 @@ function M.setup()
 	api.nvim_create_autocmd("User", {
 		pattern = { "MiniGitUpdated", "MiniDiffUpdated" },
 		group = grp,
-		callback = function() vim.cmd.redrawstatus() end,
+		callback = function()
+			vim.cmd.redrawstatus()
+		end,
 	})
 
 	api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "WinEnter", "BufEnter" }, {
 		group = grp,
-		callback = function() vim.cmd.redrawstatus() end,
+		callback = function()
+			vim.cmd.redrawstatus()
+		end,
 	})
-
 end
 
 return M
