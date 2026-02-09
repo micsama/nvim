@@ -14,55 +14,54 @@ local GIT_DELETE = "-"
 
 local capsule_hl_cache = {}
 
-local function hl(name)
-	return api.nvim_get_hl(0, { name = name, link = false })
-end
+local mode_group_map = {
+	i = "StatusLineInsert",
+	t = "StatusLineInsert",
+	c = "StatusLineCmd",
+	R = "StatusLineReplace",
+	v = "StatusLineVisual",
+	V = "StatusLineVisual",
+	["\22"] = "StatusLineVisual",
+}
 
 local function current_mode_group()
 	local mode = api.nvim_get_mode().mode
-	if mode == "V" or mode == "\22" or mode:sub(1, 1) == "v" then
-		return "StatusLineVisual"
-	end
+	return mode_group_map[mode] or mode_group_map[mode:sub(1, 1)] or "StatusLineNormal"
+end
 
-	local head = mode:sub(1, 1)
-	if head == "i" or head == "t" then
-		return "StatusLineInsert"
-	end
-	if head == "c" then
-		return "StatusLineCmd"
-	end
-	if head == "R" then
-		return "StatusLineReplace"
-	end
-	return "StatusLineNormal"
+local function build_inactive_capsule_hl()
+	local stl_nc = utils.hl("StatusLineNC")
+	local tab_sel_bg = utils.hl("TabLineSel").bg
+	local body_name = "StlCapsule_fixed"
+	local tail_name = "StlCapsuleTail_fixed"
+
+	api.nvim_set_hl(0, body_name, { fg = stl_nc.fg, bg = tab_sel_bg, bold = true })
+	api.nvim_set_hl(0, tail_name, { fg = tab_sel_bg, bg = stl_nc.bg })
+
+	capsule_hl_cache.fixed = { body = body_name, tail = tail_name }
 end
 
 local function get_capsule_hl(mode_hl, is_active)
-	local key = is_active and mode_hl or "fixed"
+	if not is_active then
+		return capsule_hl_cache.fixed
+	end
+
+	local key = mode_hl
 	if capsule_hl_cache[key] then
 		return capsule_hl_cache[key]
 	end
 
-	local stl_name = is_active and "StatusLine" or "StatusLineNC"
-	local stl_bg = hl(stl_name).bg
+	local stl_bg = utils.hl("StatusLine").bg
 	local body_name = "StlCapsule_" .. key
 	local tail_name = "StlCapsuleTail_" .. key
-
-	if is_active then
-		local tone
-		if mode_hl == "StatusLineNormal" then
-			tone = hl("TabProject").bg
-		else
-			tone = hl(mode_hl).fg
-		end
-		api.nvim_set_hl(0, body_name, { fg = stl_bg, bg = tone, bold = true })
-		api.nvim_set_hl(0, tail_name, { fg = tone, bg = stl_bg })
+	local tone
+	if mode_hl == "StatusLineNormal" then
+		tone = utils.hl("TabProject").bg
 	else
-		local nc = hl("StatusLineNC")
-		local tab_sel_bg = hl("TabLineSel").bg
-		api.nvim_set_hl(0, body_name, { fg = nc.fg, bg = tab_sel_bg, bold = true })
-		api.nvim_set_hl(0, tail_name, { fg = tab_sel_bg, bg = stl_bg })
+		tone = utils.hl(mode_hl).fg
 	end
+	api.nvim_set_hl(0, body_name, { fg = stl_bg, bg = tone, bold = true })
+	api.nvim_set_hl(0, tail_name, { fg = tone, bg = stl_bg })
 
 	capsule_hl_cache[key] = { body = body_name, tail = tail_name }
 	return capsule_hl_cache[key]
@@ -129,7 +128,7 @@ end
 function C.file_capsule(buf, win, mode_hl, is_active)
 	local file, dir = format_file_path(buf, win)
 	local hls = get_capsule_hl(mode_hl, is_active)
-	local file_hl = utils.get_compound_hl(hls.body, hls.body, true)
+	local file_hl = utils.get_compound_hl(hls.body, hls.body, true, false)
 	local readonly = api.nvim_get_option_value("readonly", { buf = buf }) and " " or ""
 	local path_part = string.format("%%#%s#%s", file_hl, file)
 
@@ -214,6 +213,7 @@ function M.render()
 end
 
 function M.setup()
+	build_inactive_capsule_hl()
 	vim.o.laststatus = 2
 	vim.o.statusline = "%!v:lua.require('component.statusline').render()"
 
@@ -224,6 +224,7 @@ function M.setup()
 		callback = function()
 			utils.reset_hl_cache()
 			capsule_hl_cache = {}
+			build_inactive_capsule_hl()
 		end,
 	})
 

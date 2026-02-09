@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/component/tabline.lua
+-- ~/.config/nvim/lua/component/theme.lua
 require("catppuccin").setup({
 	flavour = "mocha",
 	custom_highlights = function(colors)

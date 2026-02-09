@@ -4,14 +4,7 @@ local api = vim.api
 local utils = require("component.utils")
 local diag_icons = utils.icons.diag
 
-local function hl(name)
-	return api.nvim_get_hl(0, { name = name, link = false })
-end
-
-do
-	local tabline = hl("TabLine")
-	api.nvim_set_hl(0, "DiagnosticOk", { fg = tabline.fg, bg = tabline.bg })
-end
+utils.reset_hl_cache()
 
 local state = {
 	diag_cache = {},
@@ -81,22 +74,27 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
 
 	local final_name_hl = base_hl
 	if (not is_sel) and diag then
-		final_name_hl = utils.get_compound_hl(diag_hl, base_hl, false)
+		final_name_hl = utils.get_compound_hl(diag_hl, base_hl, false, false)
 	end
 
 	local final_diag_hl = base_hl
 	if diag then
-		final_diag_hl = utils.get_compound_hl(diag_hl, base_hl, is_sel)
+		final_diag_hl = utils.get_compound_hl(diag_hl, base_hl, is_sel, false)
 	end
-	local final_mod_hl = utils.get_compound_hl("DiagnosticOk", base_hl, is_sel)
+	local final_mod_hl = utils.get_compound_hl("DiagnosticOk", base_hl, is_sel, false)
+	local icon_w = api.nvim_strwidth(icon_txt)
+	local filename_w = api.nvim_strwidth(filename)
+	local diag_w = api.nvim_strwidth(diag_icon)
+	local dup_w = api.nvim_strwidth(dup_txt)
+	local mod_w = api.nvim_strwidth(mod_txt)
 
 	local width = 4
 		+ (idx >= 10 and 2 or 1)
-		+ api.nvim_strwidth(icon_txt)
-		+ api.nvim_strwidth(filename)
-		+ api.nvim_strwidth(diag_icon)
-		+ api.nvim_strwidth(dup_txt)
-		+ api.nvim_strwidth(mod_txt)
+		+ icon_w
+		+ filename_w
+		+ diag_w
+		+ dup_w
+		+ mod_w
 
 	local render_str = string.format(
 		"%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s%s",
@@ -130,22 +128,8 @@ function M.render()
 		active_tabs[t] = true
 	end
 
-	local any_valid = false
-	local to_remove = {}
 	for t in pairs(state.tab_bufs) do
-		if active_tabs[t] then
-			any_valid = true
-		else
-			to_remove[#to_remove + 1] = t
-		end
-	end
-
-	if next(state.tab_bufs) ~= nil and not any_valid then
-		-- 全失效：Session 重载
-		state.tab_bufs = {}
-	else
-		-- 单个清理
-		for _, t in ipairs(to_remove) do
+		if not active_tabs[t] then
 			state.tab_bufs[t] = nil
 		end
 	end
@@ -294,8 +278,6 @@ api.nvim_create_autocmd("ColorScheme", {
 	group = grp,
 	callback = function()
 		utils.reset_hl_cache()
-		local tabline = hl("TabLine")
-		api.nvim_set_hl(0, "DiagnosticOk", { fg = tabline.fg, bg = tabline.bg })
 	end,
 })
 
