@@ -16,7 +16,6 @@ local capsule_hl_cache = {}
 
 local mode_group_map = {
 	i = "StatusLineInsert",
-	t = "StatusLineInsert",
 	c = "StatusLineCmd",
 	R = "StatusLineReplace",
 	v = "StatusLineVisual",
@@ -31,12 +30,13 @@ end
 
 local function build_inactive_capsule_hl()
 	local stl_nc = utils.hl("StatusLineNC")
-	local tab_sel_bg = utils.hl("TabLineSel").bg
+	local info = utils.hl("DiagnosticInfo")
+	local tab_project = utils.hl("TabProject")
 	local body_name = "StlCapsule_fixed"
 	local tail_name = "StlCapsuleTail_fixed"
 
-	api.nvim_set_hl(0, body_name, { fg = stl_nc.fg, bg = tab_sel_bg, bold = true })
-	api.nvim_set_hl(0, tail_name, { fg = tab_sel_bg, bg = stl_nc.bg })
+	api.nvim_set_hl(0, body_name, { fg = tab_project.fg, bg = info.fg, bold = true })
+	api.nvim_set_hl(0, tail_name, { fg = info.fg, bg = stl_nc.bg })
 
 	capsule_hl_cache.fixed = { body = body_name, tail = tail_name }
 end
