@@ -11,7 +11,7 @@ local map = require("utils.map").map
 local IS_MACOS = vim.uv.os_uname().sysname == "Darwin"
 
 if IS_MACOS then
-	vim.o.guifont = "FantasqueSansM Nerd Font,FiraCode Nerd Font,PingFang SC:h15.5" -- 设置 Neovide 字体及大小
+	vim.o.guifont = "FantasqueSansM Nerd Font,FiraCode Nerd Font,PingFang SC:h14.5" -- 设置 Neovide 字体及大小
 else
 	vim.o.guifont = "Microsoft YaHei:h14.5" -- 设置 Neovide 字体及大小
 	vim.g.neovide_title_background_color =

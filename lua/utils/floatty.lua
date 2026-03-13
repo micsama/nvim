@@ -201,7 +201,7 @@ function M.toggle(raw, choice)
 	term.win = vim.api.nvim_open_win(term.buf, true, get_win_opts(target_cfg))
 	vim.api.nvim_set_option_value(
 		"winhighlight",
-		"FloatBorder:" .. (target_cfg.hl or "FloatBorder"),
+		"FloatBorder:" .. (target_cfg.hl or "FloatBorder") .. ",FloatTitle:" .. (target_cfg.hl or "FloatBorder"),
 		{ win = term.win }
 	)
 

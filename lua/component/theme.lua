@@ -1,8 +1,9 @@
 vim.o.background = "dark"
 require("catppuccin").setup({
 	flavour = "mocha",
-	custom_highlights = function(colors)
-		return {
+	highlight_overrides = {
+		mocha = function(colors)
+			return {
 			-- Treesitter & Syntax
 			["@variable"] = { link = "@variable.parameter" },
 			["@punctuation.bracket"] = { fg = colors.overlay0 },
@@ -44,11 +45,12 @@ require("catppuccin").setup({
 			-- DiagnosticWarn = { fg = colors.yellow },
 			-- DiagnosticInfo = { fg = colors.blue },
 			-- DiagnosticHint = { fg = colors.sky },
-		}
-	end,
+			}
+		end,
+	},
 })
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("catppuccin-nvim")
 
 -- 终端颜色同步到 Catppuccin
 local p = require("catppuccin.palettes").get_palette("mocha")
