@@ -25,17 +25,13 @@
 			"#!/usr/bin/env python3",
 			"# -*- coding: utf-8 -*-",
 			"\"\"\"",
-			"File: ${TM_FILENAME}",
+			"File: ${RELATIVE_FILEPATH}",
 			"Author: Xing Ji",
 			"Date: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
-			"Description: ${1:Description}",
-			"\"\"\"",
-			"import os",
-			"import sys",
-			"",
-			"$0"
+			"Description: ${1:Detailed description of the module's purpose.}",
+			"\"\"\""
 		],
-		"description": "更符合 PEP 257 规范的文件头文档"
+		"description": "基于 PEP 257 规范的模块级文档字符串 (项目相对路径版)"
 	},
 	"Read JSONL (Line-Delimited JSON)": {
 		"prefix": "rj",

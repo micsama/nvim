@@ -267,4 +267,10 @@ vim.iter(APPS):each(function(x)
 	end, x.name)
 end)
 
+vim.api.nvim_create_autocmd("TermOpen", {
+	callback = function()
+		vim.wo.wrap = true
+	end,
+})
+
 return M

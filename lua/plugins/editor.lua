@@ -39,7 +39,7 @@ vim.api.nvim_create_autocmd("FileType", {
 	once = true,
 	callback = function()
 		require("wildfire").setup({}) -- 默认配置
-		require("treesitter-context").setup()
+		require("treesitter-context").setup({ max_lines = 7, multiline_threshold = 3, mode = "topline" })
 		require("neoclip").setup({ enable_persistent_history = true })
 	end,
 })

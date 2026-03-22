@@ -35,5 +35,6 @@ tmp/backup
 startup
 todo
 Session.vim
+.claude/
 GEMINI.md
 /scripts/summary.md

@@ -42,6 +42,7 @@ vim.pack.add({
     "https://github.com/catppuccin/nvim",                            -- 主题色
     "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
     -- "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
+    "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
     -- "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
 
     "https://github.com/folke/noice.nvim",                           -- 好通知

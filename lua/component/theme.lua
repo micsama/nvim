@@ -1,4 +1,4 @@
-vim.o.background = "dark"
+-- ~/.config/nvim/lua/component/theme.lua
 require("catppuccin").setup({
 	flavour = "mocha",
 	highlight_overrides = {
