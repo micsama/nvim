@@ -58,17 +58,15 @@ vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 -- stylua: ignore end
 
 -- ============================================================================
--- 5) Noice (UI Layer)
+-- 5) UI2 (实验性原生消息/命令行 UI，替代 Noice)
 -- ============================================================================
-require("noice").setup({
-	cmdline = { enabled = true, view = "cmdline_popup" }, -- 只保留 cmdline UI
-	messages = { enabled = false },
-	popupmenu = { enabled = false },
-	notify = { enabled = false },
-	lsp = {
-		progress = { enabled = true, throttle = 1000 / 15, format = "lsp_progress" },
-		message = { enabled = true },
-		hover = { enabled = false },
-		signature = { enabled = false },
+require("vim._core.ui2").enable({
+	enable = true,
+	msg = {
+		targets = "cmd",
+		cmd = { height = 0.5 },
+		msg = { height = 0.5, timeout = 4000 },
+		pager = { height = 1 },
+		dialog = { height = 0.5 },
 	},
 })

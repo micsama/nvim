@@ -139,6 +139,33 @@ M.git_info = M.profiler.wrap("git_info", function(buf)
 	}
 end)
 
+-- LSP Progress 状态追踪
+local lsp_progress_state = {}
+
+api.nvim_create_autocmd("LspProgress", {
+	callback = function(ev)
+		local key = ev.data.client_id .. "-" .. tostring(ev.data.params.token)
+		local val = ev.data.params.value
+		if val.kind == "end" then
+			lsp_progress_state[key] = nil
+		else
+			lsp_progress_state[key] = {
+				title = val.title or (lsp_progress_state[key] and lsp_progress_state[key].title) or "",
+				message = val.message or "",
+				percentage = val.percentage,
+			}
+		end
+	end,
+})
+
+M.lsp_progress = M.profiler.wrap("lsp_progress", function()
+	local _, task = next(lsp_progress_state)
+	if not task then
+		return nil
+	end
+	return task
+end)
+
 M.lsp_info = M.profiler.wrap("lsp_info", function(buf)
 	if not api.nvim_buf_is_valid(buf) then
 		return nil

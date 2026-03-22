@@ -176,6 +176,41 @@ function C.lsp(buf)
 	return res .. " "
 end
 
+local spinner_frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+local spinner_idx = 1
+
+function C.lsp_progress()
+	local info = data.lsp_progress()
+	if not info then
+		return ""
+	end
+
+	spinner_idx = (spinner_idx % #spinner_frames) + 1
+
+	-- 显示 title + message，让用户区分不同阶段
+	local msg = info.title
+	if info.message ~= "" then
+		msg = msg .. ": " .. info.message
+	end
+	if vim.fn.strchars(msg) > 24 then
+		msg = vim.fn.strcharpart(msg, 0, 24) .. "…"
+	end
+
+	-- 进度条（10 格宽，箭头指示位置）
+	local bar
+	local width = 10
+	if info.percentage then
+		local pos = math.floor(width * info.percentage / 100)
+		bar = string.rep("─", pos) .. ">" .. string.rep("─", math.max(0, width - pos - 1))
+	else
+		-- 无百分比：箭头来回跑（用 spinner_idx 驱动位置）
+		local pos = (spinner_idx - 1) % width
+		bar = string.rep("─", pos) .. ">" .. string.rep("─", width - pos - 1)
+	end
+
+	return string.format(" %%#Comment#%s %%#Function#%s %s", esc_stl(msg), spinner_frames[spinner_idx], bar)
+end
+
 function C.ruler(buf, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
 	local row = api.nvim_win_get_cursor(vim.g.statusline_winid)[1]
@@ -208,6 +243,7 @@ function M.render()
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
+		C.lsp_progress(),
 		C.ruler(buf, mode_hl),
 	})
 end
@@ -236,7 +272,7 @@ function M.setup()
 		end,
 	})
 
-	api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "WinEnter", "BufEnter" }, {
+	api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "WinEnter", "BufEnter", "LspProgress" }, {
 		group = grp,
 		callback = function()
 			vim.cmd.redrawstatus()
