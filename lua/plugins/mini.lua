@@ -91,7 +91,7 @@ hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 	},
 })
 
-map("n", "<D-f>", function()
+map("nti", "<D-f>", function()
 	require("utils.zoom").toggle()
 end, "放大当前窗口")
 

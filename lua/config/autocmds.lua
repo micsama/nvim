@@ -6,20 +6,31 @@
 vim.api.nvim_create_augroup("CustomSetupGroup", { clear = true })
 local custom_group = "CustomSetupGroup"
 
--- 自动切换工作目录到项目根目录 (使用 vim.fs.root 现代 API)
+-- 自动切换工作目录到项目根目录
+-- 优先用 git rev-parse (正确处理 worktree)，回退到 vim.fs.root；结果按 buffer 缓存
 vim.api.nvim_create_autocmd("BufEnter", {
 	group = custom_group,
 	callback = function(ctx)
-		-- 只处理真实文件 buffer
 		local name = vim.api.nvim_buf_get_name(ctx.buf)
 		if vim.bo[ctx.buf].buftype ~= "" or name == "" then
 			return
 		end
-		-- 定义寻找项目根目录的标识文件/目录
-		local root_markers =
-			{ "pyproject.toml", ".luarc.json", ".git", "Makefile", ".venv", "Cargo.toml", "package.json", "go.mod" }
-		local root = vim.fs.root(ctx.buf, root_markers)
-		-- 如果找到根目录，且它不是当前目录，则切换当前窗口的目录
+
+		-- 缓存：每个 buffer 只计算一次
+		local root = vim.b[ctx.buf].project_root
+		if root == nil then
+			local buf_dir = vim.fn.fnamemodify(name, ":p:h")
+			local git_root =
+				vim.fn.systemlist("git -C " .. vim.fn.shellescape(buf_dir) .. " rev-parse --show-toplevel")
+			if vim.v.shell_error == 0 and git_root[1] then
+				root = git_root[1]
+			else
+				local root_markers = { "pyproject.toml", ".luarc.json", "Makefile", "Cargo.toml", "package.json", "go.mod" }
+				root = vim.fs.root(ctx.buf, root_markers) or false
+			end
+			vim.b[ctx.buf].project_root = root
+		end
+
 		if root and root ~= "." and root ~= vim.fn.getcwd() then
 			vim.cmd.tcd(root)
 			vim.notify(root, nil, { title = "Workspace ->", icon = "󱉭" })
@@ -58,4 +69,10 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 	group = "NVIMRC",
 	command = "source %",
 	desc = "Auto reload config file when modified",
+})
+
+vim.filetype.add({
+	extension = {
+		log = "log",
+	},
 })

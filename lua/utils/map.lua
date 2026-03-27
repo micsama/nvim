@@ -99,7 +99,7 @@ function M.map_fullwidth_to_halfwidth()
 end
 
 function M.map_smart_zh_period()
-	M.map("i", "。", smart_zh_period, {
+	M.map("it", "。", smart_zh_period, {
 		desc = "数字前中文句号 -> 英文点；数字+英文点 -> 中文句号",
 		expr = true,
 		silent = true,

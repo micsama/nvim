@@ -262,7 +262,7 @@ vim.api.nvim_create_autocmd("VimResized", {
 })
 
 vim.iter(APPS):each(function(x)
-	map("nvt", x.key, function()
+	map("nvit", x.key, function()
 		M.toggle(x)
 	end, x.name)
 end)
