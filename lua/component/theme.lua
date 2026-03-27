@@ -1,8 +1,9 @@
 -- ~/.config/nvim/lua/component/theme.lua
 require("catppuccin").setup({
 	flavour = "mocha",
-	custom_highlights = function(colors)
-		return {
+	highlight_overrides = {
+		mocha = function(colors)
+			return {
 			-- Treesitter & Syntax
 			["@variable"] = { link = "@variable.parameter" },
 			["@punctuation.bracket"] = { fg = colors.overlay0 },
@@ -33,11 +34,23 @@ require("catppuccin").setup({
 			StatusLineVisual = { fg = colors.yellow, bold = true },
 			StatusLineCmd = { fg = colors.blue, bold = true },
 			StatusLineReplace = { fg = colors.red, bold = true },
-		}
-	end,
+
+			-- MiniDiff
+			-- MiniDiffSignAdd = { fg = colors.green },
+			-- MiniDiffSignChange = { fg = colors.yellow },
+			-- MiniDiffSignDelete = { fg = colors.red },
+
+			-- Diagnostics
+			-- DiagnosticError = { fg = colors.red },
+			-- DiagnosticWarn = { fg = colors.yellow },
+			-- DiagnosticInfo = { fg = colors.blue },
+			-- DiagnosticHint = { fg = colors.sky },
+			}
+		end,
+	},
 })
 
-vim.cmd.colorscheme("catppuccin-mocha")
+vim.cmd.colorscheme("catppuccin-nvim")
 
 -- 终端颜色同步到 Catppuccin
 local p = require("catppuccin.palettes").get_palette("mocha")
