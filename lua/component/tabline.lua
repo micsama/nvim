@@ -294,6 +294,7 @@ function M.setup()
 			state.tab_bufs = {}
 		end,
 	})
+
 end
 
 return M

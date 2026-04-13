@@ -60,13 +60,20 @@ vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 -- ============================================================================
 -- 5) UI2 (实验性原生消息/命令行 UI，替代 Noice)
 -- ============================================================================
-require("vim._core.ui2").enable({
-	enable = true,
-	msg = {
-		targets = "cmd",
-		cmd = { height = 0.5 },
-		msg = { height = 0.5, timeout = 4000 },
-		pager = { height = 1 },
-		dialog = { height = 0.5 },
-	},
+-- 在 UIEnter 后启用 ui2，避免与 Neovide 冲突导致 tabline 消失
+-- ref: https://github.com/neovide/neovide/issues/3446
+vim.api.nvim_create_autocmd("UIEnter", {
+	once = true,
+	callback = function()
+		require("vim._core.ui2").enable({
+			enable = true,
+			msg = {
+				targets = "cmd",
+				cmd = { height = 0.5 },
+				msg = { height = 0.5, timeout = 4000 },
+				pager = { height = 1 },
+				dialog = { height = 0.5 },
+			},
+		})
+	end,
 })
