@@ -12,6 +12,7 @@ local state = { terms = {}, last_id = nil, ctx_cache = nil }
 -- =============================================================================
 -- 1. 配置定义 (Data)
 -- =============================================================================
+local HOME = vim.env.HOME
 local RUNNERS = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s", rust = "cargo run" }
 
 local APPS = {
@@ -30,7 +31,8 @@ local APPS = {
 		choices = {
 			{ name = "Codex", cmd = "codex" },
 			{ name = "Gemini", cmd = "gemini" },
-			{ name = "Claude", cmd = "claude" },
+			{ name = "Claude", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude1' claude"):format(HOME) },
+			{ name = "🥰Claude", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude2' claude"):format(HOME) },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},
@@ -103,13 +105,16 @@ function M.toggle(raw, choice)
 		local active_term = state.terms[state.last_id]
 		-- 判断内存地址相等，说明是同一个 raw 配置组
 		if active_term and active_term.raw_source == raw then
-			vim.api.nvim_win_close(active_term.win, true)
+			if vim.api.nvim_win_is_valid(active_term.win) then
+				vim.api.nvim_win_close(active_term.win, true)
+				state.last_id = nil
+				vim.schedule(function()
+					vim.cmd("checktime")
+				end)
+				return -- 窗口有效，正常关闭，结束
+			end
+			-- 窗口已失效（切 tab 等原因），清理状态，继续走阶段 2 复活
 			state.last_id = nil
-			-- 关闭浮窗后检查外部改动，刷新底层 buffer
-			vim.schedule(function()
-				vim.cmd("checktime")
-			end)
-			return -- 结束，不做任何事
 		end
 	end
 
@@ -262,7 +267,7 @@ vim.api.nvim_create_autocmd("VimResized", {
 })
 
 vim.iter(APPS):each(function(x)
-	map("nvt", x.key, function()
+	map("nvit", x.key, function()
 		M.toggle(x)
 	end, x.name)
 end)

@@ -66,6 +66,7 @@ vim.lsp.enable({
 	"taplo",                  -- TOML：TOML 校验与格式化（Taplo/TOML 生态）
 	"rust_analyzer",          -- Rust：官方推荐的语言服务器
 
+	"vtsls",
 	"biome",                  -- JS/TS/JSON：lint + format + code actions（Rome 继任）
 	"bashls",                 -- Bash：脚本补全、诊断、ShellCheck 集成
 	"nushell",                -- Nushell：现代 shell 的语法与补全支持
