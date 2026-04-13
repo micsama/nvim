@@ -6,6 +6,11 @@ local diag_icons = utils.icons.diag
 
 utils.reset_hl_cache()
 
+--- 生成一个带高亮组的 tabline 片段，自动处理 %% 转义
+local function seg(hl_group, text)
+	return ("%%#%s#%s"):format(hl_group, text)
+end
+
 local state = {
 	diag_cache = {},
 	scroll_off = 0,
@@ -20,7 +25,7 @@ local function get_cwd_component(max_chars)
 		return state.cwd_cache.render, state.cwd_cache.width
 	end
 
-	local name = vim.fn.fnamemodify(current_raw, ":t")
+	local name = vim.fs.basename(current_raw)
 	if name == "" then
 		name = "/"
 	end
@@ -41,10 +46,10 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
 	local base_hl = is_sel and "TabLineSel" or "TabLine"
 	local diag = state.diag_cache[buf]
 
-	local filename = (path == "") and "[No Name]" or vim.fn.fnamemodify(path, ":t")
+	local filename = (path == "") and "[No Name]" or vim.fs.basename(path)
 
 	if path ~= "" and (name_counts[filename] or 0) > 1 and (path_counts[path] or 0) == 1 then
-		local parent = vim.fn.fnamemodify(path, ":p:h:t")
+		local parent = vim.fs.basename(vim.fs.dirname(path))
 		if parent ~= "" and parent ~= "." then
 			filename = parent .. "/" .. filename
 		end
@@ -58,7 +63,7 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
 	-- 使用统一工具获取带背景色的 Icon
 	local icon_txt, final_icon_hl = utils.get_file_icon_with_bg(buf, base_hl, is_sel)
 
-	local mod_txt = api.nvim_get_option_value("modified", { buf = buf }) and " 󰷫▕" or " ▕"
+	local mod_txt = vim.bo[buf].modified and " 󰷫▕" or " ▕"
 
 	local dup_txt = ""
 	if path ~= "" and (path_counts[path] or 0) > 1 then
@@ -96,22 +101,14 @@ local function make_tab_item(tabid, idx, is_sel, name_counts, path_counts, buf, 
 		+ dup_w
 		+ mod_w
 
-	local render_str = string.format(
-		"%%%dT%%#%s# %s%d %%#%s#%s %%#%s#%s%%#%s#%s%%#%s#%s%s",
-		tabid,
-		base_hl,
-		is_sel and "󰄲 " or "󰄱 ",
-		idx,
-		final_icon_hl,
-		icon_txt,
-		final_name_hl,
-		label,
-		final_diag_hl,
-		diag_icon,
-		final_mod_hl,
-		dup_txt,
-		mod_txt
-	)
+	local render_str = table.concat({
+		("%%%dT"):format(tabid),
+		seg(base_hl, (" %s%d "):format(is_sel and "󰄲 " or "󰄱 ", idx)),
+		seg(final_icon_hl, icon_txt .. " "),
+		seg(final_name_hl, label),
+		seg(final_diag_hl, diag_icon),
+		seg(final_mod_hl, dup_txt .. mod_txt),
+	})
 
 	return { width = width, render_str = render_str }
 end
@@ -255,44 +252,48 @@ local function update_current_tab_cache()
 	vim.cmd.redrawtabline()
 end
 
-local grp = api.nvim_create_augroup("TablineCore", { clear = true })
+function M.setup()
+	vim.o.tabline = "%!v:lua.require('component.tabline').render()"
 
-api.nvim_create_autocmd({ "BufEnter", "TabEnter" }, {
-	group = grp,
-	callback = function(args)
-		update_current_tab_cache()
-		if args.buf then
+	local grp = api.nvim_create_augroup("TablineCore", { clear = true })
+
+	api.nvim_create_autocmd({ "BufEnter", "TabEnter" }, {
+		group = grp,
+		callback = function(args)
+			update_current_tab_cache()
+			if args.buf then
+				debounced_diag_update(args.buf)
+			end
+		end,
+	})
+
+	api.nvim_create_autocmd("DiagnosticChanged", {
+		group = grp,
+		callback = function(args)
 			debounced_diag_update(args.buf)
-		end
-	end,
-})
+		end,
+	})
 
-api.nvim_create_autocmd("DiagnosticChanged", {
-	group = grp,
-	callback = function(args)
-		debounced_diag_update(args.buf)
-	end,
-})
+	api.nvim_create_autocmd("ColorScheme", {
+		group = grp,
+		callback = function()
+			utils.reset_hl_cache()
+		end,
+	})
 
-api.nvim_create_autocmd("ColorScheme", {
-	group = grp,
-	callback = function()
-		utils.reset_hl_cache()
-	end,
-})
+	api.nvim_create_autocmd("BufDelete", {
+		group = grp,
+		callback = function(args)
+			state.diag_cache[args.buf] = nil
+		end,
+	})
 
-api.nvim_create_autocmd("BufDelete", {
-	group = grp,
-	callback = function(args)
-		state.diag_cache[args.buf] = nil
-	end,
-})
-
-api.nvim_create_autocmd("SessionLoadPost", {
-	group = grp,
-	callback = function()
-		state.tab_bufs = {}
-	end,
-})
+	api.nvim_create_autocmd("SessionLoadPost", {
+		group = grp,
+		callback = function()
+			state.tab_bufs = {}
+		end,
+	})
+end
 
 return M

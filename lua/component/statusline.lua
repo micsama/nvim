@@ -182,7 +182,7 @@ local spinner_idx = 1
 function C.lsp_progress()
 	local info = data.lsp_progress()
 	if not info then
-		return ""
+		return vim.o.busy and " %#Comment#◐" or ""
 	end
 
 	spinner_idx = (spinner_idx % #spinner_frames) + 1

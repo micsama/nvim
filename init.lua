@@ -29,7 +29,7 @@ vim.pack.add({
 
     -- Telescope FZF 性能优化(需要在安装的目录下手动运行 make)
     { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-    { src = "https://github.com/nvim-telescope/telescope.nvim", tag = "v0.2.0" },
+    { src = "https://github.com/nvim-telescope/telescope.nvim"},
     { src = "https://github.com/nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     "https://github.com/nvim-mini/mini.nvim",                        -- mini.nvim(具体配置见mini.lua)
 
@@ -79,4 +79,4 @@ require("plugins.mini") -- 配置 mini家族的 核心插件
 require("config.deferred") -- 依赖插件的延迟加载
 require("component.theme") -- 主题
 require("component.statusline").setup()
-vim.o.tabline = "%!v:lua.require('component.tabline').render()"
+require("component.tabline").setup()
