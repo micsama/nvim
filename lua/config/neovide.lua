@@ -25,6 +25,7 @@ vim.opt.linespace = 0 -- 消除行间距，使行高更紧凑
 -- =============================================================================
 -- 2) 窗口效果与行为
 -- =============================================================================
+vim.g.neovide_proxy_icon = true
 vim.g.neovide_window_blurred = true -- 启用窗口模糊效果
 vim.g.neovide_floating_blur_amount_x = 1.5 -- 浮动窗口 X 轴模糊量
 vim.g.neovide_floating_blur_amount_y = 1.5 -- 浮动窗口 Y 轴模糊量

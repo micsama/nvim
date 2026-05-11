@@ -32,7 +32,7 @@ local APPS = {
 			{ name = "Codex", cmd = "codex" },
 			{ name = "Gemini", cmd = "gemini" },
 			{ name = "Claude", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude1' claude"):format(HOME) },
-			{ name = "🥰Claude", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude2' claude"):format(HOME) },
+			{ name = "🐶Claude🐶", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude2' claude"):format(HOME) },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},
