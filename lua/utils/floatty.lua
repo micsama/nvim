@@ -33,6 +33,7 @@ local APPS = {
 			{ name = "Gemini", cmd = "gemini" },
 			{ name = "Claude", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude1' claude"):format(HOME) },
 			{ name = "🐶Claude🐶", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude2' claude"):format(HOME) },
+			{ name = "[😭Claude😭]", cmd = ("claude"):format(HOME) },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},
@@ -106,15 +107,25 @@ function M.toggle(raw, choice)
 		-- 判断内存地址相等，说明是同一个 raw 配置组
 		if active_term and active_term.raw_source == raw then
 			if vim.api.nvim_win_is_valid(active_term.win) then
+				local win_tab = vim.api.nvim_win_get_tabpage(active_term.win)
+				if win_tab == vim.api.nvim_get_current_tabpage() then
+					-- 同 tab：正常 toggle hide
+					vim.api.nvim_win_close(active_term.win, true)
+					state.last_id = nil
+					vim.schedule(function()
+						vim.cmd("checktime")
+					end)
+					return
+				end
+				-- 跨 tab：把窗"搬"到当前 tab。关掉旧窗，保留 buf 与 raw.active_id，
+				-- 让 Phase 2 走复活路径在当前 tab 重新 open_win
 				vim.api.nvim_win_close(active_term.win, true)
 				state.last_id = nil
-				vim.schedule(function()
-					vim.cmd("checktime")
-				end)
-				return -- 窗口有效，正常关闭，结束
+				-- 不清 raw.active_id，继续往下走
+			else
+				-- 窗口已失效（切 tab 等原因），清理状态，继续走阶段 2 复活
+				state.last_id = nil
 			end
-			-- 窗口已失效（切 tab 等原因），清理状态，继续走阶段 2 复活
-			state.last_id = nil
 		end
 	end
 
