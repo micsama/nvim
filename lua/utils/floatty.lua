@@ -252,17 +252,17 @@ function M.pick(raw)
 
 		local marker
 		if visible then
-			marker = "" -- nf-fa-check_circle
+			marker = "▶ " -- 前台显示中
 		elseif buf_alive then
-			marker = "" -- nf-fa-circle (solid)
+			marker = "○ " -- 后台运行
 		else
-			marker = "" -- nf-fa-circle_o (outline)
+			marker = "- " -- 未启动
 		end
 
 		table.insert(items, {
 			choice = c,
 			visible = visible,
-			label = ("%s  %s"):format(marker, c.name),
+			label = ("%s %s"):format(marker, c.name),
 		})
 	end
 

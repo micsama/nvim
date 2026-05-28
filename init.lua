@@ -54,6 +54,7 @@ vim.pack.add({
     "https://github.com/mbbill/undotree",                            -- 可视化撤销树
     "https://github.com/AckslD/nvim-neoclip.lua",                    -- 剪贴板历史管理器
     -- 'https://github.com/folke/trouble.nvim',                      -- 统一的诊断/Quickfix/LSP 列表
+		"https://github.com/windwp/nvim-ts-autotag",
 
     -- E. 文件管理与工作区 (File Management & Workspaces)
     "https://github.com/pteroctopus/faster.nvim",                    -- 大型文件优化处理

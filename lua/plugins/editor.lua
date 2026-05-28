@@ -49,6 +49,14 @@ vim.api.nvim_create_autocmd("FileType", {
 -- ============================================================================
 require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
 
+require('nvim-ts-autotag').setup({
+  opts = {
+    enable_close = true,           -- 自动关闭
+    enable_rename = true,          -- 自动重命名（最重要）
+    enable_close_on_slash = true,  -- 输入 </ 自动关闭
+  },
+})
+
 -- ============================================================================
 -- 6) Bigfile / 性能保护
 -- ============================================================================
