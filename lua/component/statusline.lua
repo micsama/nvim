@@ -211,6 +211,14 @@ function C.lsp_progress()
 	return string.format(" %%#Comment#%s %%#Function#%s %s", esc_stl(msg), spinner_frames[spinner_idx], bar)
 end
 
+function C.menu_alive()
+	local idx = require("utils.floatty").active_menu_indices()
+	if #idx == 0 then
+		return ""
+	end
+	return string.format(" %%#Function#󰚩 [%s]", table.concat(idx, ","))
+end
+
 function C.ruler(buf, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
 	local row = api.nvim_win_get_cursor(vim.g.statusline_winid)[1]
@@ -243,6 +251,7 @@ function M.render()
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
+		C.menu_alive(),
 		C.lsp_progress(),
 		C.ruler(buf, mode_hl),
 	})

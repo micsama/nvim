@@ -1,5 +1,6 @@
 local M = {}
 local map = require("utils.map").map
+local fclaude = require("utils.floatty_claude")
 
 -- =============================================================================
 -- 0. 全局状态中心
@@ -32,9 +33,9 @@ local APPS = {
 		choices = {
 			{ name = "Codex", cmd = "codex" },
 			{ name = "Gemini", cmd = "gemini" },
-			{ name = "Claude", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude1' claude"):format(HOME) },
-			{ name = "🐶Claude🐶", cmd = ("CLAUDE_CONFIG_DIR='%s/.claude2' claude"):format(HOME) },
-			{ name = "[😭Claude😭]", cmd = ("claude"):format(HOME) },
+			{ name = "Claude", claude = { dir = HOME .. "/.claude1" } },
+			{ name = "🐶Claude🐶", claude = { dir = HOME .. "/.claude2" } },
+			{ name = "[😭Claude😭]", claude = { dir = nil } },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},
@@ -77,7 +78,45 @@ local function get_ctx()
 end
 
 local function compute_id(cfg, cwd)
+	if cfg.claude then
+		return ("claude::%s::%s"):format(cfg.claude.dir or "default", cwd)
+	end
 	return cfg.id or ((cfg.cmd or cfg.name) .. "::" .. cwd)
+end
+
+--- 给 statusline 用：返回 APPS 菜单里当前后台存活的选项序号
+--- （序号 = 在 picker 列表里的位置，1-based）。
+--- @return integer[]
+function M.active_menu_indices()
+	local cwd = vim.uv.cwd() or vim.fn.getcwd()
+	local indices = {}
+	for _, app in ipairs(APPS) do
+		if app.choices then
+			for i, c in ipairs(app.choices) do
+				local id = compute_id(c, cwd)
+				local term = state.terms[id]
+				if term and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
+					indices[#indices + 1] = i
+				end
+			end
+		end
+	end
+	return indices
+end
+
+local function refresh_claude_title(term)
+	if not (term and term.win and vim.api.nvim_win_is_valid(term.win)) then
+		return
+	end
+	local cfg, meta = term.cfg, term.claude
+	if not (meta and cfg) then
+		return
+	end
+	local g = fclaude.STATUS_GLYPHS[meta.status or "idle"] or fclaude.STATUS_GLYPHS.idle
+	local prefix = ("%s%s %s"):format(cfg.icon or "", cfg.name, g.icon)
+	local body = meta.name or cfg.file or "Term"
+	vim.api.nvim_win_set_config(term.win, { title = make_title(prefix, body) })
+	vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(g.hl, g.hl)
 end
 
 local function kill_term(id)
@@ -85,6 +124,7 @@ local function kill_term(id)
 	if not t then
 		return
 	end
+	fclaude.detach(t.claude)
 	if t.win and vim.api.nvim_win_is_valid(t.win) then
 		vim.api.nvim_win_close(t.win, true)
 	end
@@ -197,7 +237,10 @@ function M.toggle(raw, choice)
 
 	if is_new then
 		local start_time = vim.uv.hrtime()
-		local cmd = target_cfg.cmd or vim.o.shell
+		if target_cfg.claude then
+			term.claude = fclaude.new_meta(target_cfg.claude.dir)
+		end
+		local cmd = (term.claude and fclaude.build_cmd(term.claude)) or target_cfg.cmd or vim.o.shell
 		local final_cmd = target_cfg.is_runner
 				and ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
 			or cmd
@@ -208,12 +251,16 @@ function M.toggle(raw, choice)
 				cwd = target_cfg.cwd or ctx.cwd,
 				on_exit = function(_, code)
 					vim.schedule(function()
+						fclaude.detach(term.claude)
 						if vim.api.nvim_win_is_valid(term.win) then
 							local icon = code == 0 and "✅" or "❌"
 							local exit_hl = code == 0 and "String" or "Error"
 							local duration = string.format("%.1fs", (vim.uv.hrtime() - start_time) / 1e9)
+							local body = (term.claude and term.claude.name)
+								or target_cfg.file
+								or target_cfg.name
 							vim.api.nvim_win_set_config(term.win, {
-								title = make_title(icon .. " " .. duration, target_cfg.file or target_cfg.name),
+								title = make_title(icon .. " " .. duration, body),
 							})
 							vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(exit_hl, exit_hl)
 						end
@@ -224,8 +271,17 @@ function M.toggle(raw, choice)
 				end,
 			})
 		end)
+		if term.claude then
+			fclaude.attach(term.claude, function()
+				refresh_claude_title(term)
+			end)
+		end
 	else
 		vim.cmd("startinsert")
+	end
+
+	if term.claude then
+		refresh_claude_title(term)
 	end
 
 	state.terms[target_id] = term
@@ -259,10 +315,20 @@ function M.pick(raw)
 			marker = "- " -- 未启动
 		end
 
+		-- Claude 已活的话再附带 status glyph 和真实 session name
+		local status_icon, name_suffix = "", ""
+		if buf_alive and term.claude then
+			local g = fclaude.STATUS_GLYPHS[term.claude.status or "idle"] or fclaude.STATUS_GLYPHS.idle
+			status_icon = g.icon .. " "
+			if term.claude.name then
+				name_suffix = (" · %s"):format(term.claude.name)
+			end
+		end
+
 		table.insert(items, {
 			choice = c,
 			visible = visible,
-			label = ("%s %s"):format(marker, c.name),
+			label = ("%s%s%s%s"):format(marker, status_icon, c.name, name_suffix),
 		})
 	end
 
@@ -290,6 +356,9 @@ vim.api.nvim_create_autocmd("VimResized", {
 		local t = state.terms[state.last_id]
 		if t and vim.api.nvim_win_is_valid(t.win) then
 			vim.api.nvim_win_set_config(t.win, get_win_opts(t.cfg))
+			if t.claude then
+				refresh_claude_title(t)
+			end
 		end
 	end,
 })
