@@ -306,24 +306,25 @@ function M.pick(raw)
 		local buf_alive = term and term.buf and vim.api.nvim_buf_is_valid(term.buf)
 		local visible = buf_alive and term.win and vim.api.nvim_win_is_valid(term.win)
 
+		-- Claude 已活：用 status glyph 表"后台存活+状态"，前台用 ▶；二者择一，避免重复
+		local is_claude_alive = buf_alive and merged.claude
+		local name_suffix = ""
+		if is_claude_alive and term.claude and term.claude.name then
+			name_suffix = (" · %s"):format(term.claude.name)
+		end
+
 		local marker
 		if visible then
-			marker = "▶ " -- 前台显示中
+			marker = "▶ " -- 前台显示中（Claude 的 status 已在浮窗标题里，不再叠）
+		elseif is_claude_alive and term.claude then
+			local g = fclaude.STATUS_GLYPHS[term.claude.status or "idle"] or fclaude.STATUS_GLYPHS.idle
+			marker = g.icon .. " " -- 后台 Claude：用 status glyph 单独表示
 		elseif buf_alive then
-			marker = "○ " -- 后台运行
+			marker = "○ " -- 后台运行（非 Claude）
 		else
 			marker = "- " -- 未启动
 		end
-
-		-- Claude 已活的话再附带 status glyph 和真实 session name
-		local status_icon, name_suffix = "", ""
-		if buf_alive and term.claude then
-			local g = fclaude.STATUS_GLYPHS[term.claude.status or "idle"] or fclaude.STATUS_GLYPHS.idle
-			status_icon = g.icon .. " "
-			if term.claude.name then
-				name_suffix = (" · %s"):format(term.claude.name)
-			end
-		end
+		local status_icon = ""
 
 		table.insert(items, {
 			choice = c,
