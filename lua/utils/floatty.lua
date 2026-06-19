@@ -25,6 +25,7 @@ local APPS = {
 	-- [Type 2: 菜单型] (只有这种需要 choices)
 	{
 		key = "<D-e>",
+		picker_key = "<M-e>",
 		name = "AI",
 		icon = "󰚩 ",
 		w = 0.9,
@@ -32,7 +33,7 @@ local APPS = {
 		hl = "Number",
 		choices = {
 			{ name = "Codex", cmd = "codex" },
-			{ name = "Gemini", cmd = "gemini" },
+			{ name = "Codex-YesCode", cmd = "CODEX_HOME=/Users/dzmfg/.codex1 codex" },
 			{ name = "Claude", claude = { dir = HOME .. "/.claude1" } },
 			{ name = "🐶Claude🐶", claude = { dir = HOME .. "/.claude2" } },
 			{ name = "[😭Claude😭]", claude = { dir = nil } },
@@ -370,8 +371,8 @@ for _, x in ipairs(APPS) do
 	end, x.name)
 	-- 菜单型再绑一个 Shift 变体用于 picker
 	if x.choices then
-		local shift_key = x.key:gsub("<D%-(%a)>", "<D-S-%1>")
-		map("nvit", shift_key, function()
+		local picker_key = x.picker_key or x.key:gsub("<D%-(%a)>", "<D-S-%1>")
+		map("nvit", picker_key, function()
 			M.pick(x)
 		end, x.name .. " picker")
 	end
