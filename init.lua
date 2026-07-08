@@ -75,10 +75,10 @@ vim.pack.add({
 
 })
 -- stylua: ignore end
+require("component.theme") -- 主题（须在 plugins.ui 之前加载，notify 等插件的高亮依赖当前 colorscheme）
 require("plugins.editor") -- 编辑器增强功能
 require("plugins.ui") -- 用户界面和外观
 require("plugins.mini") -- 配置 mini家族的 核心插件
 require("config.deferred") -- 依赖插件的延迟加载
-require("component.theme") -- 主题
 require("component.statusline").setup()
 require("component.tabline").setup()

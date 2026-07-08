@@ -14,6 +14,7 @@ require("hlchunk").setup({ chunk = { delay = 110, enable = true } })
 require("notify").setup({
 	timeout = 1500,
 	render = "compact",
+	background_colour = require("catppuccin.palettes").get_palette("mocha").base,
 	icons = { ERROR = "✘ ", WARN = "󱓈 ", INFO = "󰋽 ", DEBUG = "󰛩 ", TRACE = "󰓎 " },
 })
 vim.notify = require("notify")
