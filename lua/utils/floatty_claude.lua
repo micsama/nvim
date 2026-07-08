@@ -53,7 +53,7 @@ end
 
 --- @param meta ClaudeMeta
 function M.build_cmd(meta)
-	local prefix = meta.dir and ("CLAUDE_CONFIG_DIR=%s "):format(vim.fn.shellescape(meta.dir)) or ""
+	local prefix = meta.dir and ("env CLAUDE_CONFIG_DIR=%s "):format(vim.fn.shellescape(meta.dir)) or ""
 	return ("%sclaude --session-id %s -n %s"):format(
 		prefix,
 		meta.session_id,
