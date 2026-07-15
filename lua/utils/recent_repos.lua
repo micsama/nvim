@@ -165,9 +165,19 @@ function M.picker(opts)
 				actions.select_default:replace(function()
 					local selection = action_state.get_selected_entry()
 					actions.close(prompt_bufnr)
-					if selection then
-						vim.cmd.cd(selection.value.path)
-						vim.notify(selection.value.path, nil, { title = "cd ->", icon = "" })
+					if not selection then
+						return
+					end
+					local path = selection.value.path
+					vim.cmd.cd(path)
+					vim.notify(path, nil, { title = "cd ->", icon = "" })
+
+					-- 项目里留有 Session.vim 就新开一个 tab 恢复上次的窗口布局，
+					-- 避免直接 source 覆盖掉当前 tab 正在看的东西
+					local session_file = path .. "/Session.vim"
+					if vim.fn.filereadable(session_file) == 1 then
+						vim.cmd.tabnew()
+						vim.cmd.source(session_file)
 					end
 				end)
 
