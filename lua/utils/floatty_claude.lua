@@ -61,6 +61,13 @@ function M.build_cmd(meta)
 	)
 end
 
+--- 续上一次被打断（未正常关闭）的对话，不生成新 session-id/watcher
+--- @param dir string|nil
+function M.build_continue_cmd(dir)
+	local prefix = dir and ("env CLAUDE_CONFIG_DIR=%s "):format(vim.fn.shellescape(dir)) or ""
+	return prefix .. "claude -c"
+end
+
 -- ---------------------------------------------------------------------------
 -- 2. sessions JSON 读取
 -- ---------------------------------------------------------------------------

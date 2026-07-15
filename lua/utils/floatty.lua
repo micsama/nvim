@@ -11,6 +11,58 @@ local fclaude = require("utils.floatty_claude")
 local state = { terms = {}, last_id = nil, ctx_cache = nil }
 
 -- =============================================================================
+-- 0b. 持久化会话注册表
+-- =============================================================================
+-- 用于记录"当前存活的 claude 后台会话"，跨 Neovim 重启存活。
+-- 按 cwd 区分（不做 pid 隔离）：每个 nvim 实例通常只盯一个项目目录，
+-- 不同实例的 cwd 天然不重叠，孤儿检测按 cwd 过滤即可避免误判。
+-- 正常 spawn 时写入一条记录；进程退出(on_exit)或用户手动 kill_term 时移除。
+-- 如果 nvim 被直接关闭（子进程随之被杀），on_exit 的 vim.schedule 回调
+-- 来不及执行，记录就会遗留在文件里 —— 下次启动时读到的就是"未正常关闭"的孤儿。
+local REGISTRY_PATH = vim.fn.stdpath("state") .. "/floatty_sessions.json"
+
+local function load_registry()
+	local f = io.open(REGISTRY_PATH, "r")
+	if not f then
+		return {}
+	end
+	local content = f:read("*a")
+	f:close()
+	local ok, data = pcall(vim.json.decode, content)
+	if not ok or type(data) ~= "table" then
+		return {}
+	end
+	return data
+end
+
+local function save_registry(reg)
+	local ok, encoded = pcall(vim.json.encode, reg)
+	if not ok then
+		return
+	end
+	local f = io.open(REGISTRY_PATH, "w")
+	if not f then
+		return
+	end
+	f:write(encoded)
+	f:close()
+end
+
+local function registry_add(id, entry)
+	local reg = load_registry()
+	reg[id] = entry
+	save_registry(reg)
+end
+
+local function registry_remove(id)
+	local reg = load_registry()
+	if reg[id] ~= nil then
+		reg[id] = nil
+		save_registry(reg)
+	end
+end
+
+-- =============================================================================
 -- 1. 配置定义 (Data)
 -- =============================================================================
 local HOME = vim.env.HOME
@@ -106,6 +158,30 @@ function M.active_menu_indices()
 	return indices
 end
 
+--- 给 statusline 用：返回 APPS 菜单里当前 cwd 下"曾经存活但未正常关闭"的选项序号
+--- （即注册表里还有记录、但本次 nvim 里没有对应活体终端 —— 上次的孤儿会话）。
+--- @return integer[]
+function M.orphan_menu_indices()
+	local cwd = vim.uv.cwd() or vim.fn.getcwd()
+	local reg = load_registry()
+	local indices = {}
+	for _, app in ipairs(APPS) do
+		if app.choices then
+			for i, c in ipairs(app.choices) do
+				if c.claude then
+					local id = compute_id(c, cwd)
+					local term = state.terms[id]
+					local alive = term and term.exited == nil and term.buf and vim.api.nvim_buf_is_valid(term.buf)
+					if not alive and reg[id] then
+						indices[#indices + 1] = i
+					end
+				end
+			end
+		end
+	end
+	return indices
+end
+
 local function refresh_claude_title(term)
 	if not (term and term.win and vim.api.nvim_win_is_valid(term.win)) then
 		return
@@ -132,6 +208,9 @@ local function kill_term(id)
 	end
 	if t.buf and vim.api.nvim_buf_is_valid(t.buf) then
 		vim.api.nvim_buf_delete(t.buf, { force = true })
+	end
+	if t.cfg and t.cfg.claude then
+		registry_remove(id)
 	end
 
 	-- [重要] 清理记忆指针：如果这个死掉的终端是某组配置的"现任"，则将其废黜
@@ -250,10 +329,20 @@ function M.toggle(raw, choice)
 
 	if is_new then
 		local start_time = vim.uv.hrtime()
+		local cmd
 		if target_cfg.claude then
-			term.claude = fclaude.new_meta(target_cfg.claude.dir)
+			-- 注册表里还留着这个 id → 上次是被 nvim 陪葬关闭的孤儿，用 -c 续上那次对话；
+			-- 否则是全新会话，走原来的 --session-id 流程（供 status 轮询/标题联动用）。
+			local was_orphan = load_registry()[target_id] ~= nil
+			if was_orphan then
+				cmd = fclaude.build_continue_cmd(target_cfg.claude.dir)
+			else
+				term.claude = fclaude.new_meta(target_cfg.claude.dir)
+				cmd = fclaude.build_cmd(term.claude)
+			end
+			registry_add(target_id, { ts = os.time() })
 		end
-		local cmd = (term.claude and fclaude.build_cmd(term.claude)) or target_cfg.cmd or vim.o.shell
+		cmd = cmd or target_cfg.cmd or vim.o.shell
 		local final_cmd
 		if target_cfg.is_runner then
 			final_cmd = ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
@@ -271,6 +360,9 @@ function M.toggle(raw, choice)
 					vim.schedule(function()
 						term.exited = code
 						fclaude.detach(term.claude)
+						if target_cfg.claude then
+							registry_remove(target_id)
+						end
 						if term.win and vim.api.nvim_win_is_valid(term.win) then
 							local icon = code == 0 and "✅" or "❌"
 							local exit_hl = code == 0 and "String" or "Error"
@@ -319,6 +411,7 @@ function M.pick(raw)
 	end
 
 	local ctx = get_ctx()
+	local reg = load_registry()
 	local items = {}
 	for _, c in ipairs(raw.choices) do
 		local merged = vim.tbl_deep_extend("force", vim.deepcopy(raw), c)
@@ -327,6 +420,7 @@ function M.pick(raw)
 		local buf_alive = term and term.buf and vim.api.nvim_buf_is_valid(term.buf)
 		local visible = buf_alive and term.win and vim.api.nvim_win_is_valid(term.win)
 		local exited = buf_alive and term.exited ~= nil
+		local orphan = merged.claude and not buf_alive and reg[id]
 
 		-- Claude 已活：用 status glyph 表"后台存活+状态"，前台用 ▶；二者择一，避免重复
 		local is_claude_alive = buf_alive and not exited and merged.claude
@@ -345,10 +439,15 @@ function M.pick(raw)
 			marker = g.icon .. " " -- 后台 Claude：用 status glyph 单独表示
 		elseif buf_alive then
 			marker = "○ " -- 后台运行（非 Claude）
+		elseif orphan then
+			marker = "󰊠 " -- 上次未正常关闭的孤儿会话，选中会用 -c 续上
 		else
 			marker = "- " -- 未启动
 		end
 		local status_icon = ""
+		if orphan then
+			name_suffix = (" (%s 未正常关闭)"):format(os.date("%H:%M", reg[id].ts))
+		end
 
 		table.insert(items, {
 			choice = c,

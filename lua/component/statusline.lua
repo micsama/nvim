@@ -212,11 +212,20 @@ function C.lsp_progress()
 end
 
 function C.menu_alive()
-	local idx = require("utils.floatty").active_menu_indices()
-	if #idx == 0 then
+	local fl = require("utils.floatty")
+	local idx = fl.active_menu_indices()
+	local orphan_idx = fl.orphan_menu_indices()
+	if #idx == 0 and #orphan_idx == 0 then
 		return ""
 	end
-	return string.format(" %%#Function#󰚩 [%s]", table.concat(idx, ","))
+	local s = ""
+	if #idx > 0 then
+		s = s .. string.format(" %%#Function#󰚩 [%s]", table.concat(idx, ","))
+	end
+	if #orphan_idx > 0 then
+		s = s .. string.format(" %%#Comment#󰊠[%s]", table.concat(orphan_idx, ","))
+	end
+	return s
 end
 
 function C.ruler(buf, mode_hl)
