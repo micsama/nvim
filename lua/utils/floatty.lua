@@ -25,12 +25,13 @@ local APPS = {
 	-- [Type 2: 菜单型] (只有这种需要 choices)
 	{
 		key = "<D-e>",
-		picker_key = "<M-e>",
+		pick_key = "<M-e>",
 		name = "AI",
 		icon = "󰚩 ",
 		w = 0.9,
 		h = 0.95,
 		hl = "Number",
+		shell = "zsh",
 		choices = {
 			{ name = "Codex", cmd = "codex" },
 			{ name = "Codex-YesCode", cmd = "CODEX_HOME=/Users/dzmfg/.codex1 codex" },
@@ -96,7 +97,7 @@ function M.active_menu_indices()
 			for i, c in ipairs(app.choices) do
 				local id = compute_id(c, cwd)
 				local term = state.terms[id]
-				if term and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
+				if term and term.exited == nil and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
 					indices[#indices + 1] = i
 				end
 			end
@@ -195,14 +196,20 @@ function M.toggle(raw, choice)
 		local active = state.terms[target_id]
 		if active and active.win and vim.api.nvim_win_is_valid(active.win) then
 			local same_tab = vim.api.nvim_win_get_tabpage(active.win) == vim.api.nvim_get_current_tabpage()
-			vim.api.nvim_win_close(active.win, true)
-			state.last_id = nil
 			if same_tab then
+				if active.exited ~= nil then
+					kill_term(target_id)
+				else
+					vim.api.nvim_win_close(active.win, true)
+					state.last_id = nil
+				end
 				vim.schedule(function()
 					vim.cmd("checktime")
 				end)
 				return
 			end
+			vim.api.nvim_win_close(active.win, true)
+			state.last_id = nil
 			-- 跨 tab：关掉旧窗，下面在当前 tab 重开
 		end
 	end
@@ -222,11 +229,16 @@ function M.toggle(raw, choice)
 	-- 阶段 4: Spawn or Show
 	-- ============================================================
 	local term = state.terms[target_id] or {}
+	if term.exited ~= nil and not (term.win and vim.api.nvim_win_is_valid(term.win)) then
+		kill_term(target_id)
+		term = {}
+	end
 	local is_new = not (term.buf and vim.api.nvim_buf_is_valid(term.buf))
 
 	raw.active_id = target_id
 	term.raw_source = raw
 	term.cfg = target_cfg
+	term.exited = nil
 
 	if is_new then
 		term.buf = vim.api.nvim_create_buf(false, true)
@@ -242,9 +254,14 @@ function M.toggle(raw, choice)
 			term.claude = fclaude.new_meta(target_cfg.claude.dir)
 		end
 		local cmd = (term.claude and fclaude.build_cmd(term.claude)) or target_cfg.cmd or vim.o.shell
-		local final_cmd = target_cfg.is_runner
-				and ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
-			or cmd
+		local final_cmd
+		if target_cfg.is_runner then
+			final_cmd = ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
+		elseif target_cfg.shell then
+			final_cmd = { target_cfg.shell, "-c", "exec " .. cmd }
+		else
+			final_cmd = cmd
+		end
 
 		vim.api.nvim_buf_call(term.buf, function()
 			vim.fn.jobstart(final_cmd, {
@@ -252,8 +269,9 @@ function M.toggle(raw, choice)
 				cwd = target_cfg.cwd or ctx.cwd,
 				on_exit = function(_, code)
 					vim.schedule(function()
+						term.exited = code
 						fclaude.detach(term.claude)
-						if vim.api.nvim_win_is_valid(term.win) then
+						if term.win and vim.api.nvim_win_is_valid(term.win) then
 							local icon = code == 0 and "✅" or "❌"
 							local exit_hl = code == 0 and "String" or "Error"
 							local duration = string.format("%.1fs", (vim.uv.hrtime() - start_time) / 1e9)
@@ -261,13 +279,15 @@ function M.toggle(raw, choice)
 								or target_cfg.file
 								or target_cfg.name
 							vim.api.nvim_win_set_config(term.win, {
-								title = make_title(icon .. " " .. duration, body),
+								title = make_title(("%s exit %d · %s"):format(icon, code, duration), body),
 							})
 							vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(exit_hl, exit_hl)
 						end
-						vim.defer_fn(function()
-							kill_term(target_id)
-						end, AUTOCLOSE_MS)
+						if code == 0 then
+							vim.defer_fn(function()
+								kill_term(target_id)
+							end, AUTOCLOSE_MS)
+						end
 					end)
 				end,
 			})
@@ -306,9 +326,10 @@ function M.pick(raw)
 		local term = state.terms[id]
 		local buf_alive = term and term.buf and vim.api.nvim_buf_is_valid(term.buf)
 		local visible = buf_alive and term.win and vim.api.nvim_win_is_valid(term.win)
+		local exited = buf_alive and term.exited ~= nil
 
 		-- Claude 已活：用 status glyph 表"后台存活+状态"，前台用 ▶；二者择一，避免重复
-		local is_claude_alive = buf_alive and merged.claude
+		local is_claude_alive = buf_alive and not exited and merged.claude
 		local name_suffix = ""
 		if is_claude_alive and term.claude and term.claude.name then
 			name_suffix = (" · %s"):format(term.claude.name)
@@ -317,6 +338,8 @@ function M.pick(raw)
 		local marker
 		if visible then
 			marker = "▶ " -- 前台显示中（Claude 的 status 已在浮窗标题里，不再叠）
+		elseif exited then
+			marker = "✖ " -- 已退出，选中时会清理后重启
 		elseif is_claude_alive and term.claude then
 			local g = fclaude.STATUS_GLYPHS[term.claude.status or "idle"] or fclaude.STATUS_GLYPHS.idle
 			marker = g.icon .. " " -- 后台 Claude：用 status glyph 单独表示
@@ -369,10 +392,10 @@ for _, x in ipairs(APPS) do
 	map("nvit", x.key, function()
 		M.toggle(x)
 	end, x.name)
-	-- 菜单型再绑一个 Shift 变体用于 picker
+	-- 菜单型再绑一个变体用于 picker（可由 pick_key 显式指定，否则用 Shift 变体）
 	if x.choices then
-		local picker_key = x.picker_key or x.key:gsub("<D%-(%a)>", "<D-S-%1>")
-		map("nvit", picker_key, function()
+		local pick_key = x.pick_key or x.key:gsub("<D%-(%a)>", "<D-S-%1>")
+		map("nvit", pick_key, function()
 			M.pick(x)
 		end, x.name .. " picker")
 	end
