@@ -24,6 +24,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 				vim.fn.systemlist("git -C " .. vim.fn.shellescape(buf_dir) .. " rev-parse --show-toplevel")
 			if vim.v.shell_error == 0 and git_root[1] then
 				root = git_root[1]
+				require("utils.recent_repos").record(root)
 			else
 				local root_markers = { "pyproject.toml", ".luarc.json", "Makefile", "Cargo.toml", "package.json", "go.mod" }
 				root = vim.fs.root(ctx.buf, root_markers) or false

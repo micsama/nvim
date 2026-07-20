@@ -45,7 +45,7 @@ local telescope_maps = {
   -- 文件 / 搜索（高频）
   { "nv", "<leader>ff", builtin.find_files,           "📁 查找文件" },
   { "nv", "<leader>fb", builtin.buffers,              "📁 查找Buffer" },
-  { "nv", "<leader>fr", builtin.oldfiles,             "🕒 最近文件" },
+  { "nv", "<leader>fR", builtin.oldfiles,             "🕒 最近文件" },
   { "nv", "<leader>fg", builtin.live_grep,            "🔎 全局搜索" },
   { "nv", "<leader>fw", builtin.grep_string,          "🔦 搜索光标词" },
   { "nv", "<leader>f/", builtin.search_history,       "📜 搜索历史（/）" },
@@ -54,6 +54,7 @@ local telescope_maps = {
   { "nv", "<leader>fy", "<CMD>Telescope neoclip<CR>", "📋 剪贴板历史" },
   { "nv", "<leader>fn", "<CMD>Telescope notify<CR>",  "🔔 通知历史" },
   { "nv", "<leader>fp", "<CMD>Telescope pickers<CR>", "🧰 Picker 历史" },
+  { "nv", "<leader>fr", function() require("utils.recent_repos").picker() end, "🗂️ 最近仓库" },
 }
 vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 -- stylua: ignore end
