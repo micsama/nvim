@@ -17,22 +17,32 @@ local map = require("utils.map").map
 local M = {}
 
 local BAR_WIDTH = 12
+local NS = vim.api.nvim_create_namespace('proctop')
 
 local state = {
   tab = nil,
   buf = nil,
   timer = nil,
   sort_by = 'cpu', -- 'cpu' | 'mem'
+  tabname = 'ProcTop',
   -- 上一次采样的累计 CPU 时间，用来做差分算出"真实瞬时 CPU%"
   -- 结构: { [pid] = { cputime_sec = number, sampled_at = number(monotonic ms) } }
   last_samples = {},
+  -- pid 消失后归档，一直渲染成"已退出"，不做过期清理（子进程本来就不多）
+  -- 结构: { [pid] = row }
+  dead_rows = {},
+  -- 上一轮渲染过的全量行（活的+死的），用来在下一轮里发现"这次 ps 查不到了"的 pid，
+  -- 从而判断它是不是刚挂掉
+  prev_all_rows = {},
 }
 
 -- 排序方式：按 't' 循环切换。metric() 同时也是"对比"进度条用的取值，
 -- 且决定表头哪一列显示排序箭头。
+-- 已退出的行不再产生真实的 CPU%/MEM 数据，cpu/mem 排序下一律按 0 算，
+-- 自然沉到列表最后；只有 cputime 是它们生前攒下的真实值，可以正常参与排序。
 local SORT_KEYS = {
-  cpu = { col = 'CPU%', metric = function(row) return row.live_cpu_pct end },
-  mem = { col = 'MEM(MB)', metric = function(row) return row.rss_kb / 1024 end },
+  cpu = { col = 'CPU%', metric = function(row) return (not row.dead) and row.live_cpu_pct or 0 end },
+  mem = { col = 'MEM(MB)', metric = function(row) return (not row.dead) and (row.rss_kb / 1024) or 0 end },
   cputime = { col = 'CPUTIME', metric = function(row) return row.cputime_sec end },
 }
 local SORT_ORDER = { 'cpu', 'mem', 'cputime' }
@@ -162,6 +172,7 @@ local function collect_rows()
     row.label = labels[row.pid]
     row.live_cpu_pct = compute_live_cpu_pct(row, now_ms)
     seen_pids[row.pid] = true
+    state.dead_rows[row.pid] = nil -- pid 复活了（或者被系统回收复用），不算"挂了"
   end
 
   -- 清掉已经退出的进程的采样基线，避免这张表无限涨
@@ -169,9 +180,24 @@ local function collect_rows()
     if not seen_pids[pid] then state.last_samples[pid] = nil end
   end
 
+  -- 上一轮渲染过的全量行（活的+死的）里，这次 ps 查不到、又还没标记过的，
+  -- 就是"刚挂"的：标记 dead=true，一直留着（子进程本来就不多，不做过期清理）
+  for _, row in ipairs(state.prev_all_rows or {}) do
+    if not seen_pids[row.pid] and not state.dead_rows[row.pid] then
+      row.dead = true
+      state.dead_rows[row.pid] = row
+    end
+  end
+
+  local merged = {}
+  for _, row in ipairs(rows) do table.insert(merged, row) end
+  for _, row in pairs(state.dead_rows) do table.insert(merged, row) end
+
   local metric = SORT_KEYS[state.sort_by].metric
-  table.sort(rows, function(a, b) return (metric(a) or -1) > (metric(b) or -1) end)
-  return rows
+  table.sort(merged, function(a, b) return (metric(a) or -1) > (metric(b) or -1) end)
+
+  state.prev_all_rows = merged
+  return merged
 end
 
 local function fmt_mb(kb)
@@ -235,6 +261,30 @@ local function row_line(cells)
   return '│' .. table.concat(parts, '│') .. '│'
 end
 
+-- 给一行里"每个 │ 分隔符之间"的内容分别打一个 extmark，跳过所有 │（包括
+-- 表格外边框和列与列之间的分隔线），这样边框颜色不受影响，只有单元格内容变色
+local function highlight_row_cells(bufnr, ns, line_idx, line_str, hl_group)
+  local border_positions = {}
+  local search_from = 1
+  while true do
+    local s = line_str:find('│', search_from, true)
+    if not s then break end
+    border_positions[#border_positions + 1] = s
+    search_from = s + 3 -- '│' 的 UTF-8 编码占 3 字节
+  end
+  for i = 1, #border_positions - 1 do
+    local start_col = border_positions[i] + 2 -- 0-indexed，跳过这个 │
+    local end_col = border_positions[i + 1] - 1 -- 0-indexed，止于下一个 │ 之前
+    if end_col > start_col then
+      vim.api.nvim_buf_set_extmark(bufnr, ns, line_idx, start_col, {
+        end_col = end_col,
+        hl_group = hl_group,
+        priority = 200,
+      })
+    end
+  end
+end
+
 local function render()
   if not (state.buf and vim.api.nvim_buf_is_valid(state.buf)) then return end
 
@@ -243,9 +293,14 @@ local function render()
   local sorted_col = SORT_KEYS[state.sort_by].col
 
   local max_value = 0
+  local dead_count = 0
   for _, row in ipairs(rows) do
-    local v = metric(row) or 0
-    if v > max_value then max_value = v end
+    if row.dead then
+      dead_count = dead_count + 1
+    else
+      local v = metric(row) or 0
+      if v > max_value then max_value = v end
+    end
   end
 
   local names = {}
@@ -253,27 +308,40 @@ local function render()
     names[#names + 1] = (col.name == sorted_col) and (col.name .. ' ↓') or col.name
   end
 
-  local lines = {
-    string.format(
-      'nvim pid=%d  子进程数=%d  排序=%s (r 刷新, t 切换排序, q 关闭)',
-      vim.fn.getpid(), #rows, state.sort_by
-    ),
-    border('┌', '┬', '┐'),
-    row_line(names),
-    border('├', '┼', '┤'),
-  }
+  local header = string.format(
+    'nvim pid=%d  子进程数=%d  已退出=%d  排序=%s (r 刷新, t 切换排序, q 关闭)',
+    vim.fn.getpid(), #rows - dead_count, dead_count, state.sort_by
+  )
+  local lines = { header, border('┌', '┬', '┐'), row_line(names), border('├', '┼', '┤') }
+  local dead_line_idxs = {}
+
   for _, row in ipairs(rows) do
-    local cpu_str = row.live_cpu_pct and string.format('%.1f', row.live_cpu_pct) or '-'
-    table.insert(lines, row_line({
-      row.pid, row.ppid, cpu_str, fmt_cputime(row.cputime_sec), fmt_mb(row.rss_kb),
-      row.label or '-', fmt_bar(metric(row), max_value), row.comm,
-    }))
+    if row.dead then
+      local line_str = row_line({
+        row.pid, row.ppid, '0.0', fmt_cputime(row.cputime_sec), fmt_mb(row.rss_kb),
+        row.label or '-', '已退出', row.comm,
+      })
+      table.insert(lines, line_str)
+      dead_line_idxs[#dead_line_idxs + 1] = { idx = #lines - 1, line = line_str } -- 0-indexed 行号 + 行内容
+    else
+      local cpu_str = row.live_cpu_pct and string.format('%.1f', row.live_cpu_pct) or '-'
+      table.insert(lines, row_line({
+        row.pid, row.ppid, cpu_str, fmt_cputime(row.cputime_sec), fmt_mb(row.rss_kb),
+        row.label or '-', fmt_bar(metric(row), max_value), row.comm,
+      }))
+    end
   end
+
   table.insert(lines, border('└', '┴', '┘'))
 
   vim.bo[state.buf].modifiable = true
   vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
   vim.bo[state.buf].modifiable = false
+
+  vim.api.nvim_buf_clear_namespace(state.buf, NS, 0, -1)
+  for _, entry in ipairs(dead_line_idxs) do
+    highlight_row_cells(state.buf, NS, entry.idx, entry.line, 'ProcTopDead')
+  end
 end
 
 local function stop_timer()
@@ -306,6 +374,8 @@ local function open_new_tab()
   vim.bo[state.buf].bufhidden = 'wipe'
   vim.bo[state.buf].swapfile = false
   vim.bo[state.buf].filetype = 'proctop'
+  -- 只是给 tabline 一个像样的名字，重名（比如反复开关）就算了，无所谓
+  pcall(vim.api.nvim_buf_set_name, state.buf, state.tabname)
 
   vim.keymap.set('n', 'q', M.close, { buffer = state.buf, nowait = true })
   vim.keymap.set('n', 'r', render, { buffer = state.buf, nowait = true })
@@ -350,7 +420,16 @@ function M.toggle()
   open_new_tab()
 end
 
-function M.setup()
+--- opts.tabname: 自定义 tabline 上显示的名字（默认 "ProcTop"）
+function M.setup(opts)
+  opts = opts or {}
+  if opts.tabname then state.tabname = opts.tabname end
+
+  vim.api.nvim_set_hl(0, 'ProcTopDead', { fg = '#b8860b', default = true })
+  vim.api.nvim_create_autocmd('ColorScheme', {
+    callback = function() vim.api.nvim_set_hl(0, 'ProcTopDead', { fg = '#b8860b', default = true }) end,
+  })
+
   vim.api.nvim_create_user_command('ProcTop', M.toggle, {})
   map('n', '<D-p>', M.toggle, 'ProcTop 进程监控')
 end
