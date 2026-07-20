@@ -28,6 +28,12 @@ local function current_mode_group()
 	return mode_group_map[mode] or mode_group_map[mode:sub(1, 1)] or "StatusLineNormal"
 end
 
+-- Comment 默认斜体，孤儿角标只想要灰色不想要斜体，单独开一个不带 italic 的组
+local function build_orphan_hl()
+	local comment = utils.hl("Comment")
+	api.nvim_set_hl(0, "StlOrphan", { fg = comment.fg, italic = false })
+end
+
 local function build_inactive_capsule_hl()
 	local stl_nc = utils.hl("StatusLineNC")
 	local info = utils.hl("DiagnosticInfo")
@@ -212,11 +218,20 @@ function C.lsp_progress()
 end
 
 function C.menu_alive()
-	local idx = require("utils.floatty").active_menu_indices()
-	if #idx == 0 then
+	local fl = require("utils.floatty")
+	local idx = fl.active_menu_indices()
+	local orphan_idx = fl.orphan_menu_indices()
+	if #idx == 0 and #orphan_idx == 0 then
 		return ""
 	end
-	return string.format(" %%#Function#󰚩 [%s]", table.concat(idx, ","))
+	local s = ""
+	if #idx > 0 then
+		s = s .. string.format(" %%#Function#󰚩 [%s]", table.concat(idx, ","))
+	end
+	if #orphan_idx > 0 then
+		s = s .. string.format(" %%#StlOrphan#󰊠[%s]", table.concat(orphan_idx, ","))
+	end
+	return s
 end
 
 function C.ruler(buf, mode_hl)
@@ -259,6 +274,7 @@ end
 
 function M.setup()
 	build_inactive_capsule_hl()
+	build_orphan_hl()
 	vim.o.laststatus = 2
 	vim.o.statusline = "%!v:lua.require('component.statusline').render()"
 
@@ -270,6 +286,7 @@ function M.setup()
 			utils.reset_hl_cache()
 			capsule_hl_cache = {}
 			build_inactive_capsule_hl()
+			build_orphan_hl()
 		end,
 	})
 
