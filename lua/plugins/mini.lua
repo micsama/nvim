@@ -39,7 +39,9 @@ require("mini.files").setup({
 			return true
 		end,
 	},
-	permanent_delete = false,
+	options = {
+		permanent_delete = false,
+	},
 })
 
 local function yank(mod)
