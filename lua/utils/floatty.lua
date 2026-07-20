@@ -138,24 +138,24 @@ local function compute_id(cfg, cwd)
 	return cfg.id or ((cfg.cmd or cfg.name) .. "::" .. cwd)
 end
 
---- 给 statusline 用：返回 APPS 菜单里当前后台存活的选项序号
---- （序号 = 在 picker 列表里的位置，1-based）。
---- @return integer[]
+--- 给 statusline 用：返回 APPS 菜单里当前后台存活的选项
+--- （idx = 在 picker 列表里的位置，1-based；status = busy|waiting|idle，非 claude 项为 nil）。
+--- @return { idx: integer, status: string|nil }[]
 function M.active_menu_indices()
 	local cwd = vim.uv.cwd() or vim.fn.getcwd()
-	local indices = {}
+	local items = {}
 	for _, app in ipairs(APPS) do
 		if app.choices then
 			for i, c in ipairs(app.choices) do
 				local id = compute_id(c, cwd)
 				local term = state.terms[id]
 				if term and term.exited == nil and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
-					indices[#indices + 1] = i
+					items[#items + 1] = { idx = i, status = term.claude and term.claude.status }
 				end
 			end
 		end
 	end
-	return indices
+	return items
 end
 
 --- 给 statusline 用：返回 APPS 菜单里当前 cwd 下"曾经存活但未正常关闭"的选项序号
@@ -182,6 +182,95 @@ function M.orphan_menu_indices()
 	return indices
 end
 
+-- =============================================================================
+-- 2b. 呼吸边框（Claude busy 时，边框颜色随时间明暗律动）
+-- =============================================================================
+local pulse = { timer = nil, win = nil, start_ns = nil }
+
+local function hex_from_hl(name, field, fallback)
+	local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name, link = false })
+	if ok and hl and hl[field] then
+		return hl[field]
+	end
+	return fallback
+end
+
+--- 优先用 Catppuccin 当前 flavour 的 peach，取不到再退回 WarningMsg 前景色
+local function pulse_base_color()
+	local ok, palettes = pcall(require, "catppuccin.palettes")
+	if ok then
+		local p = palettes.get_palette()
+		if p and p.peach then
+			return p.peach
+		end
+	end
+	return hex_from_hl("WarningMsg", "fg", 0xfab387)
+end
+
+--- c1/c2 接受数字色值（0xRRGGBB）或 "#rrggbb" 字符串，返回 "#rrggbb"
+local function blend(c1, c2, t)
+	if type(c1) == "string" then
+		c1 = tonumber(c1:sub(2), 16)
+	end
+	if type(c2) == "string" then
+		c2 = tonumber(c2:sub(2), 16)
+	end
+	local r1, g1, b1 = math.floor(c1 / 65536) % 256, math.floor(c1 / 256) % 256, c1 % 256
+	local r2, g2, b2 = math.floor(c2 / 65536) % 256, math.floor(c2 / 256) % 256, c2 % 256
+	local r = math.floor(r1 + (r2 - r1) * t + 0.5)
+	local g = math.floor(g1 + (g2 - g1) * t + 0.5)
+	local b = math.floor(b1 + (b2 - b1) * t + 0.5)
+	return string.format("#%02x%02x%02x", r, g, b)
+end
+
+local PULSE_PERIOD_S = 1.6 -- 一次呼吸的周期
+
+local function stop_pulse()
+	if pulse.timer then
+		pcall(function()
+			pulse.timer:stop()
+			pulse.timer:close()
+		end)
+		pulse.timer = nil
+	end
+	pulse.win = nil
+end
+
+--- 让 win 的边框随时间呼吸，直到窗口失效或被其他状态打断
+local function start_pulse(win)
+	if pulse.win == win and pulse.timer then
+		return -- 已经在跑了
+	end
+	stop_pulse()
+	pulse.win = win
+	pulse.start_ns = vim.uv.hrtime()
+
+	local base = pulse_base_color()
+	local bg = hex_from_hl("NormalFloat", "bg", hex_from_hl("Normal", "bg", 0x1e1e2e))
+	local white = 0xffffff
+	-- 暗端往窗口背景色混，亮端只轻微提亮，全程保持同一色相，像光在呼吸而不是变脏变白
+	local dark_end = blend(base, bg, 0.6)
+	local bright_end = blend(base, white, 0.2)
+
+	local timer = vim.uv.new_timer()
+	pulse.timer = timer
+	-- 呼吸周期 1.6s，属于慢速律动，80ms(~12.5fps) 已经足够顺滑，没必要按 UI 帧率(50ms+)去刷
+	timer:start(0, 80, function()
+		local elapsed = (vim.uv.hrtime() - pulse.start_ns) / 1e9
+		local phase = (elapsed % PULSE_PERIOD_S) / PULSE_PERIOD_S
+		local t = (math.sin(phase * math.pi * 2) + 1) / 2 -- 0..1
+		local color = blend(dark_end, bright_end, t) -- 在暗/亮两端之间明暗律动
+		vim.schedule(function()
+			if not (pulse.win and vim.api.nvim_win_is_valid(pulse.win)) then
+				stop_pulse()
+				return
+			end
+			vim.api.nvim_set_hl(0, "FloattyPulseBusy", { fg = color })
+			vim.wo[pulse.win].winhighlight = "FloatBorder:FloattyPulseBusy,FloatTitle:FloattyPulseBusy"
+		end)
+	end)
+end
+
 local function refresh_claude_title(term)
 	if not (term and term.win and vim.api.nvim_win_is_valid(term.win)) then
 		return
@@ -190,17 +279,31 @@ local function refresh_claude_title(term)
 	if not (meta and cfg) then
 		return
 	end
-	local g = fclaude.STATUS_GLYPHS[meta.status or "idle"] or fclaude.STATUS_GLYPHS.idle
+	local status = meta.status or "idle"
+	local g = fclaude.STATUS_GLYPHS[status] or fclaude.STATUS_GLYPHS.idle
 	local prefix = ("%s%s %s"):format(cfg.icon or "", cfg.name, g.icon)
 	local body = meta.name or cfg.file or "Term"
 	vim.api.nvim_win_set_config(term.win, { title = make_title(prefix, body) })
-	vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(g.hl, g.hl)
+
+	if status == "busy" then
+		start_pulse(term.win)
+	else
+		if pulse.win == term.win then
+			stop_pulse()
+		end
+		vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(g.hl, g.hl)
+	end
+
+	vim.cmd("redrawstatus!")
 end
 
 local function kill_term(id)
 	local t = state.terms[id]
 	if not t then
 		return
+	end
+	if pulse.win == t.win then
+		stop_pulse()
 	end
 	fclaude.detach(t.claude)
 	if t.win and vim.api.nvim_win_is_valid(t.win) then
@@ -336,6 +439,12 @@ function M.toggle(raw, choice)
 			local was_orphan = load_registry()[target_id] ~= nil
 			if was_orphan then
 				cmd = fclaude.build_continue_cmd(target_cfg.claude.dir)
+				-- -c 会续接 cwd 下最近一次会话；反查它的 session id，
+				-- 让 watcher 重新挂上（找不到则退化为无状态图标，行为同旧版）。
+				local sid = fclaude.find_latest_session_id(target_cfg.claude.dir, ctx.cwd)
+				if sid then
+					term.claude = fclaude.new_meta_resume(target_cfg.claude.dir, sid)
+				end
 			else
 				term.claude = fclaude.new_meta(target_cfg.claude.dir)
 				cmd = fclaude.build_cmd(term.claude)

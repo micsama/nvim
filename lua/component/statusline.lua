@@ -219,14 +219,24 @@ end
 
 function C.menu_alive()
 	local fl = require("utils.floatty")
-	local idx = fl.active_menu_indices()
+	local fclaude = require("utils.floatty_claude")
+	local items = fl.active_menu_indices()
 	local orphan_idx = fl.orphan_menu_indices()
-	if #idx == 0 and #orphan_idx == 0 then
+	if #items == 0 and #orphan_idx == 0 then
 		return ""
 	end
 	local s = ""
-	if #idx > 0 then
-		s = s .. string.format(" %%#Function#󰚩 [%s]", table.concat(idx, ","))
+	if #items > 0 then
+		local parts = {}
+		for _, it in ipairs(items) do
+			if it.status then
+				local g = fclaude.STATUS_GLYPHS[it.status] or fclaude.STATUS_GLYPHS.idle
+				parts[#parts + 1] = string.format("%%#%s#%d%s", g.hl, it.idx, g.icon)
+			else
+				parts[#parts + 1] = string.format("%%#Function#%d", it.idx)
+			end
+		end
+		s = s .. string.format(" %%#Function#󰚩 [%s%%#Function#]", table.concat(parts, "%#Comment#,"))
 	end
 	if #orphan_idx > 0 then
 		s = s .. string.format(" %%#StlOrphan#󰊠[%s]", table.concat(orphan_idx, ","))

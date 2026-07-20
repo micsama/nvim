@@ -68,6 +68,52 @@ function M.build_continue_cmd(dir)
 	return prefix .. "claude -c"
 end
 
+--- 孤儿续接专用 meta：session_id 是从磁盘历史里反查出来的（而非自己生成），
+--- 因此不需要 initial_tag —— name/status 会由 attach() 从 sessions/<pid>.json 拉取。
+--- @param dir string|nil
+--- @param session_id string
+--- @return ClaudeMeta
+function M.new_meta_resume(dir, session_id)
+	return {
+		dir = dir,
+		session_id = session_id,
+	}
+end
+
+--- 反查某 cwd 下最近一次会话的 session id。
+--- 原理：claude 把每个会话完整落盘到 projects/<slug>/<session-id>.jsonl，
+--- 文件名即 session id；slug = realpath(cwd) 里每个非字母数字字符替换成 '-'。
+--- 取 mtime 最新的那个，正是 `claude -c` 会续接的会话 —— 二者一致，
+--- 因此可用它作为 watcher 的匹配键。找不到则返回 nil（退回无追踪的 -c）。
+--- @param dir string|nil        CLAUDE_CONFIG_DIR；nil → 默认 ~/.claude
+--- @param cwd string           会话所在工作目录
+--- @return string|nil
+function M.find_latest_session_id(dir, cwd)
+	local real = vim.uv.fs_realpath(cwd) or cwd
+	local slug = real:gsub("[^%w]", "-")
+	local pdir = (dir or (HOME .. "/.claude")) .. "/projects/" .. slug
+	local h = vim.uv.fs_scandir(pdir)
+	if not h then
+		return nil
+	end
+	local best_id, best_mtime = nil, -1
+	while true do
+		local name, kind = vim.uv.fs_scandir_next(h)
+		if not name then
+			break
+		end
+		local id = (kind == "file" or kind == nil) and name:match("^(.+)%.jsonl$")
+		if id then
+			local st = vim.uv.fs_stat(pdir .. "/" .. name)
+			local mtime = st and st.mtime and st.mtime.sec or 0
+			if mtime > best_mtime then
+				best_mtime, best_id = mtime, id
+			end
+		end
+	end
+	return best_id
+end
+
 -- ---------------------------------------------------------------------------
 -- 2. sessions JSON 读取
 -- ---------------------------------------------------------------------------
