@@ -83,6 +83,36 @@ require("mini.cursorword").setup()
 -- 5) 代码高亮与辅助
 -- =============================================================================
 local hipatterns = require("mini.hipatterns")
+local function rgb_components_to_hex(r, g, b)
+	r, g, b = tonumber(r), tonumber(g), tonumber(b)
+	if r == nil or g == nil or b == nil or r > 255 or g > 255 or b > 255 then
+		return nil
+	end
+	return string.format("#%02x%02x%02x", r, g, b)
+end
+
+local function rgb_match_to_hex(match)
+	local r, g, b = match:match("%(%s*(%d+)%s*,%s*(%d+)%s*,%s*(%d+)")
+	if r == nil then
+		return nil
+	end
+	return rgb_components_to_hex(r, g, b)
+end
+
+local function hex_match_to_hex(match)
+	local hex = match:match("Color::Hex%(%s*(0x[%x]+)%s*%)")
+	if hex ~= nil then
+		return "#" .. hex:sub(3)
+	end
+
+	hex = match:match("Color::Hex%(%s*(#[%x]+)%s*%)")
+	if hex ~= nil then
+		return hex
+	end
+
+	return nil
+end
+
 hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 	highlighters = {
 		fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
@@ -90,6 +120,33 @@ hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 		todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
 		note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
 		hex_color = hipatterns.gen_highlighter.hex_color(), -- Highlight hex color codes
+		rgb_color = {
+			pattern = {
+				"Color::Rgb%(%s*%d+%s*,%s*%d+%s*,%s*%d+%s*%)",
+				"rgb%(%s*%d+%s*,%s*%d+%s*,%s*%d+%s*%)",
+				"rgba%(%s*%d+%s*,%s*%d+%s*,%s*%d+%s*,%s*[%d%.]+%s*%)",
+			},
+			group = function(_, match)
+				local hex = rgb_match_to_hex(match)
+				if hex == nil then
+					return nil
+				end
+				return hipatterns.compute_hex_color_group(hex, "bg")
+			end,
+		},
+		rust_hex_color = {
+			pattern = {
+				"Color::Hex%(%s*0x[%x]+%s*%)",
+				"Color::Hex%(%s*#[%x]+%s*%)",
+			},
+			group = function(_, match)
+				local hex = hex_match_to_hex(match)
+				if hex == nil then
+					return nil
+				end
+				return hipatterns.compute_hex_color_group(hex, "bg")
+			end,
+		},
 	},
 })
 

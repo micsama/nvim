@@ -86,7 +86,7 @@ local APPS = {
 		shell = "zsh",
 		choices = {
 			{ name = "Codex", cmd = "codex" },
-			{ name = "Gemini", cmd = "gemini" },
+			{ name = "Codex-YesCode", cmd = "CODEX_HOME=/Users/dzmfg/.codex1 codex" },
 			{ name = "Claude", claude = { dir = HOME .. "/.claude1" } },
 			{ name = "🐶Claude🐶", claude = { dir = HOME .. "/.claude2" } },
 			{ name = "[😭Claude😭]", claude = { dir = nil } },
