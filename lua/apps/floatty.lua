@@ -120,6 +120,23 @@ local function compute_id(cfg, cwd)
 	return cfg.id or ((cfg.cmd or cfg.name) .. "::" .. cwd)
 end
 
+--- 从 state.terms[id] 读出一组存活状态布尔量，作为 "alive/exited/visible 各自什么含义"
+--- 的唯一定义。三个调用点（active_menu_indices / orphan_menu_indices / pick）都以此为准，
+--- 避免各自手写判断导致语义漂移。轻量：只查表 + 校验句柄，无 deepcopy，可放心用在热路径。
+--- @param id string
+--- @return table|nil term, table status  status = { buf_alive, alive, exited, visible }
+local function term_status(id)
+	local term = state.terms[id]
+	local buf_alive = (term and term.buf and vim.api.nvim_buf_is_valid(term.buf)) and true or false
+	return term,
+		{
+			buf_alive = buf_alive,
+			alive = buf_alive and term.exited == nil,
+			exited = buf_alive and term.exited ~= nil,
+			visible = buf_alive and term.win ~= nil and vim.api.nvim_win_is_valid(term.win),
+		}
+end
+
 --- 给 statusline 用：返回 APPS 菜单里当前后台存活的选项
 --- （idx = 在 picker 列表里的位置，1-based；status = busy|waiting|idle，非 claude 项为 nil）。
 --- @return { idx: integer, status: string|nil }[]
@@ -129,10 +146,9 @@ function M.active_menu_indices()
 	for _, app in ipairs(APPS) do
 		if app.choices then
 			for i, c in ipairs(app.choices) do
-				local id = compute_id(c, cwd)
-				local term = state.terms[id]
-				if term and term.exited == nil and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
-					items[#items + 1] = { idx = i, status = term.claude and term.claude.status }
+				local term, st = term_status(compute_id(c, cwd))
+				if st.alive then
+					items[#items + 1] = { idx = i, status = term and term.claude and term.claude.status }
 				end
 			end
 		end
@@ -152,9 +168,8 @@ function M.orphan_menu_indices()
 			for i, c in ipairs(app.choices) do
 				if c.claude then
 					local id = compute_id(c, cwd)
-					local term = state.terms[id]
-					local alive = term and term.exited == nil and term.buf and vim.api.nvim_buf_is_valid(term.buf)
-					if not alive and reg[id] then
+					local _, st = term_status(id)
+					if not st.alive and reg[id] then
 						indices[#indices + 1] = i
 					end
 				end
@@ -507,16 +522,16 @@ function M.pick(raw)
 	for _, c in ipairs(raw.choices) do
 		local merged = vim.tbl_deep_extend("force", vim.deepcopy(raw), c)
 		local id = compute_id(merged, ctx.cwd)
-		local term = state.terms[id]
-		local buf_alive = term and term.buf and vim.api.nvim_buf_is_valid(term.buf)
-		local visible = buf_alive and term.win and vim.api.nvim_win_is_valid(term.win)
-		local exited = buf_alive and term.exited ~= nil
+		local term, st = term_status(id)
+		local buf_alive = st.buf_alive
+		local visible = st.visible
+		local exited = st.exited
 		local orphan = merged.claude and not buf_alive and reg[id]
 
 		-- Claude 已活：用 status glyph 表"后台存活+状态"，前台用 ▶；二者择一，避免重复
 		local is_claude_alive = buf_alive and not exited and merged.claude
 		local name_suffix = ""
-		if is_claude_alive and term.claude and term.claude.name then
+		if is_claude_alive and term and term.claude and term.claude.name then
 			name_suffix = (" · %s"):format(term.claude.name)
 		end
 
@@ -525,7 +540,7 @@ function M.pick(raw)
 			marker = "▶ " -- 前台显示中（Claude 的 status 已在浮窗标题里，不再叠）
 		elseif exited then
 			marker = "✖ " -- 已退出，选中时会清理后重启
-		elseif is_claude_alive and term.claude then
+		elseif is_claude_alive and term and term.claude then
 			local g = fclaude.STATUS_GLYPHS[term.claude.status or "idle"] or fclaude.STATUS_GLYPHS.idle
 			marker = g.icon .. " " -- 后台 Claude：用 status glyph 单独表示
 		elseif buf_alive then
