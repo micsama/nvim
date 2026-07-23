@@ -282,9 +282,32 @@ function M.render()
 	})
 end
 
+-- statusline 组件耗时采样开关：:StlProf on|off 切换，:StlProf 打印统计。
+-- 默认关闭，仅在调优 statusline 时临时开启（详见 component/profiler.lua）。
+local function setup_profiler_cmd()
+	api.nvim_create_user_command("StlProf", function(a)
+		local prof = require("component.profiler")
+		if a.args == "on" then
+			prof.enabled = true
+			vim.notify("StlProf: 采样已开启", vim.log.levels.INFO)
+		elseif a.args == "off" then
+			prof.enabled = false
+			vim.notify("StlProf: 采样已关闭", vim.log.levels.INFO)
+		else
+			prof.print_stats()
+		end
+	end, {
+		nargs = "?",
+		complete = function()
+			return { "on", "off" }
+		end,
+	})
+end
+
 function M.setup()
 	build_inactive_capsule_hl()
 	build_orphan_hl()
+	setup_profiler_cmd()
 	vim.o.laststatus = 2
 	vim.o.statusline = "%!v:lua.require('component.statusline').render()"
 
