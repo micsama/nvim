@@ -46,30 +46,37 @@
 * `statusline.lua`: 自定义状态栏
 * `tabline.lua`: 自定义标签页栏
 * `theme.lua`: 配色方案配置
-* `stldata.lua`: 状态栏数据辅助模块
+* `stldata.lua`: 状态栏数据源（git/lsp/diagnostic → 纯数据）
+* `hl.lua`: statusline/tabline 共享的高亮组派生与文件图标辅助
 
 
-5. **lua/utils/** - 工具模块
+5. **lua/apps/** - 自制的独立功能（自成一体、自带 keymap，非横向复用的工具）
 * **`floatty.lua`**: **自定义浮动终端/窗口管理器**，支持：
 * 多种模式：终端、Lazygit、AI 聊天 (Codex/Gemini/Claude)、Shell
 * **Runner 模式**: 根据文件类型自动选择运行命令（Python: `uv run`, Lua: `lua` 等）
 
 
-* `map.lua`: 按键映射工具（处理 macOS Command 键、全角标点自动转换）
+* `proctop.lua`: 子进程 CPU/内存监视器（`<D-p>` / `:ProcTop`）
+* `recent_repos.lua`: 最近 Git 仓库 frecency 排序与 Telescope picker
 * `zoom.lua`: 窗口最大化/恢复切换
 
 
-6. **lsp/** - 语言服务器配置
+6. **lua/utils/** - 工具模块（被其他模块 `require` 复用的横向辅助）
+* `map.lua`: 按键映射工具（处理 macOS Command 键、全角标点自动转换）
+* `floatty_claude.lua`: 给 `apps/floatty.lua` 用的 Claude 会话元数据映射（watcher）
+
+
+7. **lsp/** - 语言服务器配置
 * 每个 LSP 服务对应一个文件（如 `basedpyright.lua`, `rust_analyzer.lua`）
 * 由 `lua/config/lsp.lua` 动态加载
 
 
-7. **ftplugin/** - 特定文件类型设置
+8. **ftplugin/** - 特定文件类型设置
 * 按文件类型应用
 * 适当时可通过 `vim.pack.add` 加载额外插件
 
 
-8. **snippets/** - mini.snippets 的 JSON 代码片段目录
+9. **snippets/** - mini.snippets 的 JSON 代码片段目录
 
 ### 插件管理
 
@@ -124,7 +131,7 @@ vim.pack.add({
 
 * 通过快捷键启动不同模式：`<D-g>`（终端）、`<D-i>`（Lazygit）、`<D-e>`（AI/Shell 菜单）、`<D-r>`（Runner 运行）
 * Runner 会自动识别文件类型并执行代码（定义在 `floatty.lua` 的 `RUNNERS` 表中）
-* 详见 `lua/utils/floatty.lua` 的配置及选项
+* 详见 `lua/apps/floatty.lua` 的配置及选项
 
 ### 修改 Vim 选项
 
@@ -151,7 +158,8 @@ vim.pack.add({
 * 保持配置模块化：`lua/config/` 中的每个文件只负责一项职责
 * 插件配置放在 `lua/plugins/`，文件名应与插件用途匹配
 * 特定语言的 LSP 配置放在 `lsp/` 目录
-* 工具类放在 `lua/utils/`（可复用的辅助模块）
+* 横向复用的工具放在 `lua/utils/`（被其他模块 `require` 的辅助，如 `map`、`floatty_claude`）
+* 自成一体、自带 keymap 的独立功能放在 `lua/apps/`（如 `floatty`、`proctop`、`recent_repos`、`zoom`）
 * 自定义 UI 组件放在 `lua/component/`
 * 特定文件类型的设置放在 `ftplugin/`，以文件类型命名
 
