@@ -1,7 +1,7 @@
 -- ~/.config/nvim/lua/component/tabline.lua
 local M = {}
 local api = vim.api
-local utils = require("component.utils")
+local utils = require("component.hl")
 local diag_icons = utils.icons.diag
 
 utils.reset_hl_cache()

@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/component/utils.lua
+-- ~/.config/nvim/lua/component/hl.lua
 local M = {}
 local api = vim.api
 local mini_icons = require("mini.icons")

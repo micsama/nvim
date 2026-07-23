@@ -1,7 +1,7 @@
 -- ~/.config/nvim/lua/component/statusline.lua
 local M = {}
 local api = vim.api
-local utils = require("component.utils")
+local utils = require("component.hl")
 local diag_icons = utils.icons.diag
 local data = require("component.stldata")
 
@@ -218,7 +218,7 @@ function C.lsp_progress()
 end
 
 function C.menu_alive()
-	local fl = require("utils.floatty")
+	local fl = require("apps.floatty")
 	local fclaude = require("utils.floatty_claude")
 	local items = fl.active_menu_indices()
 	local orphan_idx = fl.orphan_menu_indices()

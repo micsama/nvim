@@ -54,7 +54,7 @@ local telescope_maps = {
   { "nv", "<leader>fy", "<CMD>Telescope neoclip<CR>", "📋 剪贴板历史" },
   { "nv", "<leader>fn", "<CMD>Telescope notify<CR>",  "🔔 通知历史" },
   { "nv", "<leader>fp", "<CMD>Telescope pickers<CR>", "🧰 Picker 历史" },
-  { "nv", "<leader>fr", function() require("utils.recent_repos").picker() end, "🗂️ 最近仓库" },
+  { "nv", "<leader>fr", function() require("apps.recent_repos").picker() end, "🗂️ 最近仓库" },
 }
 vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 -- stylua: ignore end
