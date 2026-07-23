@@ -37,6 +37,26 @@ vim.opt.shortmess:append("c") -- 缩短某些消息显示（如补全菜单）�
 vim.o.formatoptions = vim.o.formatoptions:gsub("tc", "") -- 禁用自动换行(t)和文本注释自动换行(c)。
 vim.o.showtabline = 2
 vim.o.background = "dark"
+vim.o.title = true -- 允许 Neovim 设置窗口/终端标题。
+-- 标题的"文件部分"：终端 buffer 直接复用浮窗自己的窗口标题（floatty 设的那个），
+-- 普通终端回退到 term_title，其余显示相对路径。
+function _G.titlestring_file()
+	if vim.bo.buftype == "terminal" then
+		local t = vim.api.nvim_win_get_config(0).title -- floatty 浮窗标题；普通窗口为 nil
+		if type(t) == "table" then
+			local parts = {}
+			for _, chunk in ipairs(t) do
+				parts[#parts + 1] = chunk[1]
+			end
+			return table.concat(parts)
+		end
+		return t or vim.b.term_title or "Terminal"
+	end
+	local path = vim.fn.expand("%:~:.")
+	return path ~= "" and path or "[No Name]"
+end
+-- 标题格式：[项目名] 文件路径 / 终端进程名（:cd、切 buffer 后实时更新）。
+vim.o.titlestring = "[%{fnamemodify(getcwd(), ':t')}] %{%v:lua.titlestring_file()%}"
 vim.opt.list = true -- 显示不可见字符（如Tab/空格等）。
 vim.opt.listchars = { tab = "|\\ ", trail = "▫" } -- 设置不可见字符的显示样式: Tab为|和空格，行尾空格为▫。
 -- vim.opt.exrc = true -- 允许加载项目本地.nvimrc配置文件（请确保信任项目）。

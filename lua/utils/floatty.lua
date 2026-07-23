@@ -72,14 +72,14 @@ local AUTOCLOSE_MS = 100 -- on_exit 后多久自动关窗（留时间瞥一眼�
 local APPS = {
 	-- [Type 1: 直达型]
 	{ key = "<D-g>", name = "Terminal", icon = " ", hl = "Function" },
-	{ key = "<D-i>", name = "Lazygit", icon = "󰊢 ", cmd = "lazygit", w = 0.98, h = 0.95, hl = "String" },
+	{ key = "<D-i>", name = "Lazygit", icon = "󰊢  ", cmd = "lazygit", w = 0.98, h = 0.95, hl = "String" },
 
 	-- [Type 2: 菜单型] (只有这种需要 choices)
 	{
 		key = "<D-e>",
 		pick_key = "<M-e>",
 		name = "AI",
-		icon = "󰚩 ",
+		icon = "󰚩  ",
 		w = 0.9,
 		h = 0.95,
 		hl = "Number",
