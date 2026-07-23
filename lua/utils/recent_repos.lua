@@ -178,6 +178,69 @@ function M.picker(opts)
 					if vim.fn.filereadable(session_file) == 1 then
 						vim.cmd.tabnew()
 						vim.cmd.source(session_file)
+					else
+						-- 没有 Session.vim 时，按顺序尝试打开常见项目入口文件
+						-- 顺序即优先级：先看文档说明，再退回各语言的工程清单文件
+						local fallback_files = {
+							-- 文档 / 说明
+							"README.md",
+							"README.rst",
+							"README.txt",
+							"README",
+							-- AI 助理配置
+							"CLAUDE.md",
+							"AGENTS.md",
+							-- Neovim / Lua
+							"init.lua",
+							-- Rust
+							"Cargo.toml",
+							-- Node / Deno / Bun
+							"package.json",
+							"deno.json",
+							"bun.lock",
+							-- Python
+							"pyproject.toml",
+							"setup.py",
+							"requirements.txt",
+							-- Go
+							"go.mod",
+							-- Elixir
+							"mix.exs",
+							-- Ruby / PHP
+							"Gemfile",
+							"composer.json",
+							-- JVM
+							"pom.xml",
+							"build.gradle",
+							"build.gradle.kts",
+							-- C / C++
+							"CMakeLists.txt",
+							"meson.build",
+							-- Zig
+							"build.zig",
+							-- Dart / Flutter
+							"pubspec.yaml",
+							-- Swift
+							"Package.swift",
+							-- Nix
+							"flake.nix",
+							"default.nix",
+							-- 通用构建
+							"Makefile",
+							"justfile",
+							"Justfile",
+							-- 容器 / 编排
+							"docker-compose.yml",
+							"Dockerfile",
+						}
+						for _, file in ipairs(fallback_files) do
+							local filepath = path .. "/" .. file
+							if vim.fn.filereadable(filepath) == 1 then
+								vim.cmd.tabnew()
+								vim.cmd.edit(filepath)
+								break
+							end
+						end
 					end
 				end)
 
