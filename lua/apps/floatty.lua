@@ -20,32 +20,14 @@ local state = { terms = {}, last_id = nil, ctx_cache = nil }
 -- 如果 nvim 被直接关闭（子进程随之被杀），on_exit 的 vim.schedule 回调
 -- 来不及执行，记录就会遗留在文件里 —— 下次启动时读到的就是"未正常关闭"的孤儿。
 local REGISTRY_PATH = vim.fn.stdpath("state") .. "/floatty_sessions.json"
+local json_store = require("utils.json_store")
 
 local function load_registry()
-	local f = io.open(REGISTRY_PATH, "r")
-	if not f then
-		return {}
-	end
-	local content = f:read("*a")
-	f:close()
-	local ok, data = pcall(vim.json.decode, content)
-	if not ok or type(data) ~= "table" then
-		return {}
-	end
-	return data
+	return json_store.read(REGISTRY_PATH, {})
 end
 
 local function save_registry(reg)
-	local ok, encoded = pcall(vim.json.encode, reg)
-	if not ok then
-		return
-	end
-	local f = io.open(REGISTRY_PATH, "w")
-	if not f then
-		return
-	end
-	f:write(encoded)
-	f:close()
+	json_store.write(REGISTRY_PATH, reg)
 end
 
 local function registry_add(id, entry)

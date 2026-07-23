@@ -10,6 +10,7 @@
 
 local M = {}
 local HOME = vim.env.HOME
+local json_store = require("utils.json_store")
 
 local POLL_INTERVAL_MS = 120
 local POLL_MAX_TRIES = 40 -- 兜底 ~5s 还找不到 json 就放弃
@@ -118,18 +119,7 @@ end
 -- 2. sessions JSON 读取
 -- ---------------------------------------------------------------------------
 local function read_session_json(path)
-	local fd = vim.uv.fs_open(path, "r", 438)
-	if not fd then
-		return nil
-	end
-	local stat = vim.uv.fs_fstat(fd)
-	local data = stat and vim.uv.fs_read(fd, stat.size, 0) or nil
-	vim.uv.fs_close(fd)
-	if not data or data == "" then
-		return nil
-	end
-	local ok, obj = pcall(vim.json.decode, data)
-	return ok and obj or nil
+	return json_store.read(path, nil)
 end
 
 local function find_session_json(dir, session_id)

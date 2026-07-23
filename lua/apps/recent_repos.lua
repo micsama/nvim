@@ -4,6 +4,8 @@
 
 local M = {}
 
+local json_store = require("utils.json_store")
+
 local data_path = vim.fn.stdpath("data") .. "/recent_repos.json"
 local half_life_days = 7 -- 指数衰减半衰期：多久没打开分数掉一半
 
@@ -14,22 +16,11 @@ local function ensure_alias_hl()
 end
 
 local function load()
-	local ok, content = pcall(vim.fn.readfile, data_path)
-	if not ok or #content == 0 then
-		return {}
-	end
-	local ok2, decoded = pcall(vim.json.decode, table.concat(content, "\n"))
-	if not ok2 or type(decoded) ~= "table" then
-		return {}
-	end
-	return decoded
+	return json_store.read(data_path, {})
 end
 
 local function save(data)
-	local ok, encoded = pcall(vim.json.encode, data)
-	if ok then
-		vim.fn.writefile({ encoded }, data_path)
-	end
+	json_store.write(data_path, data)
 end
 
 local function score(entry)
