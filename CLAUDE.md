@@ -64,6 +64,7 @@
 6. **lua/utils/** - 工具模块（被其他模块 `require` 复用的横向辅助）
 * `map.lua`: 按键映射工具（处理 macOS Command 键、全角标点自动转换）
 * `floatty_claude.lua`: 给 `apps/floatty.lua` 用的 Claude 会话元数据映射（watcher）
+* `json_store.lua`: 小型 JSON 文件安全读写（`read(path, default)` / `write(path, tbl)`），消费者：`apps/floatty`、`apps/recent_repos`、`utils/floatty_claude`
 
 
 7. **lsp/** - 语言服务器配置
@@ -158,7 +159,7 @@ vim.pack.add({
 * 保持配置模块化：`lua/config/` 中的每个文件只负责一项职责
 * 插件配置放在 `lua/plugins/`，文件名应与插件用途匹配
 * 特定语言的 LSP 配置放在 `lsp/` 目录
-* 横向复用的工具放在 `lua/utils/`（被其他模块 `require` 的辅助，如 `map`、`floatty_claude`）
+* 横向复用的工具放在 `lua/utils/`（被其他模块 `require` 的辅助，如 `map`、`floatty_claude`、`json_store`）
 * 自成一体、自带 keymap 的独立功能放在 `lua/apps/`（如 `floatty`、`proctop`、`recent_repos`、`zoom`）
 * 自定义 UI 组件放在 `lua/component/`
 * 特定文件类型的设置放在 `ftplugin/`，以文件类型命名
