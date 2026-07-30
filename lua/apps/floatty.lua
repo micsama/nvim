@@ -54,7 +54,16 @@ local AUTOCLOSE_MS = 100 -- on_exit 后多久自动关窗（留时间瞥一眼�
 local APPS = {
 	-- [Type 1: 直达型]
 	{ key = "<D-g>", name = "Terminal", icon = " ", hl = "Function" },
-	{ key = "<D-i>", name = "Lazygit", icon = "󰊢  ", cmd = "lazygit", w = 0.98, h = 0.95, hl = "String" },
+	{
+		key = "<D-i>",
+		name = "Lazygit",
+		icon = "󰊢  ",
+		cmd = "lazygit",
+		w = 0.98,
+		h = 0.95,
+		hl = "String",
+		idle_ttl_ms = 60000, -- 隐藏超过 1 分钟未重新打开则自动关闭，省待机 CPU
+	},
 
 	-- [Type 2: 菜单型] (只有这种需要 choices)
 	{
@@ -294,11 +303,52 @@ local function refresh_claude_title(term)
 	vim.cmd("redrawstatus!")
 end
 
-local function kill_term(id)
+local kill_term -- 前向声明：schedule_idle_close 的超时回调要调用它，而它定义在后面
+
+--- 隐藏态空闲自动关闭：只对显式设置了 idle_ttl_ms 的 app 生效（目前只有 Lazygit）。
+--- 隐藏时启动定时器，若期间被重新打开则 cancel，超时仍隐藏才真正 kill。
+local function cancel_idle_timer(term)
+	if term and term.idle_timer then
+		pcall(function()
+			term.idle_timer:stop()
+			term.idle_timer:close()
+		end)
+		term.idle_timer = nil
+	end
+end
+
+local function schedule_idle_close(id, term)
+	if not (term and term.cfg and term.cfg.idle_ttl_ms) then
+		return
+	end
+	cancel_idle_timer(term)
+	local timer = vim.uv.new_timer()
+	term.idle_timer = timer
+	timer:start(term.cfg.idle_ttl_ms, 0, function()
+		vim.schedule(function()
+			pcall(function()
+				timer:stop()
+				timer:close()
+			end)
+			local t = state.terms[id]
+			if not (t and t.idle_timer == timer) then
+				return -- 已被重新打开/清理，本次计时器作废
+			end
+			t.idle_timer = nil
+			local visible = t.win and vim.api.nvim_win_is_valid(t.win)
+			if not visible then
+				kill_term(id)
+			end
+		end)
+	end)
+end
+
+kill_term = function(id)
 	local t = state.terms[id]
 	if not t then
 		return
 	end
+	cancel_idle_timer(t)
 	if pulse.win == t.win then
 		stop_pulse()
 	end
@@ -381,6 +431,7 @@ function M.toggle(raw, choice)
 				else
 					vim.api.nvim_win_close(active.win, true)
 					state.last_id = nil
+					schedule_idle_close(target_id, active)
 				end
 				vim.schedule(function()
 					vim.cmd("checktime")
@@ -401,6 +452,7 @@ function M.toggle(raw, choice)
 		local last = state.terms[state.last_id]
 		if last and last.win and vim.api.nvim_win_is_valid(last.win) then
 			vim.api.nvim_win_close(last.win, true)
+			schedule_idle_close(state.last_id, last)
 		end
 	end
 
@@ -412,6 +464,7 @@ function M.toggle(raw, choice)
 		kill_term(target_id)
 		term = {}
 	end
+	cancel_idle_timer(term) -- 重新显示：撤销之前排的空闲自动关闭
 	local is_new = not (term.buf and vim.api.nvim_buf_is_valid(term.buf))
 
 	raw.active_id = target_id
