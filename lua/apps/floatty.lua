@@ -303,58 +303,31 @@ local function refresh_claude_title(term)
 	vim.cmd("redrawstatus!")
 end
 
-local kill_term -- 前向声明：schedule_idle_close 的超时回调要调用它，而它定义在后面
-
---- 隐藏态空闲自动关闭：只对显式设置了 idle_ttl_ms 的 app 生效（目前只有 Lazygit）。
---- 隐藏时启动定时器，若期间被重新打开则 cancel，超时仍隐藏才真正 kill。
 local function cancel_idle_timer(term)
-	if term and term.idle_timer then
-		pcall(function()
-			term.idle_timer:stop()
-			term.idle_timer:close()
-		end)
-		term.idle_timer = nil
-	end
-end
-
-local function schedule_idle_close(id, term)
-	if not (term and term.cfg and term.cfg.idle_ttl_ms) then
+	local timer = term.idle_timer
+	if not timer then
 		return
 	end
-	cancel_idle_timer(term)
-	local timer = vim.uv.new_timer()
-	term.idle_timer = timer
-	timer:start(term.cfg.idle_ttl_ms, 0, function()
-		vim.schedule(function()
-			pcall(function()
-				timer:stop()
-				timer:close()
-			end)
-			local t = state.terms[id]
-			if not (t and t.idle_timer == timer) then
-				return -- 已被重新打开/清理，本次计时器作废
-			end
-			t.idle_timer = nil
-			local visible = t.win and vim.api.nvim_win_is_valid(t.win)
-			if not visible then
-				kill_term(id)
-			end
-		end)
-	end)
+	term.idle_timer = nil
+	if not timer:is_closing() then
+		timer:close()
+	end
 end
 
-kill_term = function(id)
+local function kill_term(id)
 	local t = state.terms[id]
 	if not t then
 		return
 	end
 	cancel_idle_timer(t)
-	if pulse.win == t.win then
+	local win = t.win
+	t.win = nil -- 避免 WinClosed 把主动销毁误判为隐藏
+	if pulse.win == win then
 		stop_pulse()
 	end
 	fclaude.detach(t.claude)
-	if t.win and vim.api.nvim_win_is_valid(t.win) then
-		vim.api.nvim_win_close(t.win, true)
+	if win and vim.api.nvim_win_is_valid(win) then
+		vim.api.nvim_win_close(win, true)
 	end
 	if t.buf and vim.api.nvim_buf_is_valid(t.buf) then
 		vim.api.nvim_buf_delete(t.buf, { force = true })
@@ -372,6 +345,27 @@ kill_term = function(id)
 	if state.last_id == id then
 		state.last_id = nil
 	end
+end
+
+--- 隐藏超过配置的时限后关闭终端；timer 身份校验可拦截已经入队的旧回调。
+local function schedule_idle_close(id, term)
+	local ttl = term.cfg.idle_ttl_ms
+	if not ttl then
+		return
+	end
+	cancel_idle_timer(term)
+	local timer
+	timer = vim.defer_fn(function()
+		local current = state.terms[id]
+		if not current or current.idle_timer ~= timer then
+			return
+		end
+		current.idle_timer = nil
+		if not (current.win and vim.api.nvim_win_is_valid(current.win)) then
+			kill_term(id)
+		end
+	end, ttl)
+	term.idle_timer = timer
 end
 
 -- =============================================================================
@@ -430,8 +424,6 @@ function M.toggle(raw, choice)
 					kill_term(target_id)
 				else
 					vim.api.nvim_win_close(active.win, true)
-					state.last_id = nil
-					schedule_idle_close(target_id, active)
 				end
 				vim.schedule(function()
 					vim.cmd("checktime")
@@ -439,7 +431,6 @@ function M.toggle(raw, choice)
 				return
 			end
 			vim.api.nvim_win_close(active.win, true)
-			state.last_id = nil
 			-- 跨 tab：关掉旧窗，下面在当前 tab 重开
 		end
 	end
@@ -452,7 +443,6 @@ function M.toggle(raw, choice)
 		local last = state.terms[state.last_id]
 		if last and last.win and vim.api.nvim_win_is_valid(last.win) then
 			vim.api.nvim_win_close(last.win, true)
-			schedule_idle_close(state.last_id, last)
 		end
 	end
 
@@ -641,6 +631,24 @@ vim.api.nvim_create_autocmd("VimResized", {
 			vim.api.nvim_win_set_config(t.win, get_win_opts(t.cfg))
 			if t.claude then
 				refresh_claude_title(t)
+			end
+		end
+	end,
+})
+
+-- 处理 :close、<C-w>c 等外部关窗：窗口消失后仍保留终端，按配置启动 idle TTL。
+vim.api.nvim_create_autocmd("WinClosed", {
+	desc = "Start float terminal idle timeout",
+	callback = function(ev)
+		local win = tonumber(ev.match)
+		for id, term in pairs(state.terms) do
+			if term.win == win then
+				term.win = nil
+				if state.last_id == id then
+					state.last_id = nil
+				end
+				schedule_idle_close(id, term)
+				break
 			end
 		end
 	end,
