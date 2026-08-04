@@ -229,7 +229,7 @@ local function blend(c1, c2, t)
 	return string.format("#%02x%02x%02x", r, g, b)
 end
 
-local PULSE_PERIOD_S = 1.6 -- 一次呼吸的周期
+local PULSE_PERIOD_S = 4.8 -- 一次呼吸的周期
 
 local function stop_pulse()
 	if pulse.timer then
