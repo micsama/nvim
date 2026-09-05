@@ -77,10 +77,8 @@ local APPS = {
 		shell = "zsh",
 		choices = {
 			{ name = "Codex", cmd = "codex" },
-			{ name = "Codex-YesCode", cmd = "CODEX_HOME=/Users/dzmfg/.codex1 codex" },
-			{ name = "Claude", claude = { dir = HOME .. "/.claude1" } },
-			{ name = "🐶Claude🐶", claude = { dir = HOME .. "/.claude2" } },
-			{ name = "[😭Claude😭]", claude = { dir = nil } },
+			{ name = "Claude", claude = { dir = nil } },
+			{ name = "Claude1", claude = { dir = HOME .. "/.claude1" } },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},
@@ -127,6 +125,19 @@ local function compute_id(cfg, cwd)
 		return ("claude::%s::%s"):format(cfg.claude.dir or "default", cwd)
 	end
 	return cfg.id or ((cfg.cmd or cfg.name) .. "::" .. cwd)
+end
+
+--- 某个 claude 型 choice 指定了自定义 dir，但该目录在本机不存在
+--- （比如多台电脑共用同一份配置，只有部分机器装了对应的 claude 配置）。
+--- 只用于 picker 里把这类选项标成"不可选"，不影响其它 choice。
+--- @param c table
+--- @return boolean
+local function claude_dir_missing(c)
+	if not (c.claude and c.claude.dir) then
+		return false
+	end
+	local stat = vim.uv.fs_stat(c.claude.dir)
+	return not (stat and stat.type == "directory")
 end
 
 --- 从 state.terms[id] 读出一组存活状态布尔量，作为 "alive/exited/visible 各自什么含义"
@@ -563,6 +574,7 @@ function M.pick(raw)
 	local reg = load_registry()
 	local items = {}
 	for _, c in ipairs(raw.choices) do
+		local disabled = claude_dir_missing(c)
 		local merged = vim.tbl_deep_extend("force", vim.deepcopy(raw), c)
 		local id = compute_id(merged, ctx.cwd)
 		local term, st = term_status(id)
@@ -579,7 +591,9 @@ function M.pick(raw)
 		end
 
 		local marker
-		if visible then
+		if disabled then
+			marker = "  " -- 目录不存在，本机不可用
+		elseif visible then
 			marker = "▶ " -- 前台显示中（Claude 的 status 已在浮窗标题里，不再叠）
 		elseif exited then
 			marker = "✖ " -- 已退出，选中时会清理后重启
@@ -596,11 +610,14 @@ function M.pick(raw)
 		local status_icon = ""
 		if orphan then
 			name_suffix = (" (%s 未正常关闭)"):format(os.date("%H:%M", reg[id].ts))
+		elseif disabled then
+			name_suffix = " (目录不存在)"
 		end
 
 		table.insert(items, {
 			choice = c,
 			visible = visible,
+			disabled = disabled,
 			label = ("%s%s%s%s"):format(marker, status_icon, c.name, name_suffix),
 		})
 	end
@@ -613,6 +630,9 @@ function M.pick(raw)
 	}, function(i)
 		if not i then
 			return
+		end
+		if i.disabled then
+			return vim.notify(("⚠️ %s 目录不存在，跳过"):format(i.choice.name), 3)
 		end
 		if i.visible then
 			return -- 已经在屏幕上，无事可做
