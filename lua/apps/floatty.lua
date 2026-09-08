@@ -13,7 +13,7 @@ local state = { terms = {}, last_id = nil, ctx_cache = nil }
 -- =============================================================================
 -- 0b. 持久化会话注册表
 -- =============================================================================
--- 用于记录"当前存活的 claude 后台会话"，跨 Neovim 重启存活。
+-- 用于记录需要跨 Neovim 重启恢复的 AI 会话，跨 Neovim 重启存活。
 -- 按 cwd 区分（不做 pid 隔离）：每个 nvim 实例通常只盯一个项目目录，
 -- 不同实例的 cwd 天然不重叠，孤儿检测按 cwd 过滤即可避免误判。
 -- 正常 spawn 时写入一条记录；进程退出(on_exit)或用户手动 kill_term 时移除。
@@ -76,9 +76,9 @@ local APPS = {
 		hl = "Number",
 		shell = "zsh",
 		choices = {
-			{ name = "Codex", cmd = "codex" },
-			{ name = "Claude", claude = { dir = nil } },
-			{ name = "Claude1", claude = { dir = HOME .. "/.claude1" } },
+			{ name = "Codex", cmd = "codex", codex = true },
+			{ name = "😭[Claude]😭", claude = { dir = nil } },
+			{ name = "Claude", claude = { dir = HOME .. "/.claude1" } },
 			{ name = "Shell", cmd = vim.o.shell },
 		},
 	},
@@ -125,6 +125,10 @@ local function compute_id(cfg, cwd)
 		return ("claude::%s::%s"):format(cfg.claude.dir or "default", cwd)
 	end
 	return cfg.id or ((cfg.cmd or cfg.name) .. "::" .. cwd)
+end
+
+local function is_persistent_app(cfg)
+	return cfg and (cfg.claude or cfg.codex)
 end
 
 --- 某个 claude 型 choice 指定了自定义 dir，但该目录在本机不存在
@@ -186,7 +190,7 @@ function M.orphan_menu_indices()
 	for _, app in ipairs(APPS) do
 		if app.choices then
 			for i, c in ipairs(app.choices) do
-				if c.claude then
+				if is_persistent_app(c) then
 					local id = compute_id(c, cwd)
 					local _, st = term_status(id)
 					if not st.alive and reg[id] then
@@ -343,7 +347,7 @@ local function kill_term(id)
 	if t.buf and vim.api.nvim_buf_is_valid(t.buf) then
 		vim.api.nvim_buf_delete(t.buf, { force = true })
 	end
-	if t.cfg and t.cfg.claude then
+	if is_persistent_app(t.cfg) then
 		registry_remove(id)
 	end
 
@@ -500,6 +504,16 @@ function M.toggle(raw, choice)
 				term.claude = fclaude.new_meta(target_cfg.claude.dir)
 				cmd = fclaude.build_cmd(term.claude)
 			end
+		elseif target_cfg.codex then
+			-- Codex 没有 Claude 那样可监听的实时状态文件；只记录会话是否
+			-- 在 Neovim 正常存活期间被托管，异常重启时用 --last 恢复。
+			if load_registry()[target_id] ~= nil then
+				cmd = "codex resume --last"
+			else
+				cmd = "codex"
+			end
+		end
+		if is_persistent_app(target_cfg) then
 			registry_add(target_id, { ts = os.time() })
 		end
 		cmd = cmd or target_cfg.cmd or vim.o.shell
@@ -520,7 +534,7 @@ function M.toggle(raw, choice)
 					vim.schedule(function()
 						term.exited = code
 						fclaude.detach(term.claude)
-						if target_cfg.claude then
+						if is_persistent_app(target_cfg) then
 							registry_remove(target_id)
 						end
 						if term.win and vim.api.nvim_win_is_valid(term.win) then
@@ -581,7 +595,7 @@ function M.pick(raw)
 		local buf_alive = st.buf_alive
 		local visible = st.visible
 		local exited = st.exited
-		local orphan = merged.claude and not buf_alive and reg[id]
+		local orphan = is_persistent_app(merged) and not buf_alive and reg[id]
 
 		-- Claude 已活：用 status glyph 表"后台存活+状态"，前台用 ▶；二者择一，避免重复
 		local is_claude_alive = buf_alive and not exited and merged.claude
