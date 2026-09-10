@@ -67,13 +67,12 @@ vim.iter(telescope_maps):each(function(m) map(unpack(m)) end)
 vim.api.nvim_create_autocmd("UIEnter", {
 	once = true,
 	callback = function()
-		-- msg 超时改由 'messagesopt' 选项控制（ui2 新版 API）
-		vim.opt.messagesopt:append("timeout:4000")
+		-- msg 超时/最大高度改由 'messagesopt' 选项控制（ui2 新版 API，cmd.height 字段已废弃）
+		vim.opt.messagesopt:append("timeout:4000,maxheight:50")
 		require("vim._core.ui2").enable({
 			enable = true,
 			msg = {
 				targets = "cmd",
-				cmd = { height = 0.5 },
 				msg = { height = 0.5 },
 				pager = { height = 1 },
 				dialog = { height = 0.5 },
