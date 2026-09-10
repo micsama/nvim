@@ -74,7 +74,7 @@ vim.api.nvim_create_autocmd("UIEnter", {
 			msg = {
 				targets = "cmd",
 				msg = { height = 0.5 },
-				pager = { height = 1 },
+				pager = { height = 0.999 },
 				dialog = { height = 0.5 },
 			},
 		})

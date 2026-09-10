@@ -82,3 +82,4 @@ require("plugins.mini") -- 配置 mini家族的 核心插件
 require("config.deferred") -- 依赖插件的延迟加载
 require("component.statusline").setup()
 require("component.tabline").setup()
+

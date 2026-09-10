@@ -10,6 +10,36 @@ local map = require("utils.map").map
 
 local IS_MACOS = vim.uv.os_uname().sysname == "Darwin"
 
+-- ---------------------------------------------------------------------------
+-- 兼容补丁：Neovim 0.13 移除了 BufModifiedSet 事件（改用 OptionSet + "modified"），
+-- 但 Neovide 内置注入的 Lua（enable_document_state）仍在使用它，会在设置
+-- vim.g.neovide_* 时抛错。这里做一层转发，等 Neovide 上游修复后可删除。
+-- ---------------------------------------------------------------------------
+if vim.fn.exists("##BufModifiedSet") == 0 then
+	local create_autocmd = vim.api.nvim_create_autocmd
+	vim.api.nvim_create_autocmd = function(event, opts)
+		local events = type(event) == "table" and event or { event }
+		local rest, hit = {}, false
+		for _, e in ipairs(events) do
+			if e == "BufModifiedSet" then
+				hit = true
+			else
+				table.insert(rest, e)
+			end
+		end
+		if not hit then
+			return create_autocmd(event, opts)
+		end
+		local o = vim.tbl_extend("force", {}, opts or {})
+		o.pattern = "modified"
+		local id = create_autocmd("OptionSet", o)
+		if #rest > 0 then
+			create_autocmd(rest, opts)
+		end
+		return id
+	end
+end
+
 if IS_MACOS then
 	vim.o.guifont = "FantasqueSansM Nerd Font,FiraCode Nerd Font,PingFang SC:h14.5" -- 设置 Neovide 字体及大小
 else
