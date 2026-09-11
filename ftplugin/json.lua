@@ -2,4 +2,4 @@
 -- ftplugin: json
 -- ===========================================================================
 
-vim.lsp.inlay_hint.enable(false)
+vim.lsp.inlay_hint.enable(false, { bufnr = 0 })

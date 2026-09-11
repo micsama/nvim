@@ -62,15 +62,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
 	desc = "Automatically enter insert mode when opening terminal",
 })
 
--- 自动重新加载配置文件
-vim.api.nvim_create_augroup("NVIMRC", { clear = true })
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-	pattern = "init.lua,*/base.lua", -- 匹配 init.lua 或当前的 base.lua
-	group = "NVIMRC",
-	command = "source %",
-	desc = "Auto reload config file when modified",
-})
+-- 配置修改后重启 Neovim，避免 source 与 require 缓存造成部分重载。
 
 vim.filetype.add({
 	extension = {

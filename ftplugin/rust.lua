@@ -3,7 +3,7 @@
 -- ===========================================================================
 
 local pairs = require("mini.pairs")
-vim.lsp.inlay_hint.enable(true)
+vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
 
 vim.lsp.codelens.enable(true, { bufnr = 0 })
 

@@ -25,8 +25,6 @@ vim.g.pack_ft_markdown = {
 	"https://github.com/MeanderingProgrammer/render-markdown.nvim",    -- Markdown 实时渲染/预览
 }
 vim.pack.add({
-    -- 准备研究后续加入
-    -- "https://github.com/debugloop/telescope-undo.nvim",
 
     -- Telescope FZF 性能优化(需要在安装的目录下手动运行 make)
     { src = "https://github.com/nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -42,9 +40,6 @@ vim.pack.add({
     -- B. UI / 外观 / 状态栏 (UI / Appearance / Statusline)
     "https://github.com/catppuccin/nvim",                            -- 主题色
     "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
-    -- "https://github.com/nvim-lualine/lualine.nvim",                  -- 状态行 (Statusline)
-    "https://github.com/folke/which-key.nvim",                       -- 快捷键提示系统
-    -- "https://github.com/Bekaboo/dropbar.nvim",                       -- 文件路径/上下文导航栏
 
     "https://github.com/rcarriga/nvim-notify",                       -- 通知系统
 
@@ -54,7 +49,6 @@ vim.pack.add({
     "https://github.com/shellRaining/hlchunk.nvim",                  -- 高亮当前代码块/缩进块
     "https://github.com/mbbill/undotree",                            -- 可视化撤销树
     "https://github.com/AckslD/nvim-neoclip.lua",                    -- 剪贴板历史管理器
-    -- 'https://github.com/folke/trouble.nvim',                      -- 统一的诊断/Quickfix/LSP 列表
 		"https://github.com/windwp/nvim-ts-autotag",
 
     -- E. 文件管理与工作区 (File Management & Workspaces)
@@ -63,21 +57,15 @@ vim.pack.add({
     -- F. Git / 终端 / LLM 工具 (Git / Terminal / LLM Tools)
     "https://github.com/olimorris/codecompanion.nvim",               -- LLM/AI 代码伴侣工具
 
-    -- G. 调试 (DAP) 及其依赖
-    "https://github.com/williamboman/mason.nvim",                    -- 插件/LSP/DAP 安装器
-    -- "https://github.com/nvim-neotest/nvim-nio",                   -- 异步 I/O 依赖
-    -- 'https://github.com/mfussenegger/nvim-dap',                   -- Debug Adapter Protocol 核心
-    -- 'https://github.com/rcarriga/nvim-dap-ui',                    -- DAP 调试 UI 界面
-    -- 'https://github.com/theHamsta/nvim-dap-virtual-text',         -- DAP 调试虚拟文本显示
-    -- 'https://github.com/jay-babu/mason-nvim-dap.nvim',            -- Mason DAP 自动安装
-    -- 'https://github.com/mfussenegger/nvim-dap-python',            -- Python 调试配置
-    -- 'https://github.com/nvim-telescope/telescope-dap.nvim',       -- Telescope DAP 扩展
+    -- 语言工具安装器
+    "https://github.com/williamboman/mason.nvim",
 
 })
 -- stylua: ignore end
 require("component.theme") -- 主题（须在 plugins.ui 之前加载，notify 等插件的高亮依赖当前 colorscheme）
 require("plugins.editor") -- 编辑器增强功能
 require("plugins.ui") -- 用户界面和外观
+require("plugins.telescope") -- 搜索与项目导航
 require("plugins.mini") -- 配置 mini家族的 核心插件
 require("config.deferred") -- 依赖插件的延迟加载
 require("component.statusline").setup()

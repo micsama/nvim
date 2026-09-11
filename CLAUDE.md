@@ -39,7 +39,7 @@
 * `ui.lua`: UI 插件（Notify, Noice, which-key 等）
 * `editor.lua`: 编辑器增强（Treesitter, 匹配, 缩进）
 * `llm/`: AI/LLM 工具（CodeCompanion, GPT5, Ollama-Qwen3）
-* `dap.lua`: 调试适配器协议（DAP）设置
+* `telescope.lua`: 搜索、历史和最近仓库入口
 
 
 4. **lua/component/** - 自定义 UI 组件
@@ -131,8 +131,8 @@ vim.pack.add({
 ### 使用 Floatty（自定义终端）
 
 * 通过快捷键启动不同模式：`<D-g>`（终端）、`<D-i>`（Lazygit）、`<D-e>`（AI/Shell 菜单）、`<D-r>`（Runner 运行）
-* Runner 会自动识别文件类型并执行代码（定义在 `floatty.lua` 的 `RUNNERS` 表中）
-* 详见 `lua/apps/floatty.lua` 的配置及选项
+* Runner 会自动识别文件类型并执行代码（定义在 `lua/config/floatty.lua` 的 `runners` 表中）
+* 常改选项在 `lua/config/floatty.lua`；控制器在 `lua/apps/floatty.lua`；会话缓存由 `lua/apps/floatty_registry.lua` 管理
 
 ### 修改 Vim 选项
 
@@ -168,6 +168,6 @@ vim.pack.add({
 
 由于这是 Neovim 配置（非编译项目），测试方法如下：
 
-1. 重启 Neovim 或使用 `:source $MYVIMRC` 重新加载配置
+1. 重启 Neovim 应用配置（不使用部分 source 重载）
 2. 对于插件更改，可能需要完全重启 Neovim
 3. 使用 `:messages` 查看错误或使用 `:checkhealth` 进行健康检查

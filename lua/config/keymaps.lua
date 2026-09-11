@@ -5,7 +5,7 @@ local map = require("utils.map").map
 require("utils.map").map_fullwidth_to_halfwidth()
 require("utils.map").map_smart_zh_period()
 
-M = {}
+local M = {}
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -53,31 +53,12 @@ local static_maps = {
     { "nv",  "<D-o>",       "<CMD>CodeCompanionChat Toggle<CR>", "AI 聊天" },
 }
 
-local function debug_statusline_mode_group()
-	local mode = vim.api.nvim_get_mode().mode
-	local head = mode:sub(1, 1)
-	local group = "StatusLineNormal"
-
-	if mode == "V" or mode == "\22" or head == "v" then
-		group = "StatusLineVisual"
-	elseif head == "i" or head == "t" then
-		group = "StatusLineInsert"
-	elseif head == "c" then
-		group = "StatusLineCmd"
-	elseif head == "R" then
-		group = "StatusLineReplace"
-	end
-
-	vim.notify("mode=" .. mode .. " group=" .. group, vim.log.levels.INFO, { title = "Statusline Debug" })
-end
-
 local function_maps = {
 	{ "n",   "<c-g>",      function() MiniGit.show_at_cursor() end,          "查看当前行git历史" },
 	{ "n",   "H",          function() MiniDiff.toggle_overlay() end,         "切换 Hunk 预览" },
 	{ "n",   "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end, "打开侧边文件树" },
 	{ "n",   "<leader>rc", "<CMD>source ~/.config/nvim/Session.vim<CR>",     "加载 Session" },
 	{ "n",   "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
-	{ "nivxsotc", "<D-n>", debug_statusline_mode_group, "[临时] 调试 statusline 模式组" },
 }
 
 M.lsp_maps = {

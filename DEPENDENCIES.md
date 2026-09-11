@@ -52,7 +52,7 @@ lua-language-server、stylua、ty、ruff、basedpyright、taplo、vtsls、biome�
 
 ## ⚫ 无需关心
 
-- **DAP 全家桶**（nvim-dap / dap-ui / dap-virtual-text / mason-nvim-dap / dap-python / telescope-dap）及 **debugpy**：`init.lua` 中相关插件条目全部注释掉，`lua/plugins/dap.lua` 未被任何地方 `require`，属于未启用的死代码。
+- **DAP 全家桶**（nvim-dap / dap-ui / dap-virtual-text / mason-nvim-dap / dap-python / telescope-dap）及 **debugpy**：相关插件声明和旧配置文件已移除，不属于当前配置依赖。
 
 ---
 

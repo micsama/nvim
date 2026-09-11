@@ -10,82 +10,19 @@ local fclaude = require("utils.floatty_claude")
 -- ctx_cache: 缓存文件上下文，防止在 Terminal 里获取不到文件类型
 local state = { terms = {}, last_id = nil, ctx_cache = nil }
 
--- =============================================================================
--- 0b. 持久化会话注册表
--- =============================================================================
--- 用于记录需要跨 Neovim 重启恢复的 AI 会话，跨 Neovim 重启存活。
--- 按 cwd 区分（不做 pid 隔离）：每个 nvim 实例通常只盯一个项目目录，
--- 不同实例的 cwd 天然不重叠，孤儿检测按 cwd 过滤即可避免误判。
--- 正常 spawn 时写入一条记录；进程退出(on_exit)或用户手动 kill_term 时移除。
--- 如果 nvim 被直接关闭（子进程随之被杀），on_exit 的 vim.schedule 回调
--- 来不及执行，记录就会遗留在文件里 —— 下次启动时读到的就是"未正常关闭"的孤儿。
-local REGISTRY_PATH = vim.fn.stdpath("state") .. "/floatty_sessions.json"
-local json_store = require("utils.json_store")
-
-local function load_registry()
-	return json_store.read(REGISTRY_PATH, {})
-end
-
-local function save_registry(reg)
-	json_store.write(REGISTRY_PATH, reg)
-end
-
-local function registry_add(id, entry)
-	local reg = load_registry()
-	reg[id] = entry
-	save_registry(reg)
-end
-
-local function registry_remove(id)
-	local reg = load_registry()
-	if reg[id] ~= nil then
-		reg[id] = nil
-		save_registry(reg)
-	end
-end
+-- 注册表仅在显式读取/更新和目录、焦点变化时刷新，状态栏只读内存。
+local registry = require("apps.floatty_registry")
+local load_registry = registry.refresh
+local registry_add = registry.add
+local registry_remove = registry.remove
 
 -- =============================================================================
 -- 1. 配置定义 (Data)
 -- =============================================================================
-local HOME = vim.env.HOME
-local RUNNERS = { python = "uv run %s", lua = "lua %s", sh = "bash %s", go = "go run %s", rust = "cargo run" }
-local AUTOCLOSE_MS = 100 -- on_exit 后多久自动关窗（留时间瞥一眼结果）
-
-local APPS = {
-	-- [Type 1: 直达型]
-	{ key = "<D-g>", name = "Terminal", icon = " ", hl = "Function" },
-	{
-		key = "<D-i>",
-		name = "Lazygit",
-		icon = "󰊢  ",
-		cmd = "lazygit",
-		w = 0.98,
-		h = 0.95,
-		hl = "String",
-		idle_ttl_ms = 60000, -- 隐藏超过 1 分钟未重新打开则自动关闭，省待机 CPU
-	},
-
-	-- [Type 2: 菜单型] (只有这种需要 choices)
-	{
-		key = "<D-e>",
-		pick_key = "<M-e>",
-		name = "AI",
-		icon = "󰚩  ",
-		w = 0.9,
-		h = 0.95,
-		hl = "Number",
-		shell = "zsh",
-		choices = {
-			{ name = "Codex", cmd = "codex", codex = true },
-			{ name = "😭[Claude]😭", claude = { dir = nil } },
-			{ name = "Claude", claude = { dir = HOME .. "/.claude1" } },
-			{ name = "Shell", cmd = vim.o.shell },
-		},
-	},
-
-	-- [Type 3: 动态型]
-	{ key = "<D-r>", name = "Runner", icon = "󰐊 ", is_runner = true, w = 0.75, h = 0.6, hl = "Constant" },
-}
+local options = require("config.floatty")
+local APPS = vim.deepcopy(options.apps)
+local RUNNERS = options.runners
+local AUTOCLOSE_MS = options.autoclose_ms
 
 -- =============================================================================
 -- 2. 辅助函数 (Helpers)
@@ -95,7 +32,7 @@ local function make_title(prefix, body)
 end
 
 local function get_win_opts(cfg)
-	local w, h = cfg.w or 0.8, cfg.h or 0.8
+	local w, h = cfg.w or options.window.w, cfg.h or options.window.h
 	local cols, lines = vim.o.columns, vim.o.lines
 	local width, height = math.floor(cols * w), math.floor(lines * h)
 	return {
@@ -105,8 +42,8 @@ local function get_win_opts(cfg)
 		row = (lines - height) / 2,
 		col = (cols - width) / 2,
 		style = "minimal",
-		border = "rounded",
-		zindex = 50,
+		border = options.window.border,
+		zindex = options.window.zindex,
 		title = make_title((cfg.icon or "") .. cfg.name, cfg.file or "Term"),
 		title_pos = "center",
 	}
@@ -185,7 +122,7 @@ end
 --- @return integer[]
 function M.orphan_menu_indices()
 	local cwd = vim.uv.cwd() or vim.fn.getcwd()
-	local reg = load_registry()
+	local reg = registry.get()
 	local indices = {}
 	for _, app in ipairs(APPS) do
 		if app.choices then
@@ -244,7 +181,7 @@ local function blend(c1, c2, t)
 	return string.format("#%02x%02x%02x", r, g, b)
 end
 
-local PULSE_PERIOD_S = 4.8 -- 一次呼吸的周期
+local PULSE_PERIOD_S = options.pulse.period_s -- 一次呼吸的周期
 
 local function stop_pulse()
 	if pulse.timer then
@@ -275,8 +212,8 @@ local function start_pulse(win)
 
 	local timer = vim.uv.new_timer()
 	pulse.timer = timer
-	-- 呼吸周期 1.6s，属于慢速律动，80ms(~12.5fps) 已经足够顺滑，没必要按 UI 帧率(50ms+)去刷
-	timer:start(0, 80, function()
+	-- 动画频率和周期由 config.floatty 控制。
+	timer:start(0, options.pulse.interval_ms, function()
 		local elapsed = (vim.uv.hrtime() - pulse.start_ns) / 1e9
 		local phase = (elapsed % PULSE_PERIOD_S) / PULSE_PERIOD_S
 		local t = (math.sin(phase * math.pi * 2) + 1) / 2 -- 0..1
@@ -306,7 +243,7 @@ local function refresh_claude_title(term)
 	local body = meta.name or cfg.file or "Term"
 	vim.api.nvim_win_set_config(term.win, { title = make_title(prefix, body) })
 
-	if status == "busy" then
+	if status == "busy" and options.pulse.enabled then
 		start_pulse(term.win)
 	else
 		if pulse.win == term.win then

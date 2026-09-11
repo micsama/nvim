@@ -34,7 +34,7 @@ vim.opt.sessionoptions = { "curdir", "tabpages", "winsize", "help", "globals", "
 vim.opt.updatetime = 100 -- 触发LSP和CursorHold事件的时间间隔（毫秒）。
 vim.opt.inccommand = "split" -- 实时预览命令效果（如替换命令）到分割窗口。
 vim.opt.shortmess:append("c") -- 缩短某些消息显示（如补全菜单）。
-vim.o.formatoptions = vim.o.formatoptions:gsub("tc", "") -- 禁用自动换行(t)和文本注释自动换行(c)。
+vim.opt.formatoptions:remove({ "t", "c" }) -- 禁用自动换行(t)和文本注释自动换行(c)。
 vim.o.showtabline = 2
 vim.o.background = "dark"
 vim.o.title = true -- 允许 Neovim 设置窗口/终端标题。
@@ -87,11 +87,9 @@ if uname.sysname == "Darwin" then
 	vim.env.PATH = "/opt/homebrew/bin:" .. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 else
 	vim.opt.shell = "/usr/bin/bash"
-		-- vim.env.PATH = "/home/dzmfg/.nvm/versions/node/v22.20.0/bin:/home/linuxbrew/.linuxbrew/bin:~/.local/bin"
-		.. vim.env.PATH -- 将 Homebrew 的 bin 目录添加到 PATH。
 end
 
 
 
--- vim.env.http_proxy = "http://127.0.0.1:1082"
--- vim.env.https_proxy = "http://127.0.0.1:1082"
+vim.env.http_proxy = "http://127.0.0.1:1082"
+vim.env.https_proxy = "http://127.0.0.1:1082"

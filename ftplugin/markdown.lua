@@ -2,7 +2,7 @@
 -- ftplugin: markdown
 -- ===========================================================================
 
-vim.opt.complete = { ".", "b" }
+vim.opt_local.complete = { ".", "b" }
 vim.pack.add(vim.g.pack_ft_markdown)
 
 require("render-markdown").setup({
