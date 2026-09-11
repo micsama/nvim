@@ -91,5 +91,7 @@ end
 
 
 
-vim.env.http_proxy = "http://127.0.0.1:1082"
-vim.env.https_proxy = "http://127.0.0.1:1082"
+-- 本机专属配置（如代理地址），因机器而异且不便公开，不纳入版本库。
+-- Neovide 拿不到外部 shell 导出的环境变量，所以在这里用 vim.env 直接设置。
+-- 参考模板：lua/config/local.lua.example
+pcall(require, "config.local")
