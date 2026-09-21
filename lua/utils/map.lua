@@ -88,6 +88,28 @@ function M.map(mode, lhs, rhs, opts_or_desc)
 	vim.keymap.set(modes, key_to_use, rhs, opts)
 end
 
+--- 终端里的窗口操作先用真实按键退出 terminal_enter，再运行 Lua。
+--- 单独 stopinsert() 只设置标志，不能让当前 C 调用栈立即退场。
+local terminal_action_id = 0
+function M.map_terminal_action(lhs, callback, desc)
+	terminal_action_id = terminal_action_id + 1
+	local plug = ("<Plug>(terminal-action-%d)"):format(terminal_action_id)
+	vim.keymap.set("n", plug, function()
+		callback()
+		-- 切回仍在运行的终端时恢复输入；已退出的终端不能重新进入。
+		local job = vim.b.terminal_job_id
+		local buf, win = vim.api.nvim_get_current_buf(), vim.api.nvim_get_current_win()
+		if vim.bo.buftype == "terminal" and job and vim.fn.jobwait({ job }, 0)[1] == -1 then
+			-- jobwait 可能处理其他退出回调，重新确认焦点还在原来的终端。
+			if vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_current_win() == win then
+				vim.cmd.startinsert()
+			end
+		end
+	end, { desc = desc })
+	-- <Plug> 即使在 noremap 映射里也会展开。
+	M.map("t", lhs, "<C-\\><C-n>" .. plug, desc)
+end
+
 --- 绑定全角字符到半角字符的 Normal 模式操作
 function M.map_fullwidth_to_halfwidth()
 	for fullwidth_char, config in pairs(FULLWIDTH_TO_HALFWIDTH_MAP) do

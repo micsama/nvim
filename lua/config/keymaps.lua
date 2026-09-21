@@ -79,13 +79,15 @@ vim.iter({ static_maps, function_maps }):flatten():each(function(m)
 end)
 
 vim.iter(vim.fn.range(1, 9)):each(function(i)
-	map("nit", "<D-" .. i .. ">", function()
+	local function switch_tab()
 		if i <= vim.fn.tabpagenr("$") then
 			vim.cmd("tabnext " .. i)
 		else
 			vim.notify("标签页[" .. i .. "]不存在", vim.log.levels.WARN, { title = "󰓩  Tabs" })
 		end
-	end, "切换到标签页 " .. i)
+	end
+	map("ni", "<D-" .. i .. ">", switch_tab, "切换到标签页 " .. i)
+	require("utils.map").map_terminal_action("<D-" .. i .. ">", switch_tab, "切换到标签页 " .. i)
 end)
 
 function ToggleMiniFilesAtCurrentFile()

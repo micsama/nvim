@@ -266,9 +266,9 @@ local function cancel_idle_timer(term)
 	end
 end
 
-local function kill_term(id)
+local function kill_term(id, expected)
 	local t = state.terms[id]
-	if not t then
+	if not t or (expected and t ~= expected) then
 		return
 	end
 	cancel_idle_timer(t)
@@ -463,12 +463,16 @@ function M.toggle(raw, choice)
 			final_cmd = cmd
 		end
 
-		vim.api.nvim_buf_call(term.buf, function()
+		local spawned_buf = term.buf
+		vim.api.nvim_buf_call(spawned_buf, function()
 			vim.fn.jobstart(final_cmd, {
 				term = true,
 				cwd = target_cfg.cwd or ctx.cwd,
 				on_exit = function(_, code)
 					vim.schedule(function()
+						if state.terms[target_id] ~= term or term.buf ~= spawned_buf then
+							return -- 旧 job 的退出事件不能修改新实例或它的注册记录。
+						end
 						term.exited = code
 						fclaude.detach(term.claude)
 						if is_persistent_app(target_cfg) then
@@ -488,7 +492,9 @@ function M.toggle(raw, choice)
 						end
 						if code == 0 then
 							vim.defer_fn(function()
-								kill_term(target_id)
+								if term.buf == spawned_buf then
+									kill_term(target_id, term)
+								end
 							end, AUTOCLOSE_MS)
 						end
 					end)
@@ -626,15 +632,19 @@ vim.api.nvim_create_autocmd("WinClosed", {
 })
 
 for _, x in ipairs(APPS) do
-	map("nvit", x.key, function()
+	local function toggle()
 		M.toggle(x)
-	end, x.name)
+	end
+	map("nvi", x.key, toggle, x.name)
+	require("utils.map").map_terminal_action(x.key, toggle, x.name)
 	-- 菜单型再绑一个变体用于 picker（可由 pick_key 显式指定，否则用 Shift 变体）
 	if x.choices then
 		local pick_key = x.pick_key or x.key:gsub("<D%-(%a)>", "<D-S-%1>")
-		map("nvit", pick_key, function()
+		local function pick()
 			M.pick(x)
-		end, x.name .. " picker")
+		end
+		map("nvi", pick_key, pick, x.name .. " picker")
+		require("utils.map").map_terminal_action(pick_key, pick, x.name .. " picker")
 	end
 end
 
