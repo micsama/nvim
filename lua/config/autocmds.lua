@@ -32,9 +32,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 			vim.b[ctx.buf].project_root = root
 		end
 
-		if root and vim.b[ctx.buf].project_is_git then
-			require("apps.recent_repos").record(root)
-		end
+		require("apps.recent_repos").enter(root and vim.b[ctx.buf].project_is_git and root or nil)
 
 		if root and root ~= "." and root ~= vim.fn.getcwd() then
 			vim.cmd.tcd(root)

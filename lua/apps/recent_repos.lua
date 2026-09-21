@@ -7,9 +7,10 @@ local M = {}
 local json_store = require("utils.json_store")
 
 local data_path = vim.fn.stdpath("data") .. "/recent_repos.json"
--- 每个仓库每天计一次有效访问；近期权重最多 1 分，不压过常用项目。
-local half_life_days = 30
-local recorded_today = {}
+-- 每次访问单独衰减，7 天权重减半。
+-- weighted_count 保存 last 时刻的累计权重，无需保存完整访问历史。
+local half_life_days = 7
+local active_repo
 local alias_hl = "RecentRepoAlias"
 local function ensure_alias_hl()
 	local palette = require("catppuccin.palettes").get_palette("mocha")
@@ -44,33 +45,56 @@ local function save(data)
 	end
 end
 
+local function visit_count(entry)
+	local count = entry.count
+	if type(count) ~= "number" or count < 1 or count >= math.huge or count % 1 ~= 0 then
+		count = entry.days
+	end
+	return count
+end
+
 local function score(entry, now)
 	local age = math.max(0, now - entry.last) / 86400
-	return math.log(1 + entry.days) / math.log(2) + 0.5 ^ (age / half_life_days)
+	local weight = entry.weighted_count
+	if type(weight) ~= "number" or not (weight >= 0 and weight < math.huge) then
+		-- 旧数据没有逐次访问时间，按最后访问时刻初始化；保留原 count。
+		weight = visit_count(entry)
+	end
+	return weight * 0.5 ^ (age / half_life_days)
 end
 
 function M.record(path)
 	if not path or path == "" then
 		return
 	end
-	local today = os.date("%Y-%m-%d")
-	if recorded_today[path] == today then
-		return
-	end
-	recorded_today[path] = today
+	local now = os.time()
+	local today = os.date("%Y-%m-%d", now)
 	local data = load()
 	for _, e in ipairs(data) do
 		if e.path == path then
+			-- 先衰减旧分数再加本次访问，不能用新的 last 复活全部历史权重。
+			e.weighted_count = score(e, now) + 1
+			e.count = visit_count(e) + 1
 			if os.date("%Y-%m-%d", e.last) ~= today then
 				e.days = e.days + 1
 			end
-			e.last = os.time()
+			e.last = now
 			save(data)
+			active_repo = path
 			return
 		end
 	end
-	data[#data + 1] = { path = path, days = 1, last = os.time() }
+	data[#data + 1] = { path = path, count = 1, weighted_count = 1, days = 1, last = now }
 	save(data)
+	active_repo = path
+end
+
+-- 切入仓库才算访问，同仓库内切换文件不重复计数；没有时间冷却。
+function M.enter(path)
+	if path ~= active_repo then
+		active_repo = path
+		M.record(path)
+	end
 end
 
 function M.set_alias(path, alias)
@@ -219,7 +243,9 @@ function M.picker(opts)
 						return e.path ~= selected.value.path
 					end, load())
 					save(data)
-					recorded_today[selected.value.path] = nil
+					if active_repo == selected.value.path then
+						active_repo = nil
+					end
 					action_state.get_current_picker(prompt_bufnr):refresh(make_finder(), { reset_prompt = false })
 				end)
 
