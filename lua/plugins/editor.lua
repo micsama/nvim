@@ -47,7 +47,14 @@ vim.api.nvim_create_autocmd("FileType", {
 -- ============================================================================
 -- 4) Treesitter / LSP 工具
 -- ============================================================================
-require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
+-- 启动期只需要 mason 的 bin 目录进 PATH（供 LSP 使用）；setup 延迟到首次 :Mason* 命令
+vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin:" .. vim.env.PATH
+require("utils.lazy").on_cmd(
+	{ "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonUpdate", "MasonLog" },
+	function()
+		require("mason").setup({ ui = { icons = { package_installed = "✓" } } })
+	end
+)
 
 require('nvim-ts-autotag').setup({
   opts = {

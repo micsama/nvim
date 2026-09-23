@@ -355,7 +355,7 @@ function M.toggle(raw, choice)
 			return vim.notify("⚠️ No runner for " .. (ctx.ft or "nil"), 3)
 		end
 		target_cfg = vim.tbl_extend("force", target_cfg, {
-			cmd = RUNNERS[ctx.ft]:format(ctx.file),
+			cmd = RUNNERS[ctx.ft]:format(vim.fn.shellescape(ctx.file)),
 			id = "RUN::" .. ctx.cwd,
 			file = ctx.path .. "/" .. ctx.file,
 		})
@@ -604,7 +604,7 @@ end
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function()
 		local t = state.terms[state.last_id]
-		if t and vim.api.nvim_win_is_valid(t.win) then
+		if t and t.win and vim.api.nvim_win_is_valid(t.win) then
 			vim.api.nvim_win_set_config(t.win, get_win_opts(t.cfg))
 			if t.claude then
 				refresh_claude_title(t)

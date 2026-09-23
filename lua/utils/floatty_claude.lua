@@ -34,12 +34,12 @@ M.STATUS_GLYPHS = {
 -- ---------------------------------------------------------------------------
 -- 1. 工厂 & 命令拼装
 -- ---------------------------------------------------------------------------
+--- 本地生成 UUID v4，不再同步起 uuidgen 进程
 local function gen_uuid()
-	local out = vim.fn.system("uuidgen"):gsub("%s+", ""):lower()
-	if out == "" then
-		error("floatty_claude: uuidgen failed; install uuid-runtime or coreutils")
-	end
-	return out
+	local b = { vim.uv.random(16):byte(1, 16) }
+	b[7] = bit.bor(bit.band(b[7], 0x0f), 0x40) -- version 4
+	b[9] = bit.bor(bit.band(b[9], 0x3f), 0x80) -- RFC 4122 variant
+	return ("%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x"):format(unpack(b))
 end
 
 --- @param dir string|nil

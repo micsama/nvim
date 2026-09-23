@@ -139,7 +139,7 @@ function M.open(path)
 	-- 文件名先统一小写，兼容 README.md / Readme.MD / claude.md 等写法。
 	local root_files = {}
 	local scan = vim.uv.fs_scandir(path)
-	while true do
+	while scan do
 		local name, kind = vim.uv.fs_scandir_next(scan)
 		if not name then
 			break
@@ -208,6 +208,7 @@ vim.api.nvim_create_autocmd("TermClose", {
 
 function M.picker(opts)
 	opts = opts or {}
+	require("plugins.telescope").load()
 	local pickers = require("telescope.pickers")
 	local finders = require("telescope.finders")
 	local conf = require("telescope.config").values

@@ -28,6 +28,7 @@ function M.read(path, default)
 end
 
 --- 编码并写入 JSON 文件。编码失败或文件打不开则放弃（不抛错、不落半截）。
+--- 先写临时文件再 rename：多个 nvim 实例共享同一文件时，读方不会读到写了一半的内容。
 --- @param path string
 --- @param tbl table
 --- @return boolean  是否成功写入
@@ -36,12 +37,17 @@ function M.write(path, tbl)
 	if not ok then
 		return false
 	end
-	local f = io.open(path, "w")
+	local tmp = ("%s.%d.tmp"):format(path, vim.uv.os_getpid())
+	local f = io.open(tmp, "w")
 	if not f then
 		return false
 	end
-	f:write(encoded)
+	local written = f:write(encoded)
 	f:close()
+	if not written or not vim.uv.fs_rename(tmp, path) then
+		os.remove(tmp)
+		return false
+	end
 	return true
 end
 

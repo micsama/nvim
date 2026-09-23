@@ -15,7 +15,6 @@ vim.opt.showmode = false -- 隐藏模式提示（如INSERT/NORMAL等），通常
 vim.opt.virtualedit = "block" -- 允许在块选择模式下移动到空位置。
 vim.opt.splitright = true -- 垂直分割时新窗口出现在右侧。
 vim.opt.splitbelow = true -- 水平分割时新窗口出现在下方。
-vim.cmd([[hi NonText ctermfg=gray guifg=grey10]]) -- 设置非文本元素（如文件末尾的~）的颜色。
 vim.opt.number = true -- 显示文件的绝对行号。
 vim.opt.relativenumber = true -- 显示相对于光标的相对行号，启用混合行号。
 vim.opt.foldlevel = 99 -- 默认展开所有折叠（99是最高级别，即不折叠）。
@@ -67,16 +66,13 @@ vim.opt.scrolloffpad = 1 -- 配合 scrolloff，让光标在文件末尾也能保
 -- =============================================================================
 -- 2) 文件与备份
 -- =============================================================================
-local config_dir = vim.fn.stdpath("config") .. "/tmp" -- 获取配置目录下的tmp子目录
-vim.o.backupdir = config_dir .. "/backup,." -- 备份文件保存位置
-vim.o.directory = config_dir .. "/backup,." -- 交换文件保存位置
+-- backup/swap/undo 目录沿用 Neovim 默认（stdpath("state") 下），不写进配置仓库或当前目录。
 vim.o.undofile = true -- 启用撤销历史持久化
-vim.o.undodir = config_dir .. "/undo,." -- 撤销历史文件保存位置
 
 -- =============================================================================
 -- 3) 运行环境
 -- =============================================================================
-vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or "/Users/dzmfg/.venvs/base") .. "/bin/python" -- 优先使用虚拟环境中的 Python。
+vim.g.python3_host_prog = (os.getenv("VIRTUAL_ENV") or (vim.env.HOME .. "/.venvs/base")) .. "/bin/python" -- 优先使用虚拟环境中的 Python。
 
 -- 禁用不必要的提供程序，减少启动开销。
 vim.g.loaded_perl_provider = 0

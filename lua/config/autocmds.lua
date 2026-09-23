@@ -7,7 +7,7 @@ vim.api.nvim_create_augroup("CustomSetupGroup", { clear = true })
 local custom_group = "CustomSetupGroup"
 
 -- 自动切换工作目录到项目根目录
--- 优先用 git rev-parse (正确处理 worktree)，回退到 vim.fs.root；结果按 buffer 缓存
+-- 优先找 .git（worktree/submodule 里 .git 是文件，同样命中），回退到其他项目标记；结果按 buffer 缓存
 vim.api.nvim_create_autocmd("BufEnter", {
 	group = custom_group,
 	callback = function(ctx)
@@ -19,10 +19,9 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		-- 缓存：每个 buffer 只计算一次
 		local root = vim.b[ctx.buf].project_root
 		if root == nil then
-			local buf_dir = vim.fn.fnamemodify(name, ":p:h")
-			local git_root = vim.fn.systemlist("git -C " .. vim.fn.shellescape(buf_dir) .. " rev-parse --show-toplevel")
-			if vim.v.shell_error == 0 and git_root[1] then
-				root = git_root[1]
+			local git_root = vim.fs.root(ctx.buf, ".git")
+			if git_root then
+				root = git_root
 				vim.b[ctx.buf].project_is_git = true
 			else
 				local root_markers =

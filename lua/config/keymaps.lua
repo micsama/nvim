@@ -53,23 +53,33 @@ local static_maps = {
     { "nv",  "<D-o>",       "<CMD>CodeCompanionChat Toggle<CR>", "AI 聊天" },
 }
 
+local function toggle_mini_files()
+	if not MiniFiles.close() then
+		local current_file = vim.api.nvim_buf_get_name(0)
+		local is_valid_file = current_file ~= "" and vim.fn.filereadable(current_file) == 1
+		MiniFiles.open(is_valid_file and current_file or nil)
+	end
+end
+
 local function_maps = {
 	{ "n",   "<c-g>",      function() MiniGit.show_at_cursor() end,          "查看当前行git历史" },
 	{ "n",   "H",          function() MiniDiff.toggle_overlay() end,         "切换 Hunk 预览" },
-	{ "n",   "<D-b>",      function() _G.ToggleMiniFilesAtCurrentFile() end, "打开侧边文件树" },
+	{ "n",   "<D-b>",      toggle_mini_files,                                "打开侧边文件树" },
 	{ "n",   "<leader>rc", "<CMD>source ~/.config/nvim/Session.vim<CR>",     "加载 Session" },
 	{ "n",   "<leader>q",  function() local wins = vim.api.nvim_tabpage_list_wins(0) if #wins > 1 then vim.cmd("wincmd j | q") end end, "关闭下方窗口" },
 }
 
+-- 按名字延迟取 vim.lsp.buf.xxx：直接引用函数会在启动期加载整条 vim.lsp 链路
+local function lsp(name) return function() vim.lsp.buf[name]() end end
 M.lsp_maps = {
-    { "n",   "<leader>h",  vim.lsp.buf.hover,           "悬浮提示" },
-    { "n",   "gd",         vim.lsp.buf.definition,      "跳转定义" },
-    { "n",   "gi",         vim.lsp.buf.implementation,  "跳转实现" },
-    { "n",   "go",         vim.lsp.buf.type_definition, "跳转类型定义" },
-    { "n",   "gr",         vim.lsp.buf.references,      "查看引用" },
-    { "n",   "<leader>rn", vim.lsp.buf.rename,          "变量重命名" },
-    { "n",   "<leader>,",  vim.lsp.buf.code_action,     "代码操作" },
-    { "i",   "<c-f>",      vim.lsp.buf.signature_help,  "函数签名帮助" },
+    { "n",   "<leader>h",  lsp("hover"),           "悬浮提示" },
+    { "n",   "gd",         lsp("definition"),      "跳转定义" },
+    { "n",   "gi",         lsp("implementation"),  "跳转实现" },
+    { "n",   "go",         lsp("type_definition"), "跳转类型定义" },
+    { "n",   "gr",         lsp("references"),      "查看引用" },
+    { "n",   "<leader>rn", lsp("rename"),          "变量重命名" },
+    { "n",   "<leader>,",  lsp("code_action"),     "代码操作" },
+    { "i",   "<c-f>",      lsp("signature_help"),  "函数签名帮助" },
     { "n",   "gD",         function() vim.cmd('tab split | lua vim.lsp.buf.definition()') end, "新标签打开定义" },
 }
 -- stylua: ignore end
@@ -90,21 +100,13 @@ vim.iter(vim.fn.range(1, 9)):each(function(i)
 	require("utils.map").map_terminal_action("<D-" .. i .. ">", switch_tab, "切换到标签页 " .. i)
 end)
 
-function ToggleMiniFilesAtCurrentFile()
-	if not MiniFiles.close() then
-		local current_file = vim.api.nvim_buf_get_name(0)
-		local is_valid_file = current_file and current_file ~= "" and vim.fn.filereadable(current_file) == 1
-		MiniFiles.open(is_valid_file and current_file or nil)
-	end
-end
-
 vim.keymap.set("v", "*", [[y/\V<C-R>=escape(@", '/\')<CR><CR>]])
 vim.keymap.set("v", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]])
 
 
--- 清理未使用的或冲突的默认映射
--- vim.keymap.del("n", "grr")
--- vim.keymap.del("x", "gra")
--- vim.keymap.del("n", "gra")
--- vim.keymap.del("n", "grn")
+-- 删除 0.11+ 内置的 gr* LSP 映射：它们以 gr 为前缀，会让上面的 gr（查看引用）每次都等满 timeoutlen
+for _, m in ipairs({ { "n", "grn" }, { "n", "grr" }, { "n", "gri" }, { "n", "grt" }, { "n", "grx" }, { { "n", "x" }, "gra" } }) do
+	pcall(vim.keymap.del, m[1], m[2])
+end
+
 return M

@@ -20,9 +20,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("DeferredTreesitter", { clear = true }),
 	callback = function(args)
-		-- 仅在真正打开缓冲区时加载 LLM 插件，并启用 treesitter
-		require("plugins.llm.codecompanion")
 		pcall(vim.treesitter.start, args.buf)
 	end,
 })

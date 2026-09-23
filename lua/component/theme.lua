@@ -11,6 +11,7 @@ require("catppuccin").setup({
 			TreesitterContextLineNumber = { fg = colors.green, bg = colors.mantle },
 
 			-- UI 基础
+			NonText = { fg = "#1a1a1a" }, -- 文件末尾 ~ 等非文本字符几乎隐形（原 guifg=grey10）
 			LineNr = { fg = colors.surface1 },
 			CursorLineNr = { fg = colors.mauve, bold = true },
 			Visual = { bg = colors.surface1 },
