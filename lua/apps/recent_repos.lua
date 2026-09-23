@@ -129,11 +129,43 @@ function M.open(path)
 		vim.notify("仓库目录不存在：" .. path, vim.log.levels.WARN)
 		return
 	end
-	local files = require("mini.files")
-	vim.cmd.tabnew()
-	vim.cmd.tcd(path)
+
+	-- 最近项目入口只保留一个项目标签页，沿用当前 Tab，关闭其他 Tab。
+	vim.cmd.tabonly()
+	vim.cmd.only()
+	vim.cmd.tcd({ args = { path } })
 	M.record(path)
-	files.open(path, false)
+
+	-- 文件名先统一小写，兼容 README.md / Readme.MD / claude.md 等写法。
+	local root_files = {}
+	local scan = vim.uv.fs_scandir(path)
+	while true do
+		local name, kind = vim.uv.fs_scandir_next(scan)
+		if not name then
+			break
+		end
+		if kind == "file" or kind == "link" then
+			root_files[name:lower()] = name
+		end
+	end
+
+	local entry_file = root_files["readme.md"] or root_files["readme"]
+	if not entry_file then
+		for name, actual_name in pairs(root_files) do
+			if name:match("^readme%.") and (not entry_file or name < entry_file:lower()) then
+				entry_file = actual_name
+			end
+		end
+	end
+	for _, name in ipairs({ "claude.md", "agents.md", "contributing.md" }) do
+		entry_file = entry_file or root_files[name]
+	end
+
+	if entry_file then
+		vim.cmd.edit(vim.fn.fnameescape(path .. "/" .. entry_file))
+	else
+		require("mini.files").open(path)
+	end
 end
 
 -- 目录预览：优先用 eza（图标 + 颜色），否则退回 ls；只看一层，不递归子目录
