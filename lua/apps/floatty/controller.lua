@@ -406,6 +406,9 @@ local function show_term(raw, target_cfg, target_id, ctx)
 	end
 
 	term.win = vim.api.nvim_open_win(term.buf, true, get_win_opts(target_cfg))
+	-- 滚轮离开终端模式后，不要用普通编辑窗口的光标留白设置重排终端视图。
+	vim.wo[term.win].scrolloff = 0
+	vim.wo[term.win].scrolloffpad = 0
 	local hl = target_cfg.hl or "FloatBorder"
 	vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(hl, hl)
 
