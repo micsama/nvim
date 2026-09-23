@@ -427,6 +427,7 @@ function M.setup(opts)
 
   vim.api.nvim_set_hl(0, 'ProcTopDead', { fg = '#b8860b', default = true })
   vim.api.nvim_create_autocmd('ColorScheme', {
+    group = vim.api.nvim_create_augroup('apps.proctop', { clear = true }),
     callback = function() vim.api.nvim_set_hl(0, 'ProcTopDead', { fg = '#b8860b', default = true }) end,
   })
 

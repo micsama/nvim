@@ -1,6 +1,11 @@
+-- =============================================================================
+-- Floatty 控制器：终端实例生命周期（toggle / pick / kill / idle 定时关闭）
+-- 本模块 require 时无副作用；keymap 与 autocmd 由 apps.floatty.setup() 注册。
+-- =============================================================================
 local M = {}
-local map = require("utils.map").map
-local fclaude = require("utils.floatty_claude")
+local claude = require("apps.floatty.claude")
+local registry = require("apps.floatty.registry")
+local pulse = require("apps.floatty.pulse")
 
 -- =============================================================================
 -- 0. 全局状态中心
@@ -10,17 +15,12 @@ local fclaude = require("utils.floatty_claude")
 -- ctx_cache: 缓存文件上下文，防止在 Terminal 里获取不到文件类型
 local state = { terms = {}, last_id = nil, ctx_cache = nil }
 
--- 注册表仅在显式读取/更新和目录、焦点变化时刷新，状态栏只读内存。
-local registry = require("apps.floatty_registry")
-local load_registry = registry.refresh
-local registry_add = registry.add
-local registry_remove = registry.remove
-
 -- =============================================================================
 -- 1. 配置定义 (Data)
 -- =============================================================================
 local options = require("config.floatty")
-local APPS = vim.deepcopy(options.apps)
+M.APPS = vim.deepcopy(options.apps)
+local APPS = M.APPS
 local RUNNERS = options.runners
 local AUTOCLOSE_MS = options.autoclose_ms
 
@@ -140,95 +140,6 @@ function M.orphan_menu_indices()
 	return indices
 end
 
--- =============================================================================
--- 2b. 呼吸边框（Claude busy 时，边框颜色随时间明暗律动）
--- =============================================================================
-local pulse = { timer = nil, win = nil, start_ns = nil }
-
-local function hex_from_hl(name, field, fallback)
-	local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name, link = false })
-	if ok and hl and hl[field] then
-		return hl[field]
-	end
-	return fallback
-end
-
---- 优先用 Catppuccin 当前 flavour 的 peach，取不到再退回 WarningMsg 前景色
-local function pulse_base_color()
-	local ok, palettes = pcall(require, "catppuccin.palettes")
-	if ok then
-		local p = palettes.get_palette()
-		if p and p.peach then
-			return p.peach
-		end
-	end
-	return hex_from_hl("WarningMsg", "fg", 0xfab387)
-end
-
---- c1/c2 接受数字色值（0xRRGGBB）或 "#rrggbb" 字符串，返回 "#rrggbb"
-local function blend(c1, c2, t)
-	if type(c1) == "string" then
-		c1 = tonumber(c1:sub(2), 16)
-	end
-	if type(c2) == "string" then
-		c2 = tonumber(c2:sub(2), 16)
-	end
-	local r1, g1, b1 = math.floor(c1 / 65536) % 256, math.floor(c1 / 256) % 256, c1 % 256
-	local r2, g2, b2 = math.floor(c2 / 65536) % 256, math.floor(c2 / 256) % 256, c2 % 256
-	local r = math.floor(r1 + (r2 - r1) * t + 0.5)
-	local g = math.floor(g1 + (g2 - g1) * t + 0.5)
-	local b = math.floor(b1 + (b2 - b1) * t + 0.5)
-	return string.format("#%02x%02x%02x", r, g, b)
-end
-
-local PULSE_PERIOD_S = options.pulse.period_s -- 一次呼吸的周期
-
-local function stop_pulse()
-	if pulse.timer then
-		pcall(function()
-			pulse.timer:stop()
-			pulse.timer:close()
-		end)
-		pulse.timer = nil
-	end
-	pulse.win = nil
-end
-
---- 让 win 的边框随时间呼吸，直到窗口失效或被其他状态打断
-local function start_pulse(win)
-	if pulse.win == win and pulse.timer then
-		return -- 已经在跑了
-	end
-	stop_pulse()
-	pulse.win = win
-	pulse.start_ns = vim.uv.hrtime()
-
-	local base = pulse_base_color()
-	local bg = hex_from_hl("NormalFloat", "bg", hex_from_hl("Normal", "bg", 0x1e1e2e))
-	local white = 0xffffff
-	-- 暗端往窗口背景色混，亮端只轻微提亮，全程保持同一色相，像光在呼吸而不是变脏变白
-	local dark_end = blend(base, bg, 0.6)
-	local bright_end = blend(base, white, 0.2)
-
-	local timer = vim.uv.new_timer()
-	pulse.timer = timer
-	-- 动画频率和周期由 config.floatty 控制。
-	timer:start(0, options.pulse.interval_ms, function()
-		local elapsed = (vim.uv.hrtime() - pulse.start_ns) / 1e9
-		local phase = (elapsed % PULSE_PERIOD_S) / PULSE_PERIOD_S
-		local t = (math.sin(phase * math.pi * 2) + 1) / 2 -- 0..1
-		local color = blend(dark_end, bright_end, t) -- 在暗/亮两端之间明暗律动
-		vim.schedule(function()
-			if not (pulse.win and vim.api.nvim_win_is_valid(pulse.win)) then
-				stop_pulse()
-				return
-			end
-			vim.api.nvim_set_hl(0, "FloattyPulseBusy", { fg = color })
-			vim.wo[pulse.win].winhighlight = "FloatBorder:FloattyPulseBusy,FloatTitle:FloattyPulseBusy"
-		end)
-	end)
-end
-
 local function refresh_claude_title(term)
 	if not (term and term.win and vim.api.nvim_win_is_valid(term.win)) then
 		return
@@ -238,16 +149,16 @@ local function refresh_claude_title(term)
 		return
 	end
 	local status = meta.status or "idle"
-	local g = fclaude.STATUS_GLYPHS[status] or fclaude.STATUS_GLYPHS.idle
+	local g = claude.STATUS_GLYPHS[status] or claude.STATUS_GLYPHS.idle
 	local prefix = ("%s%s %s"):format(cfg.icon or "", cfg.name, g.icon)
 	local body = meta.name or cfg.file or "Term"
 	vim.api.nvim_win_set_config(term.win, { title = make_title(prefix, body) })
 
-	if status == "busy" and options.pulse.enabled then
-		start_pulse(term.win)
+	if status == "busy" and pulse.enabled() then
+		pulse.start(term.win)
 	else
-		if pulse.win == term.win then
-			stop_pulse()
+		if pulse.win() == term.win then
+			pulse.stop()
 		end
 		vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(g.hl, g.hl)
 	end
@@ -274,10 +185,10 @@ local function kill_term(id, expected)
 	cancel_idle_timer(t)
 	local win = t.win
 	t.win = nil -- 避免 WinClosed 把主动销毁误判为隐藏
-	if pulse.win == win then
-		stop_pulse()
+	if pulse.win() == win then
+		pulse.stop()
 	end
-	fclaude.detach(t.claude)
+	claude.detach(t.claude)
 	if win and vim.api.nvim_win_is_valid(win) then
 		vim.api.nvim_win_close(win, true)
 	end
@@ -285,7 +196,7 @@ local function kill_term(id, expected)
 		vim.api.nvim_buf_delete(t.buf, { force = true })
 	end
 	if is_persistent_app(t.cfg) then
-		registry_remove(id)
+		registry.remove(id)
 	end
 
 	-- [重要] 清理记忆指针：如果这个死掉的终端是某组配置的"现任"，则将其废黜
@@ -322,37 +233,38 @@ end
 
 -- =============================================================================
 -- 3. 核心控制器 (Controller)
+-- toggle = resolve_target → hide_if_shown → 互斥关窗 → show_term（→ spawn_job）
 -- =============================================================================
-function M.toggle(raw, choice)
-	local ctx = get_ctx()
 
-	-- ============================================================
-	-- 阶段 1: 解析目标 (target_cfg, target_id)
-	--   - choice 显式传入 → 用 choice
-	--   - 否则有 active_id 且 buf 健在 → 复活
-	--   - 否则是菜单型 → 走 picker
-	--   - 否则 → 用 raw 本体
-	-- ============================================================
+--- 阶段 1: 解析目标。
+---   - choice 显式传入 → 用 choice
+---   - 否则有 active_id 且 buf 健在 → 复活
+---   - 否则是菜单型 → 返回 nil，由调用方走 picker
+---   - 否则 → 用 raw 本体
+--- Runner 只在新启动路径按文件类型拼命令，复活时保持原 cfg。
+--- @return table|nil cfg, string|nil id
+local function resolve_target(raw, choice, ctx)
 	local target_id, target_cfg
-
 	if choice then
 		target_cfg = vim.tbl_deep_extend("force", vim.deepcopy(raw), choice)
-	elseif raw.active_id and state.terms[raw.active_id] and vim.api.nvim_buf_is_valid(state.terms[raw.active_id].buf) then
+	elseif
+		raw.active_id
+		and state.terms[raw.active_id]
+		and vim.api.nvim_buf_is_valid(state.terms[raw.active_id].buf)
+	then
 		target_id = raw.active_id
 		target_cfg = state.terms[target_id].cfg
 	elseif raw.choices then
-		return M.pick(raw)
+		return nil
 	else
 		target_cfg = vim.deepcopy(raw)
-		if raw.active_id then
-			raw.active_id = nil -- 记忆已失效
-		end
+		raw.active_id = nil -- 记忆已失效
 	end
 
-	-- Runner 特殊处理 (仅在新启动路径，复活时保持原 cfg)
 	if target_cfg.is_runner and not target_id then
 		if not (ctx.ft and RUNNERS[ctx.ft]) then
-			return vim.notify("⚠️ No runner for " .. (ctx.ft or "nil"), 3)
+			vim.notify("⚠️ No runner for " .. (ctx.ft or "nil"), 3)
+			return nil
 		end
 		target_cfg = vim.tbl_extend("force", target_cfg, {
 			cmd = RUNNERS[ctx.ft]:format(vim.fn.shellescape(ctx.file)),
@@ -361,46 +273,121 @@ function M.toggle(raw, choice)
 		})
 	end
 
-	target_id = target_id or compute_id(target_cfg, ctx.cwd)
+	return target_cfg, target_id or compute_id(target_cfg, ctx.cwd)
+end
 
-	-- ============================================================
-	-- 阶段 2: Toggle Hide
-	-- 如果屏幕上正显示的就是 target，且在当前 tab → 藏起来收工
-	-- ============================================================
-	if state.last_id == target_id then
-		local active = state.terms[target_id]
-		if active and active.win and vim.api.nvim_win_is_valid(active.win) then
-			local same_tab = vim.api.nvim_win_get_tabpage(active.win) == vim.api.nvim_get_current_tabpage()
-			if same_tab then
-				if active.exited ~= nil then
-					kill_term(target_id)
-				else
-					vim.api.nvim_win_close(active.win, true)
-				end
-				vim.schedule(function()
-					vim.cmd("checktime")
-				end)
-				return
+--- 阶段 2: 屏幕上正显示的就是 target 且在当前 tab → 藏起来（已退出则销毁），返回 true 收工。
+--- 在别的 tab 显示 → 关掉旧窗，由后续流程在当前 tab 重开。
+local function hide_if_shown(target_id)
+	if state.last_id ~= target_id then
+		return false
+	end
+	local active = state.terms[target_id]
+	if not (active and active.win and vim.api.nvim_win_is_valid(active.win)) then
+		return false
+	end
+	if vim.api.nvim_win_get_tabpage(active.win) ~= vim.api.nvim_get_current_tabpage() then
+		vim.api.nvim_win_close(active.win, true)
+		return false
+	end
+	if active.exited ~= nil then
+		kill_term(target_id)
+	else
+		vim.api.nvim_win_close(active.win, true)
+	end
+	vim.schedule(function()
+		vim.cmd("checktime")
+	end)
+	return true
+end
+
+--- 按应用类型拼出最终命令；claude/codex 会根据注册表判断是否续接孤儿会话。
+local function build_cmd(term, target_cfg, target_id, ctx)
+	local cmd
+	if target_cfg.claude then
+		-- 注册表里还留着这个 id → 上次是被 nvim 陪葬关闭的孤儿，用 -c 续上那次对话；
+		-- 否则是全新会话，走原来的 --session-id 流程（供 status 轮询/标题联动用）。
+		local was_orphan = registry.refresh()[target_id] ~= nil
+		if was_orphan then
+			cmd = claude.build_continue_cmd(target_cfg.claude.dir)
+			-- -c 会续接 cwd 下最近一次会话；反查它的 session id，
+			-- 让 watcher 重新挂上（找不到则退化为无状态图标，行为同旧版）。
+			local sid = claude.find_latest_session_id(target_cfg.claude.dir, ctx.cwd)
+			if sid then
+				term.claude = claude.new_meta_resume(target_cfg.claude.dir, sid)
 			end
-			vim.api.nvim_win_close(active.win, true)
-			-- 跨 tab：关掉旧窗，下面在当前 tab 重开
+		else
+			term.claude = claude.new_meta(target_cfg.claude.dir)
+			cmd = claude.build_cmd(term.claude)
 		end
+	elseif target_cfg.codex then
+		-- Codex 没有 Claude 那样可监听的实时状态文件；只记录会话是否
+		-- 在 Neovim 正常存活期间被托管，异常重启时用 --last 恢复。
+		cmd = registry.refresh()[target_id] ~= nil and "codex resume --last" or "codex"
+	end
+	cmd = cmd or target_cfg.cmd or vim.o.shell
+
+	if target_cfg.is_runner then
+		return ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
+	elseif target_cfg.shell then
+		return { target_cfg.shell, "-c", "exec " .. cmd }
+	end
+	return cmd
+end
+
+--- 在 term.buf 里启动 job；退出时更新标题/边框，成功退出的延迟自动关闭。
+local function spawn_job(term, target_cfg, target_id, ctx)
+	local start_time = vim.uv.hrtime()
+	local final_cmd = build_cmd(term, target_cfg, target_id, ctx)
+	if is_persistent_app(target_cfg) then
+		registry.add(target_id, { ts = os.time() })
 	end
 
-	-- ============================================================
-	-- 阶段 3: 互斥关窗
-	-- 屏幕上若有别的浮动窗，关窗保留 buf
-	-- ============================================================
-	if state.last_id and state.last_id ~= target_id then
-		local last = state.terms[state.last_id]
-		if last and last.win and vim.api.nvim_win_is_valid(last.win) then
-			vim.api.nvim_win_close(last.win, true)
-		end
+	local spawned_buf = term.buf
+	vim.api.nvim_buf_call(spawned_buf, function()
+		vim.fn.jobstart(final_cmd, {
+			term = true,
+			cwd = target_cfg.cwd or ctx.cwd,
+			on_exit = function(_, code)
+				vim.schedule(function()
+					if state.terms[target_id] ~= term or term.buf ~= spawned_buf then
+						return -- 旧 job 的退出事件不能修改新实例或它的注册记录。
+					end
+					term.exited = code
+					claude.detach(term.claude)
+					if is_persistent_app(target_cfg) then
+						registry.remove(target_id)
+					end
+					if term.win and vim.api.nvim_win_is_valid(term.win) then
+						local icon = code == 0 and "✅" or "❌"
+						local exit_hl = code == 0 and "String" or "Error"
+						local duration = string.format("%.1fs", (vim.uv.hrtime() - start_time) / 1e9)
+						local body = (term.claude and term.claude.name) or target_cfg.file or target_cfg.name
+						vim.api.nvim_win_set_config(term.win, {
+							title = make_title(("%s exit %d · %s"):format(icon, code, duration), body),
+						})
+						vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(exit_hl, exit_hl)
+					end
+					if code == 0 then
+						vim.defer_fn(function()
+							if term.buf == spawned_buf then
+								kill_term(target_id, term)
+							end
+						end, AUTOCLOSE_MS)
+					end
+				end)
+			end,
+		})
+	end)
+	if term.claude then
+		claude.attach(term.claude, function()
+			refresh_claude_title(term)
+		end)
 	end
+end
 
-	-- ============================================================
-	-- 阶段 4: Spawn or Show
-	-- ============================================================
+--- 阶段 4: 复用或新建终端 buffer，打开浮窗；新 buffer 才启动 job。
+local function show_term(raw, target_cfg, target_id, ctx)
 	local term = state.terms[target_id] or {}
 	if term.exited ~= nil and not (term.win and vim.api.nvim_win_is_valid(term.win)) then
 		kill_term(target_id)
@@ -423,89 +410,7 @@ function M.toggle(raw, choice)
 	vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(hl, hl)
 
 	if is_new then
-		local start_time = vim.uv.hrtime()
-		local cmd
-		if target_cfg.claude then
-			-- 注册表里还留着这个 id → 上次是被 nvim 陪葬关闭的孤儿，用 -c 续上那次对话；
-			-- 否则是全新会话，走原来的 --session-id 流程（供 status 轮询/标题联动用）。
-			local was_orphan = load_registry()[target_id] ~= nil
-			if was_orphan then
-				cmd = fclaude.build_continue_cmd(target_cfg.claude.dir)
-				-- -c 会续接 cwd 下最近一次会话；反查它的 session id，
-				-- 让 watcher 重新挂上（找不到则退化为无状态图标，行为同旧版）。
-				local sid = fclaude.find_latest_session_id(target_cfg.claude.dir, ctx.cwd)
-				if sid then
-					term.claude = fclaude.new_meta_resume(target_cfg.claude.dir, sid)
-				end
-			else
-				term.claude = fclaude.new_meta(target_cfg.claude.dir)
-				cmd = fclaude.build_cmd(term.claude)
-			end
-		elseif target_cfg.codex then
-			-- Codex 没有 Claude 那样可监听的实时状态文件；只记录会话是否
-			-- 在 Neovim 正常存活期间被托管，异常重启时用 --last 恢复。
-			if load_registry()[target_id] ~= nil then
-				cmd = "codex resume --last"
-			else
-				cmd = "codex"
-			end
-		end
-		if is_persistent_app(target_cfg) then
-			registry_add(target_id, { ts = os.time() })
-		end
-		cmd = cmd or target_cfg.cmd or vim.o.shell
-		local final_cmd
-		if target_cfg.is_runner then
-			final_cmd = ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
-		elseif target_cfg.shell then
-			final_cmd = { target_cfg.shell, "-c", "exec " .. cmd }
-		else
-			final_cmd = cmd
-		end
-
-		local spawned_buf = term.buf
-		vim.api.nvim_buf_call(spawned_buf, function()
-			vim.fn.jobstart(final_cmd, {
-				term = true,
-				cwd = target_cfg.cwd or ctx.cwd,
-				on_exit = function(_, code)
-					vim.schedule(function()
-						if state.terms[target_id] ~= term or term.buf ~= spawned_buf then
-							return -- 旧 job 的退出事件不能修改新实例或它的注册记录。
-						end
-						term.exited = code
-						fclaude.detach(term.claude)
-						if is_persistent_app(target_cfg) then
-							registry_remove(target_id)
-						end
-						if term.win and vim.api.nvim_win_is_valid(term.win) then
-							local icon = code == 0 and "✅" or "❌"
-							local exit_hl = code == 0 and "String" or "Error"
-							local duration = string.format("%.1fs", (vim.uv.hrtime() - start_time) / 1e9)
-							local body = (term.claude and term.claude.name)
-								or target_cfg.file
-								or target_cfg.name
-							vim.api.nvim_win_set_config(term.win, {
-								title = make_title(("%s exit %d · %s"):format(icon, code, duration), body),
-							})
-							vim.wo[term.win].winhighlight = ("FloatBorder:%s,FloatTitle:%s"):format(exit_hl, exit_hl)
-						end
-						if code == 0 then
-							vim.defer_fn(function()
-								if term.buf == spawned_buf then
-									kill_term(target_id, term)
-								end
-							end, AUTOCLOSE_MS)
-						end
-					end)
-				end,
-			})
-		end)
-		if term.claude then
-			fclaude.attach(term.claude, function()
-				refresh_claude_title(term)
-			end)
-		end
+		spawn_job(term, target_cfg, target_id, ctx)
 	else
 		vim.cmd("startinsert")
 	end
@@ -518,6 +423,31 @@ function M.toggle(raw, choice)
 	state.last_id = target_id
 end
 
+function M.toggle(raw, choice)
+	local ctx = get_ctx()
+	local target_cfg, target_id = resolve_target(raw, choice, ctx)
+	if not target_cfg then
+		if raw.choices and not choice then
+			M.pick(raw)
+		end
+		return
+	end
+
+	if hide_if_shown(target_id) then
+		return
+	end
+
+	-- 阶段 3: 互斥关窗 —— 屏幕上若有别的浮动窗，关窗保留 buf
+	if state.last_id and state.last_id ~= target_id then
+		local last = state.terms[state.last_id]
+		if last and last.win and vim.api.nvim_win_is_valid(last.win) then
+			vim.api.nvim_win_close(last.win, true)
+		end
+	end
+
+	show_term(raw, target_cfg, target_id, ctx)
+end
+
 -- =============================================================================
 -- 3b. Picker (Shift 变体)
 -- 列出 raw.choices 所有项及当前运行状态
@@ -528,7 +458,7 @@ function M.pick(raw)
 	end
 
 	local ctx = get_ctx()
-	local reg = load_registry()
+	local reg = registry.refresh()
 	local items = {}
 	for _, c in ipairs(raw.choices) do
 		local disabled = claude_dir_missing(c)
@@ -555,7 +485,7 @@ function M.pick(raw)
 		elseif exited then
 			marker = "✖ " -- 已退出，选中时会清理后重启
 		elseif is_claude_alive and term and term.claude then
-			local g = fclaude.STATUS_GLYPHS[term.claude.status or "idle"] or fclaude.STATUS_GLYPHS.idle
+			local g = claude.STATUS_GLYPHS[term.claude.status or "idle"] or claude.STATUS_GLYPHS.idle
 			marker = g.icon .. " " -- 后台 Claude：用 status glyph 单独表示
 		elseif buf_alive then
 			marker = "○ " -- 后台运行（非 Claude）
@@ -564,7 +494,6 @@ function M.pick(raw)
 		else
 			marker = "- " -- 未启动
 		end
-		local status_icon = ""
 		if orphan then
 			name_suffix = (" (%s 未正常关闭)"):format(os.date("%H:%M", reg[id].ts))
 		elseif disabled then
@@ -575,7 +504,7 @@ function M.pick(raw)
 			choice = c,
 			visible = visible,
 			disabled = disabled,
-			label = ("%s%s%s%s"):format(marker, status_icon, c.name, name_suffix),
+			label = ("%s%s%s"):format(marker, c.name, name_suffix),
 		})
 	end
 
@@ -599,59 +528,30 @@ function M.pick(raw)
 end
 
 -- =============================================================================
--- 4. 自动化与按键绑定
+-- 4. 事件处理（由 apps.floatty.setup() 挂到 autocmd 上）
 -- =============================================================================
-vim.api.nvim_create_autocmd("VimResized", {
-	callback = function()
-		local t = state.terms[state.last_id]
-		if t and t.win and vim.api.nvim_win_is_valid(t.win) then
-			vim.api.nvim_win_set_config(t.win, get_win_opts(t.cfg))
-			if t.claude then
-				refresh_claude_title(t)
-			end
+function M.on_resized()
+	local t = state.terms[state.last_id]
+	if t and t.win and vim.api.nvim_win_is_valid(t.win) then
+		vim.api.nvim_win_set_config(t.win, get_win_opts(t.cfg))
+		if t.claude then
+			refresh_claude_title(t)
 		end
-	end,
-})
-
--- 处理 :close、<C-w>c 等外部关窗：窗口消失后仍保留终端，按配置启动 idle TTL。
-vim.api.nvim_create_autocmd("WinClosed", {
-	desc = "Start float terminal idle timeout",
-	callback = function(ev)
-		local win = tonumber(ev.match)
-		for id, term in pairs(state.terms) do
-			if term.win == win then
-				term.win = nil
-				if state.last_id == id then
-					state.last_id = nil
-				end
-				schedule_idle_close(id, term)
-				break
-			end
-		end
-	end,
-})
-
-for _, x in ipairs(APPS) do
-	local function toggle()
-		M.toggle(x)
-	end
-	map("nvi", x.key, toggle, x.name)
-	require("utils.map").map_terminal_action(x.key, toggle, x.name)
-	-- 菜单型再绑一个变体用于 picker（可由 pick_key 显式指定，否则用 Shift 变体）
-	if x.choices then
-		local pick_key = x.pick_key or x.key:gsub("<D%-(%a)>", "<D-S-%1>")
-		local function pick()
-			M.pick(x)
-		end
-		map("nvi", pick_key, pick, x.name .. " picker")
-		require("utils.map").map_terminal_action(pick_key, pick, x.name .. " picker")
 	end
 end
 
-vim.api.nvim_create_autocmd("TermOpen", {
-	callback = function()
-		vim.wo.wrap = true
-	end,
-})
+--- 处理 :close、<C-w>c 等外部关窗：窗口消失后仍保留终端，按配置启动 idle TTL。
+function M.on_win_closed(win)
+	for id, term in pairs(state.terms) do
+		if term.win == win then
+			term.win = nil
+			if state.last_id == id then
+				state.last_id = nil
+			end
+			schedule_idle_close(id, term)
+			break
+		end
+	end
+end
 
 return M

@@ -134,7 +134,7 @@ function M.open(path)
 	vim.cmd.tabonly()
 	vim.cmd.only()
 	vim.cmd.tcd({ args = { path } })
-	M.record(path)
+	M.enter(path) -- tcd 通常已经触发 DirChanged 计数；这里兜底，enter 自带去重
 
 	-- 文件名先统一小写，兼容 README.md / Readme.MD / claude.md 等写法。
 	local root_files = {}
@@ -189,22 +189,35 @@ local function preview_cmd(path)
 	end
 end
 
--- "[Process exited N]" 其实是 nvim 内置的 nested TermClose 自动命令用 extmark（虚拟文本）
--- 叠加上去的（namespace: nvim.terminal.exitmsg），不是真实 buffer 内容，直接清掉这个 namespace 即可
-local exitmsg_ns = vim.api.nvim_create_namespace("nvim.terminal.exitmsg")
-vim.api.nvim_create_autocmd("TermClose", {
-	nested = true, -- 必须晚于内置的那个自动命令执行，等它把 extmark 打上去之后再清
-	callback = function(args)
-		if not vim.b[args.buf].recent_repos_preview then
-			return
-		end
-		vim.schedule(function()
-			if vim.api.nvim_buf_is_valid(args.buf) then
-				vim.api.nvim_buf_clear_namespace(args.buf, exitmsg_ns, 0, -1)
+-- 进入一个 git 仓库根目录（cwd 变化 / 切 tab / 启动）才算访问；
+-- cwd 不是 git 根时清空 active_repo，之后回到仓库会重新计数。
+local function track_cwd()
+	local cwd = vim.fn.getcwd()
+	M.enter(vim.fs.root(cwd, ".git") == cwd and cwd or nil)
+end
+
+function M.setup()
+	local group = vim.api.nvim_create_augroup("apps.recent_repos", { clear = true })
+	vim.api.nvim_create_autocmd({ "VimEnter", "DirChanged", "TabEnter" }, { group = group, callback = track_cwd })
+
+	-- "[Process exited N]" 其实是 nvim 内置的 nested TermClose 自动命令用 extmark（虚拟文本）
+	-- 叠加上去的（namespace: nvim.terminal.exitmsg），不是真实 buffer 内容，直接清掉这个 namespace 即可
+	local exitmsg_ns = vim.api.nvim_create_namespace("nvim.terminal.exitmsg")
+	vim.api.nvim_create_autocmd("TermClose", {
+		group = group,
+		nested = true, -- 必须晚于内置的那个自动命令执行，等它把 extmark 打上去之后再清
+		callback = function(args)
+			if not vim.b[args.buf].recent_repos_preview then
+				return
 			end
-		end)
-	end,
-})
+			vim.schedule(function()
+				if vim.api.nvim_buf_is_valid(args.buf) then
+					vim.api.nvim_buf_clear_namespace(args.buf, exitmsg_ns, 0, -1)
+				end
+			end)
+		end,
+	})
+end
 
 function M.picker(opts)
 	opts = opts or {}

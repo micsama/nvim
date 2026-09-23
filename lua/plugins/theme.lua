@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/component/theme.lua
+-- ~/.config/nvim/lua/plugins/theme.lua
 require("catppuccin").setup({
 	flavour = "mocha",
 	highlight_overrides = {

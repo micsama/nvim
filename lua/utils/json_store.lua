@@ -1,7 +1,7 @@
 -- ~/.config/nvim/lua/utils/json_store.lua
 -- 小型 JSON 文件读写：安全读（失败给默认值）+ 安全写（编码失败不落盘）。
--- 消费者：apps/floatty（会话注册表）、apps/recent_repos（frecency 记录）、
---         utils/floatty_claude（读 sessions json，只读、默认 nil）。
+-- 消费者：apps/floatty/registry（会话注册表）、apps/recent_repos（frecency 记录）、
+--         apps/floatty/claude（读 sessions json，只读、默认 nil）。
 -- 语义：文件缺失 / 内容空 / 解析失败 / 结果非 table 一律回落到 default，
 --       这些都是"首次运行 / 文件尚未生成"的正常情况，不做 Fail Fast。
 local M = {}

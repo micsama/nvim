@@ -19,19 +19,10 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		-- 缓存：每个 buffer 只计算一次
 		local root = vim.b[ctx.buf].project_root
 		if root == nil then
-			local git_root = vim.fs.root(ctx.buf, ".git")
-			if git_root then
-				root = git_root
-				vim.b[ctx.buf].project_is_git = true
-			else
-				local root_markers =
-					{ "pyproject.toml", ".luarc.json", "Makefile", "Cargo.toml", "package.json", "go.mod" }
-				root = vim.fs.root(ctx.buf, root_markers) or false
-			end
+			local root_markers = { "pyproject.toml", ".luarc.json", "Makefile", "Cargo.toml", "package.json", "go.mod" }
+			root = vim.fs.root(ctx.buf, ".git") or vim.fs.root(ctx.buf, root_markers) or false
 			vim.b[ctx.buf].project_root = root
 		end
-
-		require("apps.recent_repos").enter(root and vim.b[ctx.buf].project_is_git and root or nil)
 
 		if root and root ~= "." and root ~= vim.fn.getcwd() then
 			vim.cmd.tcd(root)
@@ -59,8 +50,11 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.api.nvim_create_autocmd("TermOpen", {
 	group = custom_group,
 	pattern = "term://*",
-	command = "startinsert",
-	desc = "Automatically enter insert mode when opening terminal",
+	callback = function()
+		vim.wo.wrap = true
+		vim.cmd.startinsert()
+	end,
+	desc = "Terminal: wrap long lines and enter insert mode",
 })
 
 -- 配置修改后重启 Neovim，避免 source 与 require 缓存造成部分重载。

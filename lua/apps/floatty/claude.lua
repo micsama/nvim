@@ -1,11 +1,11 @@
 -- =============================================================================
--- floatty_claude — 把 Claude Code 的 sessions/<pid>.json 元数据映射给浮窗 UI
+-- apps.floatty.claude — 把 Claude Code 的 sessions/<pid>.json 元数据映射给浮窗 UI
 -- =============================================================================
 -- 主要职责：
 --   * 生成 UUID & 拼装 `claude --session-id ... -n ...` 启动命令
 --   * 在 ~/.claude*/sessions/ 里轮询找到自己的 JSON，然后改用 fs_event 监听
 --   * 一旦 .name / .status 发生变化，触发上层注册的 on_change 回调
--- 不负责实际改窗口标题 —— 那是调用方（floatty.lua / statusline）的工作。
+-- 不负责实际改窗口标题 —— 那是调用方（controller / statusline_segment）的工作。
 -- =============================================================================
 
 local M = {}

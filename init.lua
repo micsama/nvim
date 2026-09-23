@@ -8,8 +8,11 @@ vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 require("config.base") -- 加载基础 Vim/Neovim 选项配置
 require("config.keymaps") -- 加载全局键盘快捷键映射
 require("config.autocmds") -- 纯内置自动命令
-require("apps.floatty") -- 浮窗控制
-require("apps.proctop").setup() -- 进程监控 (<D-p> / :ProcTop)
+-- 自制独立功能：require 时无副作用，keymap / 命令 / augroup 都在各自的 setup() 里
+-- floatty 浮窗终端 · proctop 进程监控 · zoom 窗口放大 · recent_repos 最近仓库
+for _, app in ipairs({ "floatty", "proctop", "zoom", "recent_repos" }) do
+	require("apps." .. app).setup()
+end
 
 -- 2. GUI 客户端特定配置
 if vim.g.neovide then
@@ -79,7 +82,7 @@ vim.pack.add({
     "https://github.com/MeanderingProgrammer/render-markdown.nvim",  -- Markdown 实时渲染/预览
 }, { load = function() end })
 -- stylua: ignore end
-require("component.theme") -- 主题（须在 plugins.ui 之前加载，notify 等插件的高亮依赖当前 colorscheme）
+require("plugins.theme") -- 主题（须在 plugins.ui 之前加载，notify 等插件的高亮依赖当前 colorscheme）
 require("plugins.editor") -- 编辑器增强功能
 require("plugins.ui") -- 用户界面和外观
 require("plugins.telescope") -- 搜索与项目导航（按需加载）

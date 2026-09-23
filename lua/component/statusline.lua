@@ -6,8 +6,7 @@ local diag_icons = utils.icons.diag
 local data = require("component.stldata")
 local util = require("component.util")
 local esc_stl = util.escape
-local fl = require("apps.floatty")
-local fclaude = require("utils.floatty_claude")
+local floatty = require("apps.floatty")
 
 local R_ROUND = ""
 local L_ROUND = ""
@@ -30,12 +29,6 @@ local mode_group_map = {
 local function current_mode_group()
 	local mode = api.nvim_get_mode().mode
 	return mode_group_map[mode] or mode_group_map[mode:sub(1, 1)] or "StatusLineNormal"
-end
-
--- Comment 默认斜体，孤儿角标只想要灰色不想要斜体，单独开一个不带 italic 的组
-local function build_orphan_hl()
-	local comment = utils.hl("Comment")
-	api.nvim_set_hl(0, "StlOrphan", { fg = comment.fg, italic = false })
 end
 
 local function build_inactive_capsule_hl()
@@ -213,31 +206,6 @@ function C.lsp_progress(buf)
 	return string.format(" %%#Comment#%s %%#Function#%s %s", esc_stl(msg), spinner_frames[spinner_idx], bar)
 end
 
-function C.menu_alive()
-	local items = fl.active_menu_indices()
-	local orphan_idx = fl.orphan_menu_indices()
-	if #items == 0 and #orphan_idx == 0 then
-		return ""
-	end
-	local s = ""
-	if #items > 0 then
-		local parts = {}
-		for _, it in ipairs(items) do
-			if it.status then
-				local g = fclaude.STATUS_GLYPHS[it.status] or fclaude.STATUS_GLYPHS.idle
-				parts[#parts + 1] = string.format("%%#%s#%d%s", g.hl, it.idx, g.icon)
-			else
-				parts[#parts + 1] = string.format("%%#Function#%d", it.idx)
-			end
-		end
-		s = s .. string.format(" %%#Function#󰚩 [%s%%#Function#]", table.concat(parts, "%#Comment#,"))
-	end
-	if #orphan_idx > 0 then
-		s = s .. string.format(" %%#StlOrphan#󰊠 [%s]", table.concat(orphan_idx, ","))
-	end
-	return s
-end
-
 function C.ruler(buf, win, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
 	local row = api.nvim_win_get_cursor(win)[1]
@@ -270,7 +238,7 @@ function M.render()
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
-		C.menu_alive(),
+		floatty.statusline_segment(),
 		C.lsp_progress(buf),
 		C.ruler(buf, win, mode_hl),
 	})
@@ -306,7 +274,6 @@ end
 
 function M.setup()
 	build_inactive_capsule_hl()
-	build_orphan_hl()
 	setup_profiler_cmd()
 	vim.o.laststatus = 2
 	vim.o.statusline = "%!v:lua.require('component.statusline').render()"
@@ -318,7 +285,6 @@ function M.setup()
 		callback = function()
 			capsule_hl_cache = {}
 			build_inactive_capsule_hl()
-			build_orphan_hl()
 		end,
 	})
 

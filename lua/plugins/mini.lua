@@ -150,10 +150,6 @@ hipatterns.setup({ -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
 	},
 })
 
-map("nti", "<D-f>", function()
-	require("apps.zoom").toggle()
-end, "放大当前窗口")
-
 vim.api.nvim_create_autocmd("InsertEnter", {
 	group = vim.api.nvim_create_augroup("DzmfgMiniSnippets", { clear = true }),
 	once = true,

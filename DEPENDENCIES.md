@@ -37,8 +37,7 @@ lua-language-server、stylua、ty、ruff、basedpyright、taplo、vtsls、biome�
 
 | 工具 | 用途 |
 |---|---|
-| **claude**（Claude Code CLI） | `<D-e>` AI 菜单主力，`lua/apps/floatty.lua` / `lua/utils/floatty_claude.lua` |
-| **uuidgen** | claude 会话 session-id 生成；缺失会 fail-fast 直接报错，务必安装 |
+| **claude**（Claude Code CLI） | `<D-e>` AI 菜单主力，`lua/apps/floatty/`（`claude.lua` 负责会话元数据） |
 | **lazygit** | `<D-i>` 浮窗 |
 | **codex** | AI 菜单里的 Codex 选项 |
 | **zsh** | AI 菜单唤起 shell 用 |

@@ -1,4 +1,4 @@
--- 两条栏共用的文本处理和重绘调度；不缓存整条渲染结果。
+-- 状态栏、标签栏与终端标题共用的文本处理和重绘调度；不缓存整条渲染结果。
 local M = {}
 
 function M.escape(text)
@@ -43,6 +43,24 @@ function M.redraw(status, tabs)
 			vim.cmd.redrawtabline()
 		end
 	end)
+end
+
+-- 标题的"文件部分"：终端 buffer 直接复用浮窗自己的窗口标题（floatty 设的那个），
+-- 普通终端回退到 term_title，其余显示相对路径。
+function M.titlestring_file()
+	if vim.bo.buftype == "terminal" then
+		local t = vim.api.nvim_win_get_config(0).title -- floatty 浮窗标题；普通窗口为 nil
+		if type(t) == "table" then
+			local parts = {}
+			for _, chunk in ipairs(t) do
+				parts[#parts + 1] = chunk[1]
+			end
+			return table.concat(parts)
+		end
+		return t or vim.b.term_title or "Terminal"
+	end
+	local path = vim.fn.expand("%:~:.")
+	return path ~= "" and path or "[No Name]"
 end
 
 return M

@@ -1,6 +1,6 @@
 # nvim
 
-个人 Neovim 配置，面向 **Neovim 0.12 Nightly**，追求轻量、可读、易维护。核心功能栈用 `mini.nvim` 拼起来，插件管理用 Neovim 原生的 `vim.pack.add`，不引入 lazy.nvim / packer 之类的外部管理器。
+个人 Neovim 配置，面向 **Neovim 0.13-dev Nightly**，追求轻量、可读、易维护。核心功能栈用 `mini.nvim` 拼起来，插件管理用 Neovim 原生的 `vim.pack.add`，不引入 lazy.nvim / packer 之类的外部管理器。
 
 最初的组织方式受 [theniceboy/nvim](https://github.com/theniceboy/nvim/tree/lua-migration) 启发。
 
@@ -8,7 +8,7 @@
 
 - **声明式插件列表**：所有插件在 `init.lua` 里用 `vim.pack.add()` 一次性列出，版本靠 `nvim-pack-lock.json` 锁定。
 - **模块化**：每个文件只负责一件事，按「核心配置 / 插件配置 / 自定义组件 / 独立小工具 / 横向工具」分层存放。
-- **启动性能优先**：LSP 和重插件放进 `config/deferred.lua`，在 `VimEnter` / `FileType` 时才加载。
+- **启动性能优先**：LSP 和重插件放进 `config/deferred.lua`，在 `VimEnter` / `FileType` 时才加载；telescope、codecompanion、markdown 插件只安装不加载，首次使用时再 `packadd`（见 `utils/lazy.lua`）。
 - **自己动手**：statusline、tabline、浮动终端（floatty）都是自研的，不依赖 lualine / toggleterm 等成熟插件。
 
 ## 目录结构
@@ -28,26 +28,30 @@ lua/
 ├── plugins/               # 插件的具体配置（插件已注册后加载）
 │   ├── mini.lua           #   mini.nvim 各模块：补全/文件树/git/图标/代码片段…
 │   ├── ui.lua             #   notify、which-key、原生 UI2
-│   ├── telescope.lua      #   搜索快捷键与最近仓库入口
+│   ├── telescope.lua      #   搜索快捷键与最近仓库入口（按需加载）
+│   ├── theme.lua          #   catppuccin 配色与高亮覆盖
 │   ├── editor.lua         #   treesitter、匹配、缩进高亮
 │   └── llm/               #   AI 工具：codecompanion（deepseek 适配器）
 ├── component/             # 自定义 UI 组件
 │   ├── statusline.lua     #   状态栏
 │   ├── tabline.lua        #   标签页栏
-│   ├── theme.lua          #   配色方案
 │   ├── stldata.lua        #   git/lsp/diagnostic → 状态栏用的纯数据
 │   ├── hl.lua             #   statusline/tabline 共用的高亮 & 文件图标辅助
 │   └── profiler.lua       #   statusline 耗时统计（:StlProf on/off）
-├── apps/                  # 自成一体、自带 keymap 的独立功能
-│   ├── floatty.lua           #   浮动终端/窗口管理器（终端/Lazygit/AI 聊天/Runner）
-│   ├── floatty_registry.lua  #   Floatty 会话注册表与磁盘缓存
-│   ├── proctop.lua           #   子进程 CPU/内存监视器 (<D-p> / :ProcTop)
-│   ├── recent_repos.lua      #   最近 Git 仓库 frecency 排序 + Telescope picker
-│   └── zoom.lua               #   窗口最大化/恢复
+├── apps/                  # 自成一体的独立功能；require 无副作用，统一由 init.lua 调 setup()
+│   ├── floatty/           #   浮动终端/窗口管理器（终端/Lazygit/AI 聊天/Runner）
+│   │   ├── init.lua       #     setup()（keymap/autocmd）、statusline_segment()
+│   │   ├── controller.lua #     终端生命周期：toggle / pick / idle 关闭
+│   │   ├── registry.lua   #     持久会话注册表（孤儿会话续接）
+│   │   ├── claude.lua     #     Claude Code 会话元数据 watcher
+│   │   └── pulse.lua      #     busy 时的呼吸边框
+│   ├── proctop.lua        #   子进程 CPU/内存监视器 (<D-p> / :ProcTop)
+│   ├── recent_repos.lua   #   最近 Git 仓库 frecency 排序 + Telescope picker
+│   └── zoom.lua           #   窗口最大化/恢复 (<D-f>)
 └── utils/                 # 被其他模块 require 的横向工具
     ├── map.lua            #   键位映射封装（macOS <D-key>、全角标点转换）
-    ├── floatty_claude.lua #   floatty 的 Claude 会话元数据 watcher
-    └── json_store.lua     #   小型 JSON 文件安全读写
+    ├── lazy.lua           #   按需加载：once() / on_cmd() 命令 stub
+    └── json_store.lua     #   小型 JSON 文件安全读写（原子写入）
 
 lsp/          # 每个 LSP 一个文件，由 config/lsp.lua 统一 enable
 ftplugin/     # 按文件类型加载的设置
@@ -60,11 +64,15 @@ snippets/     # mini.snippets 用的 JSON 代码片段
 
 ```lua
 vim.pack.add({
-  { src = "https://github.com/...", tag = "v0.2.0" },  -- 锁定版本
-  { src = "https://github.com/...", build = "make" },  -- 需要构建步骤
-  "https://github.com/...",                            -- 无需构建，简单 URL
+  { src = "https://github.com/...", version = "v0.2.0" },  -- 锁定版本（spec 只认 src/name/version/data）
+  "https://github.com/...",                                -- 简单 URL
 })
+
+-- 只安装不加载（注意 load = false 等同 :packadd!，启动时仍会 source plugin/）
+vim.pack.add({ "https://github.com/..." }, { load = function() end })
 ```
+
+构建步骤（`make`、`:TSUpdate`）写在 `init.lua` 的 `pack_builds` 表里，由 `PackChanged` 钩子在安装/更新时执行。
 
 `nvim-pack-lock.json` 记录实际锁定的 commit，跨机器同步时以它为准；改动插件版本时记得同步更新。
 
@@ -72,13 +80,14 @@ vim.pack.add({
 
 | 分类 | 插件 |
 |---|---|
-| 基础库 | `mini.nvim`、plenary.nvim、sqlite.lua、nui.nvim |
+| 基础库 | `mini.nvim`、plenary.nvim、sqlite.lua |
 | UI/外观 | catppuccin、which-key.nvim、nvim-notify |
 | 搜索 | telescope.nvim + telescope-fzf-native.nvim |
 | 语法 | nvim-treesitter、nvim-treesitter-context、nvim-ts-autotag |
 | 编辑增强 | wildfire.nvim、hlchunk.nvim、undotree、nvim-neoclip.lua |
-| AI | codecompanion.nvim |
-| 语言工具安装 | mason.nvim |
+| AI | codecompanion.nvim（按需加载） |
+| 语言工具安装 | mason.nvim（首次 `:Mason*` 时 setup） |
+| Markdown | render-markdown.nvim、bullets.nvim（首个 markdown buffer 时加载） |
 | 性能 | faster.nvim（大文件优化） |
 
 > DAP 遗留配置已移除；Mason 和 CodeCompanion 保留。
@@ -103,17 +112,18 @@ Leader 是 `<space>`（`vim.g.mapleader`），完整定义看 `lua/config/keymap
 |---|---|
 | `<D-g>` | Floatty：浮动终端 |
 | `<D-i>` | Floatty：Lazygit |
-| `<D-e>` | Floatty：AI 聊天 / Shell 菜单（Claude / Codex / Gemini） |
+| `<D-e>` | Floatty：AI 聊天 / Shell 菜单（Codex / Claude / Shell），`<M-e>` 打开选择器 |
 | `<D-r>` | Floatty：Runner，按文件类型自动执行（`RUNNERS` 表：python → `uv run`、rust → `cargo run`…） |
 | `<D-b>` | 打开侧边文件树（mini.files） |
 | `<D-o>` | CodeCompanion AI 聊天 |
 | `<D-p>` | ProcTop 子进程监视器 |
+| `<D-f>` | 放大/恢复当前窗口 |
 | `<leader>h` / `<leader>rn` / `<leader>,` | LSP：悬浮提示 / 重命名 / 代码操作 |
 | `<D-S-f>` | 格式化当前文件 |
 
 ## 依赖
 
-- **Neovim 0.12 Nightly 及以上**（依赖原生 `vim.pack.add`）
+- **Neovim 0.13-dev Nightly**（依赖原生 `vim.pack`、`vim._core.ui2` 等）
 - 主力在 macOS 上开发，默认 shell 为 nu (Nushell)
 - 完整的外部命令行工具清单（按必需/推荐/可选分级，含跨平台迁移注意事项）见 **[DEPENDENCIES.md](./DEPENDENCIES.md)**
 
@@ -142,10 +152,12 @@ nvim
 | 新语言 LSP | 新建 `lsp/<name>.lua` → `config/lsp.lua` 里 `vim.lsp.enable()` 加进去 → 按需在 `ftplugin/` 补充 |
 | 状态栏 / 标签栏 | `lua/component/statusline.lua` / `tabline.lua` |
 | Floatty 应用 / 快捷键 / Runner / 窗口 / 动画 | `lua/config/floatty.lua` |
-| Floatty 终端生命周期 | `lua/apps/floatty.lua` |
-| Floatty 会话注册表和缓存 | `lua/apps/floatty_registry.lua` |
+| Floatty 终端生命周期 | `lua/apps/floatty/controller.lua` |
+| Floatty 快捷键注册 / 状态栏片段 | `lua/apps/floatty/init.lua` |
+| Floatty 会话注册表和缓存 | `lua/apps/floatty/registry.lua` |
+| 新增独立小工具 | `lua/apps/<name>.lua` 导出 `setup()` → 加进 `init.lua` 的 apps 列表 |
 
-修改后 `:source $MYVIMRC` 或重启 Neovim 验证；插件相关改动建议完全重启。出问题看 `:messages` 或 `:checkhealth`。
+修改后重启 Neovim 验证（不做部分 source 重载）。出问题看 `:messages` 或 `:checkhealth`。
 
 ## 参考
 
