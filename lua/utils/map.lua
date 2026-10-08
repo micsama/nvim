@@ -37,7 +37,28 @@ local FULLWIDTH_TO_HALFWIDTH_MAP = {
 }
 -- stylua: ignore end
 
+-- 终端里的 TUI（Claude Code 等）会隐藏真实光标、自绘输入框，读不到屏幕上的前一个字符，
+-- 所以 t 模式改用自己记录的最后一次输入：nil 表示未知（特殊键、刚进入终端模式等）。
+local term_last_char
+
+local function smart_zh_period_term()
+	local prev = term_last_char
+	if prev == "." then
+		term_last_char = "。"
+		return "<BS>。"
+	end
+	if prev and prev:match("%d") then
+		term_last_char = "."
+		return "."
+	end
+	term_last_char = "。"
+	return "。"
+end
+
 local function smart_zh_period()
+	if vim.api.nvim_get_mode().mode == "t" then
+		return smart_zh_period_term()
+	end
 	local line = vim.api.nvim_get_current_line()
 	local col = vim.api.nvim_win_get_cursor(0)[2]
 	if col <= 0 then
@@ -126,6 +147,26 @@ function M.map_smart_zh_period()
 		expr = true,
 		silent = true,
 	})
+
+	vim.api.nvim_create_autocmd("TermEnter", {
+		group = vim.api.nvim_create_augroup("utils.map.zh_period", { clear = true }),
+		callback = function()
+			term_last_char = nil
+		end,
+	})
+	vim.on_key(function(_, typed)
+		-- typed 为空的是映射/feedkeys 产生的键；。 自己在映射里更新状态。
+		if typed == "" or typed == "。" or vim.api.nvim_get_mode().mode ~= "t" then
+			return
+		end
+		-- 特殊键（<BS>、方向键等以 0x80 开头）和控制字符都让状态失效。
+		-- 注意 0x80 也是 UTF-8 续字节，只能看首字节，不能整串搜。
+		if typed:byte(1) == 0x80 or typed:find("[%z\1-\31\127]") then
+			term_last_char = nil
+		else
+			term_last_char = vim.fn.strcharpart(typed, vim.fn.strchars(typed) - 1)
+		end
+	end, vim.api.nvim_create_namespace("utils.map.zh_period"))
 end
 
 return M
