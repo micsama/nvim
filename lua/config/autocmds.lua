@@ -10,6 +10,7 @@ local custom_group = "CustomSetupGroup"
 -- 优先找 .git（worktree/submodule 里 .git 是文件，同样命中），回退到其他项目标记；结果按 buffer 缓存
 vim.api.nvim_create_autocmd("BufEnter", {
 	group = custom_group,
+	nested = true, -- 让 tcd 触发 DirChanged（apps.recent_repos 靠它记录访问）
 	callback = function(ctx)
 		local name = vim.api.nvim_buf_get_name(ctx.buf)
 		if vim.bo[ctx.buf].buftype ~= "" or name == "" then
