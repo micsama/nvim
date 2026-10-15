@@ -168,8 +168,20 @@ function M.open(path)
 	end
 end
 
+-- 预览头部：当前分支 + 最近 5 条提交，之后 exec 目录列表命令（"$@"）
+local git_header_script = [[
+cd "$1" 2>/dev/null || exit 1
+shift
+branch=$(git branch --show-current 2>/dev/null)
+[ -z "$branch" ] && branch="(detached) $(git rev-parse --short HEAD 2>/dev/null)"
+printf '\033[1;35m\356\202\240 %s\033[0m\n' "$branch"
+git --no-pager log -n 5 --color=always --format='%C(yellow)%h%C(reset) %s %C(dim)(%cr)%C(reset)' 2>/dev/null
+echo
+exec "$@"
+]]
+
 -- 目录预览：优先用 eza（图标 + 颜色），否则退回 ls；只看一层，不递归子目录
-local function preview_cmd(path)
+local function list_cmd(path)
 	if vim.fn.executable("eza") == 1 then
 		return {
 			"eza",
@@ -187,6 +199,14 @@ local function preview_cmd(path)
 	elseif vim.fn.executable("ls") == 1 then
 		return { "ls", "-1p", path }
 	end
+end
+
+local function preview_cmd(path)
+	local cmd = list_cmd(path)
+	if not cmd or vim.fn.executable("git") ~= 1 then
+		return cmd
+	end
+	return { "sh", "-c", git_header_script, "sh", path, unpack(cmd) }
 end
 
 -- 进入一个 git 仓库根目录（cwd 变化 / 切 tab / 启动）才算访问；
@@ -262,6 +282,17 @@ function M.picker(opts)
 			return preview_cmd(entry.value.path)
 		end,
 	})
+
+	-- 标题显示目录名，有别名时追加 [别名]。dyn_title 要全局开 dynamic_preview_title 才生效，
+	-- 这里直接覆盖本 previewer 的 title，不影响其他 picker
+	function tree_previewer:title(entry)
+		if not entry then
+			return "目录预览"
+		end
+		local e = entry.value
+		local name = vim.fs.basename(e.path)
+		return e.alias and ("%s  [%s]"):format(name, e.alias) or name
+	end
 
 	pickers
 		.new(opts, {
