@@ -175,7 +175,7 @@ shift
 branch=$(git branch --show-current 2>/dev/null)
 [ -z "$branch" ] && branch="(detached) $(git rev-parse --short HEAD 2>/dev/null)"
 printf '\033[1;35m\356\202\240 %s\033[0m\n' "$branch"
-git --no-pager log -n 5 --color=always --format='%C(yellow)%h%C(reset) %s %C(dim)(%cr)%C(reset)' 2>/dev/null
+git --no-pager log -n 5 --color=always --format='%C(dim)•%C(reset) %s' 2>/dev/null
 echo
 exec "$@"
 ]]
