@@ -32,6 +32,7 @@ local function load()
 			and e.last >= 0
 			and e.last <= os.time()
 			and (e.alias == nil or type(e.alias) == "string")
+			and (e.pin == nil or e.pin == 1 or e.pin == -1)
 		then
 			result[#result + 1] = e
 		end
@@ -97,21 +98,31 @@ function M.enter(path)
 	end
 end
 
-function M.set_alias(path, alias)
+local function update(path, fn)
 	local data = load()
 	for _, e in ipairs(data) do
 		if e.path == path then
-			alias = vim.trim(alias)
-			e.alias = alias ~= "" and alias or nil
+			fn(e)
 			break
 		end
 	end
 	save(data)
 end
 
+function M.set_alias(path, alias)
+	alias = vim.trim(alias)
+	update(path, function(e)
+		e.alias = alias ~= "" and alias or nil
+	end)
+end
+
 local function sorted_entries()
 	local data, now = load(), os.time()
 	table.sort(data, function(a, b)
+		-- pin：1 置顶 / -1 沉底。不能并进 score()：record() 会把 score 写回 weighted_count
+		if (a.pin or 0) ~= (b.pin or 0) then
+			return (a.pin or 0) > (b.pin or 0)
+		end
 		local sa, sb = score(a, now), score(b, now)
 		if sa ~= sb then
 			return sa > sb
@@ -260,13 +271,15 @@ function M.picker(opts)
 		return finders.new_table({
 			results = sorted_entries(),
 			entry_maker = function(e)
-				local tag = e.alias and { "[" .. e.alias .. "]", alias_hl } or { "[]" }
+				local dim = e.pin == -1 and "Comment" or nil
+				local tag = (e.pin == 1 and "📌[" or "[") .. (e.alias or "") .. "]"
+				local path = vim.fn.fnamemodify(e.path, ":~")
 				return {
 					value = e,
 					path = e.path,
 					ordinal = (e.alias or "") .. " " .. e.path,
 					display = function()
-						return displayer({ tag, vim.fn.fnamemodify(e.path, ":~") })
+						return displayer({ { tag, dim or e.alias and alias_hl }, { path, dim } })
 					end,
 				}
 			end,
@@ -310,34 +323,46 @@ function M.picker(opts)
 					M.open(selection.value.path)
 				end)
 
+				local function refresh()
+					action_state.get_current_picker(prompt_bufnr):refresh(make_finder(), { reset_prompt = false })
+				end
+				local function on_selected(key, fn)
+					map({ "n", "i" }, key, function()
+						local selection = action_state.get_selected_entry()
+						if selection then
+							fn(selection.value)
+						end
+					end)
+				end
+
 				-- 仅移除历史记录，不操作磁盘目录。
-				map({ "n", "i" }, "<C-d>", function()
-					local selected = action_state.get_selected_entry()
-					if not selected then
-						return
-					end
-					local data = vim.tbl_filter(function(e)
-						return e.path ~= selected.value.path
-					end, load())
-					save(data)
-					if active_repo == selected.value.path then
+				on_selected("<C-d>", function(e)
+					save(vim.tbl_filter(function(x)
+						return x.path ~= e.path
+					end, load()))
+					if active_repo == e.path then
 						active_repo = nil
 					end
-					action_state.get_current_picker(prompt_bufnr):refresh(make_finder(), { reset_prompt = false })
+					refresh()
 				end)
 
-				map({ "n", "i" }, "<C-r>", function()
-					local selection = action_state.get_selected_entry()
-					if not selection then
-						return
-					end
-					local current_picker = action_state.get_current_picker(prompt_bufnr)
-					vim.ui.input({ prompt = "别名: ", default = selection.value.alias or "" }, function(input)
-						if input == nil then
-							return
+				-- 置顶/沉底，再按一次取消；只在输入框为空时体现，输入后按模糊匹配度排序
+				for key, pin in pairs({ ["<C-t>"] = 1, ["<C-b>"] = -1 }) do
+					on_selected(key, function(e)
+						update(e.path, function(x)
+							x.pin = x.pin ~= pin and pin or nil
+						end)
+						refresh()
+					end)
+				end
+
+				-- 不用 <C-r>：telescope 有 <C-r><C-w> 等组合键，单按会等 timeoutlen
+				on_selected("<C-e>", function(e)
+					vim.ui.input({ prompt = "别名: ", default = e.alias or "" }, function(input)
+						if input then
+							M.set_alias(e.path, input)
+							refresh()
 						end
-						M.set_alias(selection.value.path, input)
-						current_picker:refresh(make_finder(), { reset_prompt = false })
 					end)
 				end)
 
