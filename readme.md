@@ -168,6 +168,7 @@ nvim
 
 - Floatty 的常改参数集中在 `lua/config/floatty.lua`，保持原有应用顺序与快捷键。`apps` 配置会复制后使用，运行状态不会写回配置表。
 - 应用可设置 `key`、`pick_key`、`cmd`、`shell`、`w`、`h`、`idle_ttl_ms`；AI 菜单通过 `choices` 配置，Claude 配置目录使用 `claude.dir`。
+- Google 连通性每 10 秒在后台通过 `https_proxy` / `HTTPS_PROXY` 探测一次；周期在 `lua/config/floatty.lua` 的 `network.interval_ms` 中调整（如 `5000`）。statusline 显示 `Google ✓`（正常）、`Google ×`（失败）、`Google …`（等待首次结果）。失败时 notify，同一故障期间不重复提醒；请求不重叠，退出时停止。打开 Claude / Shell 不再等待或触发探测。此检查不判断出口国家。
 - 全局窗口默认值在 `window`，呼吸边框在 `pulse`（`enabled`、`period_s`、`interval_ms`），成功退出关窗延迟为 `autoclose_ms`。
 - 状态栏读取缓存；注册表在启动、会话操作、焦点恢复和目录变化时刷新。仍沿用共享 JSON 和最近会话恢复机制，多实例事务与精确会话恢复尚未改动。
 - 修改配置后重启 Neovim，不再保存 `init.lua` / `base.lua` 时自动部分重载。临时 `⌘N` 状态栏调试键已移除；`:StlProf on`、`:StlProf`、`:StlProf off` 保留。
