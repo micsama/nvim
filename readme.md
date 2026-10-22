@@ -169,6 +169,8 @@ nvim
 - Floatty 的常改参数集中在 `lua/config/floatty.lua`，保持原有应用顺序与快捷键。`apps` 配置会复制后使用，运行状态不会写回配置表。
 - 应用可设置 `key`、`pick_key`、`cmd`、`shell`、`w`、`h`、`idle_ttl_ms`；AI 菜单通过 `choices` 配置，Claude 配置目录使用 `claude.dir`。
 - 网络状态通过 `https_proxy` / `HTTPS_PROXY` 请求单个国外接口 `https://speed.cloudflare.com/cdn-cgi/trace`，同时检查连通性并读取出口地区，不再请求 Google。后台周期 10 秒，连接超时 10 秒、总超时 30 秒；请求未完成时不重叠发起。配置位于 `lua/config/floatty.lua` 的 `network`。状态栏展示地区旗帜及代码：澳大利亚绿色、其他地区或地区未知黄色；失败红色，显示失败原因和持续离线时长（每秒更新，恢复后清零）。首次失败 notify，同一故障期间不重复提醒。PAC 下地区代表该诊断域名的出口；打开浮窗不等待探测。通知窗口层级设为 300，位于 Floatty 上方。
+- 相同代理及探测配置的多个 Neovim 共享网络结果：只有一个实例运行 curl，使用内核文件锁选出探测者；退出或崩溃后其他实例自动接替。不同代理配置单独探测。ProcTop 中正在运行的探测仍标为“网络探测”，退出后不归档，其他任务的 curl 不受影响。共享锁使用 macOS / Linux 的 flock。
+- Floatty 的 Codex / Claude 通过官方回调写入本机事件文件，当前聚焦的 Neovim 使用 notify 提醒“本轮结束 / 等待授权”；后台事件在重新聚焦时汇总。同一浮窗的完成事件静默，授权事件始终提醒。配置位于 `notifications`。Codex 首次需在 `/hooks` 信任新增的 PermissionRequest / PostToolUse hook；Claude 授权提醒使用 `permission_prompt`，实际等待约 6 秒才触发，也覆盖网络授权。仅影响重启后新启动的 Floatty 会话，不修改全局 CLI 配置。详见 [通知设计](docs/design/floatty-task-notifications.md)。
 - 全局窗口默认值在 `window`，呼吸边框在 `pulse`（`enabled`、`period_s`、`interval_ms`），成功退出关窗延迟为 `autoclose_ms`。
 - 状态栏读取缓存；注册表在启动、会话操作、焦点恢复和目录变化时刷新。仍沿用共享 JSON 和最近会话恢复机制，多实例事务与精确会话恢复尚未改动。
 - 修改配置后重启 Neovim，不再保存 `init.lua` / `base.lua` 时自动部分重载。临时 `⌘N` 状态栏调试键已移除；`:StlProf on`、`:StlProf`、`:StlProf off` 保留。

@@ -49,6 +49,10 @@ function M.setup()
 	local map = require("utils.map")
 	local group = vim.api.nvim_create_augroup("apps.floatty", { clear = true })
 	network.setup(group)
+	require("apps.floatty.notifications").setup(group, function()
+		local context = controller.window_context(vim.api.nvim_get_current_win())
+		return context and context.notification_id
+	end)
 
 	set_hl()
 	vim.api.nvim_create_autocmd("ColorScheme", { group = group, callback = set_hl })

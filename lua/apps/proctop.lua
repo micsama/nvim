@@ -15,6 +15,7 @@
 local map = require("utils.map").map
 
 local M = {}
+local network = require('apps.floatty.network')
 
 local BAR_WIDTH = 12
 local NS = vim.api.nvim_create_namespace('proctop')
@@ -169,7 +170,8 @@ local function collect_rows()
 
   local seen_pids = {}
   for _, row in ipairs(rows) do
-    row.label = labels[row.pid]
+    row.transient = row.pid == network.probe_pid
+    row.label = labels[row.pid] or (row.transient and "网络探测" or nil)
     row.live_cpu_pct = compute_live_cpu_pct(row, now_ms)
     seen_pids[row.pid] = true
     state.dead_rows[row.pid] = nil -- pid 复活了（或者被系统回收复用），不算"挂了"
@@ -183,7 +185,7 @@ local function collect_rows()
   -- 上一轮渲染过的全量行（活的+死的）里，这次 ps 查不到、又还没标记过的，
   -- 就是"刚挂"的：标记 dead=true，一直留着（子进程本来就不多，不做过期清理）
   for _, row in ipairs(state.prev_all_rows or {}) do
-    if not seen_pids[row.pid] and not state.dead_rows[row.pid] then
+    if not seen_pids[row.pid] and not row.transient and not state.dead_rows[row.pid] then
       row.dead = true
       state.dead_rows[row.pid] = row
     end

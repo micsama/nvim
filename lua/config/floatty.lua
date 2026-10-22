@@ -51,5 +51,6 @@ return {
 		timeout_s = 30,
 		url = "https://speed.cloudflare.com/cdn-cgi/trace",
 	},
+	notifications = { enabled = true, poll_ms = 1000, timeout_ms = 5000, retention_s = 86400 },
 	pulse = { enabled = true, period_s = 4.8, interval_ms = 80 },
 }

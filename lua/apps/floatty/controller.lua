@@ -6,6 +6,7 @@ local M = {}
 local claude = require("apps.floatty.claude")
 local registry = require("apps.floatty.registry")
 local pulse = require("apps.floatty.pulse")
+local notifications = require("apps.floatty.notifications")
 
 -- =============================================================================
 -- 0. 全局状态中心
@@ -19,7 +20,7 @@ local state = { terms = {}, last_id = nil, ctx_cache = nil }
 function M.window_context(win)
 	for _, term in pairs(state.terms) do
 		if term.win == win and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
-			return { name = term.cfg.name, icon = term.cfg.icon or "" }
+			return { name = term.cfg.name, icon = term.cfg.icon or "", notification_id = term.notification_id }
 		end
 	end
 end
@@ -338,6 +339,7 @@ local function build_cmd(term, target_cfg, target_id, ctx)
 		cmd = registry.refresh()[target_id] ~= nil and "codex resume --last" or "codex"
 	end
 	cmd = cmd or target_cfg.cmd or vim.o.shell
+	cmd, term.notification_env = notifications.wrap(cmd, target_cfg, term, target_cfg.cwd or ctx.cwd)
 
 	if target_cfg.is_runner then
 		return ("sh -c %s"):format(vim.fn.shellescape(cmd .. '; printf "\\n✅ Done. Enter to close."; read -r'))
@@ -359,6 +361,7 @@ local function spawn_job(term, target_cfg, target_id, ctx)
 	vim.api.nvim_buf_call(spawned_buf, function()
 		vim.fn.jobstart(final_cmd, {
 			term = true,
+			env = term.notification_env,
 			cwd = target_cfg.cwd or ctx.cwd,
 			on_exit = function(_, code)
 				vim.schedule(function()
