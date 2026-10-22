@@ -18,6 +18,7 @@ local GIT_DELETE = "-"
 local capsule_hl_cache = {}
 
 local mode_group_map = {
+	t = "StatusLineTerminal",
 	i = "StatusLineInsert",
 	c = "StatusLineCmd",
 	R = "StatusLineReplace",
@@ -71,6 +72,32 @@ local function get_capsule_hl(mode_hl, is_active)
 end
 
 local C = {}
+
+function C.float_capsule(context, mode_hl)
+	local mode = api.nvim_get_mode().mode:sub(1, 1)
+	local names = {
+		t = "TERMINAL",
+		n = "NORMAL",
+		i = "INSERT",
+		c = "COMMAND",
+		R = "REPLACE",
+		v = "VISUAL",
+		V = "V-LINE",
+		["\22"] = "V-BLOCK",
+		s = "SELECT",
+		S = "SELECT",
+		["\19"] = "SELECT",
+	}
+	local hls = get_capsule_hl(mode_hl, true)
+	return string.format(
+		"%%#%s# %s │ %s %%#%s#%s",
+		hls.body,
+		esc_stl(context.icon .. context.name),
+		names[mode] or mode:upper(),
+		hls.tail,
+		R_ROUND
+	)
+end
 
 local function fold_path(path, max_width)
 	if vim.fn.strdisplaywidth(path) <= max_width then
@@ -208,7 +235,11 @@ end
 
 function C.ruler(buf, win, mode_hl)
 	local ft = api.nvim_get_option_value("filetype", { buf = buf })
-	local row = api.nvim_win_get_cursor(win)[1]
+	if ft == "" and vim.bo[buf].buftype == "terminal" then
+		ft = "terminal"
+	end
+	local cursor = api.nvim_win_get_cursor(win)
+	local row = cursor[1]
 	local total = api.nvim_buf_line_count(buf)
 	local progress = (row <= 1) and "󰘣"
 		or (row >= total and "󰘡" or string.format("%d%%%%", math.floor((row / total) * 100)))
@@ -218,7 +249,7 @@ function C.ruler(buf, win, mode_hl)
 
 	local hls = get_capsule_hl(mode_hl, true)
 	local progress_str = string.format("%%#%s# %s ", hls.body, progress)
-	local cursor_str = string.format("%%#%s# %%l:%%c", hls.tail)
+	local cursor_str = string.format("%%#%s# %d:%d", hls.tail, row, cursor[2] + 1)
 	local sep_str = string.format("%%#%s#%s", hls.tail, L_ROUND)
 
 	return string.format("%%#StatusLine# %s%s %s %s%s", icon_str, esc_stl(ft), cursor_str, sep_str, progress_str)
@@ -228,13 +259,18 @@ function M.render()
 	local win = vim.g.statusline_winid or api.nvim_get_current_win()
 	local buf = api.nvim_win_get_buf(win)
 
-	if win ~= api.nvim_get_current_win() then
+	local current_win = api.nvim_get_current_win()
+	local context = floatty.window_context(current_win)
+	if context then
+		win = current_win
+		buf = api.nvim_win_get_buf(win)
+	elseif win ~= current_win then
 		return C.file_capsule(buf, win, "StatusLineNormal", false)
 	end
 
 	local mode_hl = current_mode_group()
 	return table.concat({
-		C.file_capsule(buf, win, mode_hl, true),
+		context and C.float_capsule(context, mode_hl) or C.file_capsule(buf, win, mode_hl, true),
 		C.git(buf),
 		C.lsp(buf),
 		"%=",

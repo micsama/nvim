@@ -45,6 +45,11 @@ return {
 	runners = runners,
 	autoclose_ms = autoclose_ms,
 	window = { w = 0.8, h = 0.8, border = "rounded", zindex = 50 },
-	network = { interval_ms = 10000 }, -- Google 后台连通探测周期，可改为 5000
+	network = {
+		interval_ms = 10000, -- 后台探测周期；上次请求未完成时不重叠发起
+		connect_timeout_s = 10,
+		timeout_s = 30,
+		url = "https://speed.cloudflare.com/cdn-cgi/trace",
+	},
 	pulse = { enabled = true, period_s = 4.8, interval_ms = 80 },
 }

@@ -32,6 +32,7 @@ require("catppuccin").setup({
 
 			StatusLineNormal = { link = "TabProject" },
 			StatusLineInsert = { fg = colors.green, bold = true },
+			StatusLineTerminal = { fg = colors.teal, bold = true },
 			StatusLineVisual = { fg = colors.yellow, bold = true },
 			StatusLineCmd = { fg = colors.blue, bold = true },
 			StatusLineReplace = { fg = colors.red, bold = true },

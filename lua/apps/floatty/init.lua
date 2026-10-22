@@ -13,8 +13,9 @@ local network = require("apps.floatty.network")
 
 M.toggle = controller.toggle
 M.pick = controller.pick
+M.window_context = controller.window_context
 
---- statusline 片段：Google 连通状态 + AI 后台会话 + 上次未正常关闭的孤儿会话。
+--- statusline 片段：网络连通状态与出口地区 + AI 后台会话 + 上次未正常关闭的孤儿会话。
 --- 返回已带高亮的 statusline 字符串，仅读取缓存。
 function M.statusline_segment()
 	local items = controller.active_menu_indices()

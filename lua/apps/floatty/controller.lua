@@ -15,6 +15,15 @@ local pulse = require("apps.floatty.pulse")
 -- ctx_cache: 缓存文件上下文，防止在 Terminal 里获取不到文件类型
 local state = { terms = {}, last_id = nil, ctx_cache = nil }
 
+--- 当前窗口对应的 Floatty 应用；供底部状态栏跟随浮窗焦点。
+function M.window_context(win)
+	for _, term in pairs(state.terms) do
+		if term.win == win and term.buf and vim.api.nvim_buf_is_valid(term.buf) then
+			return { name = term.cfg.name, icon = term.cfg.icon or "" }
+		end
+	end
+end
+
 -- =============================================================================
 -- 1. 配置定义 (Data)
 -- =============================================================================
@@ -35,11 +44,14 @@ local function get_win_opts(cfg)
 	local w, h = cfg.w or options.window.w, cfg.h or options.window.h
 	local cols, lines = vim.o.columns, vim.o.lines
 	local width, height = math.floor(cols * w), math.floor(lines * h)
+	local row = math.floor((lines - height) / 2)
+	-- 顶边保持原位，底边收一行；连同上下边框避开底部 statusline。
+	height = math.max(1, math.min(height - 1, lines - vim.o.cmdheight - 1 - row - 2))
 	return {
 		relative = "editor",
 		width = width,
 		height = height,
-		row = (lines - height) / 2,
+		row = row,
 		col = (cols - width) / 2,
 		style = "minimal",
 		border = options.window.border,
