@@ -38,3 +38,4 @@ Session.vim
 .claude/
 GEMINI.md
 /scripts/summary.md
+__pycache__/

@@ -75,10 +75,6 @@
     "which-key.nvim": {
       "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
       "src": "https://github.com/folke/which-key.nvim"
-    },
-    "wildfire.nvim": {
-      "rev": "918a1873c2b8010baa034f373cf28c53ce4f038f",
-      "src": "https://github.com/SUSTech-data/wildfire.nvim"
     }
   }
 }

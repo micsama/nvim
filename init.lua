@@ -56,7 +56,6 @@ vim.pack.add({
     "https://github.com/rcarriga/nvim-notify",                       -- 通知系统
 
     -- D. 编辑器增强与生产力 (Editing Enhancements & Productivity)
-    "https://github.com/SUSTech-data/wildfire.nvim",                 -- 支持按回车键范围选择
     "https://github.com/nvim-treesitter/nvim-treesitter-context",    -- Treesitter 上下文显示
     "https://github.com/shellRaining/hlchunk.nvim",                  -- 高亮当前代码块/缩进块
     "https://github.com/mbbill/undotree",                            -- 可视化撤销树

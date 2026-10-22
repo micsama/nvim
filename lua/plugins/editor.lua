@@ -33,12 +33,21 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- ============================================================================
+-- 2.5) 回车扩选（原生 treesitter 选区，支持注入语言；特殊 buffer 如 quickfix 保持原回车）
+-- ============================================================================
+-- 直接复用内置 v_an / v_in（它们本身就是映射，所以需要 remap）
+map("n", "<CR>", function()
+	return vim.bo.buftype == "" and "van" or "<CR>"
+end, { expr = true, remap = true, desc = "Treesitter 扩选" })
+map("x", "<CR>", "an", { remap = true, desc = "Treesitter 向外扩" })
+map("x", "<BS>", "in", { remap = true, desc = "Treesitter 向内缩" })
+
+-- ============================================================================
 -- 3) 延迟加载：首次进入 FileType
 -- ============================================================================
 vim.api.nvim_create_autocmd("FileType", {
 	once = true,
 	callback = function()
-		require("wildfire").setup({}) -- 默认配置
 		require("treesitter-context").setup({ max_lines = 7, multiline_threshold = 3, mode = "topline" })
 		require("neoclip").setup({ enable_persistent_history = true })
 	end,
