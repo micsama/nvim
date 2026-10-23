@@ -46,10 +46,10 @@ return {
 	autoclose_ms = autoclose_ms,
 	window = { w = 0.8, h = 0.8, border = "rounded", zindex = 50 },
 	network = {
-		interval_ms = 10000, -- 后台探测周期；上次请求未完成时不重叠发起
+		interval_ms = 120000, -- 每两分钟查询一次；多实例共享结果
 		connect_timeout_s = 10,
 		timeout_s = 30,
-		url = "https://speed.cloudflare.com/cdn-cgi/trace",
+		url = "https://ipinfo.io/country",
 	},
 	notifications = { enabled = true, poll_ms = 1000, timeout_ms = 5000, retention_s = 86400 },
 	pulse = { enabled = true, period_s = 4.8, interval_ms = 80 },

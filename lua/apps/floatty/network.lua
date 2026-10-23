@@ -1,4 +1,4 @@
--- 单个国外诊断接口同时提供连通性与出口地区；状态栏只读内存。
+-- 单次 HTTPS 请求查询代理出口国家；状态栏只读内存。
 local M = {}
 local uv = vim.uv
 local store = require("utils.json_store")
@@ -38,7 +38,7 @@ function M.statusline_segment()
 		elseif seconds >= 60 then
 			elapsed = ("%d分%02d秒"):format(math.floor(seconds / 60), seconds % 60)
 		end
-		return (" %%#DiagnosticError#网络 × %s（已离线 %s）"):format(failure, elapsed)
+		return (" %%#DiagnosticWarn#网络 ? %s（探测失败 %s）"):format(failure, elapsed)
 	end
 	return " %#Comment#网络 …"
 end
@@ -145,6 +145,7 @@ function M.setup(group)
 			complete(false, "未配置代理")
 			return
 		end
+
 		local ok, process = pcall(vim.system, {
 			"curl",
 			"--disable",
@@ -162,6 +163,9 @@ function M.setup(group)
 			options.url,
 		}, { text = true, timeout = (options.timeout_s + 1) * 1000 }, function(result)
 			vim.schedule(function()
+				if current ~= generation then
+					return
+				end
 				if result.code ~= 0 then
 					local reasons = {
 						[5] = "代理解析失败",
@@ -175,7 +179,7 @@ function M.setup(group)
 					}
 					complete(false, reasons[result.code] or ("请求失败 " .. result.code))
 				else
-					local region = ("\n" .. (result.stdout or "") .. "\n"):match("\nloc=([A-Z][A-Z])[\r\n]")
+					local region = vim.trim(result.stdout or ""):match("^[A-Z][A-Z]$")
 					complete(true, nil, region)
 				end
 			end)

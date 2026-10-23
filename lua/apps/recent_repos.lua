@@ -142,8 +142,12 @@ function M.open(path)
 	end
 
 	-- 最近项目入口只保留一个项目标签页，沿用当前 Tab，关闭其他 Tab。
-	vim.cmd.tabonly()
-	vim.cmd.only()
+	if #vim.api.nvim_list_tabpages() > 1 then
+		vim.cmd.tabonly()
+	end
+	if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+		vim.cmd.only()
+	end
 	vim.cmd.tcd({ args = { path } })
 	M.enter(path) -- tcd 通常已经触发 DirChanged 计数；这里兜底，enter 自带去重
 
@@ -320,7 +324,13 @@ function M.picker(opts)
 					if not selection then
 						return
 					end
-					M.open(selection.value.path)
+					local path = selection.value.path
+					-- 连续切换仓库时曾在 :edit 触发 E812（自动命令改变了 buffer）。
+					-- 延后一轮事件循环，让 Telescope 关闭窗口及预览的清理事件先结束，
+					-- 避免在选择器动作的调用栈内立即切目录、打开文件；不要改回直接调用。
+					vim.schedule(function()
+						M.open(path)
+					end)
 				end)
 
 				local function refresh()
