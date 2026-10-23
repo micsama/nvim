@@ -19,6 +19,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	end,
 })
 
+-- JSONL / NDJSON 每行一个 JSON 值，复用 JSON parser；保留独立 filetype，避免普通 JSON LSP 误诊。
+vim.treesitter.language.register("json", "jsonl")
+
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("DeferredTreesitter", { clear = true }),
 	callback = function(args)

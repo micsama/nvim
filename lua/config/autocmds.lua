@@ -63,5 +63,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
 vim.filetype.add({
 	extension = {
 		log = "log",
+		jsonl = "jsonl",
+		ndjson = "jsonl",
 	},
 })
