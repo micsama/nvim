@@ -26,11 +26,17 @@ end
 -- 3. 插件管理：使用 vim.pack.add 定义所有插件列表，方便统一管理，都放一起。
 -- vim.pack 的 spec 只认 src/name/version/data，构建步骤要靠 PackChanged 钩子执行；
 -- 必须在第一次 vim.pack.add 之前注册，首次安装时才会触发。
+-- 无 UI 时（upall 里 headless 跑 vim.pack.update）nvim 会马上退出，异步构建要等它跑完。
+local function headless() return #vim.api.nvim_list_uis() == 0 end
 local pack_builds = {
-    ["telescope-fzf-native.nvim"] = function(path) vim.system({ "make" }, { cwd = path }) end,
+    ["telescope-fzf-native.nvim"] = function(path)
+        local job = vim.system({ "make" }, { cwd = path })
+        if headless() then job:wait() end
+    end,
     ["nvim-treesitter"] = function(_, active)
         if not active then vim.cmd.packadd("nvim-treesitter") end
-        vim.cmd("TSUpdate")
+        local task = require("nvim-treesitter").update(nil, { summary = true })
+        if headless() then task:wait(300000) end
     end,
 }
 vim.api.nvim_create_autocmd("PackChanged", {
