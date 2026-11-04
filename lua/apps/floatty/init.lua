@@ -9,18 +9,17 @@
 local M = {}
 local controller = require("apps.floatty.controller")
 local claude = require("apps.floatty.claude")
-local network = require("apps.floatty.network")
 
 M.toggle = controller.toggle
 M.pick = controller.pick
 M.window_context = controller.window_context
 
---- statusline 片段：网络连通状态与出口地区 + AI 后台会话 + 上次未正常关闭的孤儿会话。
+--- statusline 片段：AI 后台会话 + 上次未正常关闭的孤儿会话。
 --- 返回已带高亮的 statusline 字符串，仅读取缓存。
 function M.statusline_segment()
 	local items = controller.active_menu_indices()
 	local orphan_idx = controller.orphan_menu_indices()
-	local s = network.statusline_segment()
+	local s = ""
 	if #items > 0 then
 		local parts = {}
 		for _, it in ipairs(items) do
@@ -48,7 +47,6 @@ end
 function M.setup()
 	local map = require("utils.map")
 	local group = vim.api.nvim_create_augroup("apps.floatty", { clear = true })
-	network.setup(group)
 	require("apps.floatty.notifications").setup(group, function()
 		local context = controller.window_context(vim.api.nvim_get_current_win())
 		return context and context.notification_id

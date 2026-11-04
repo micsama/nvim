@@ -45,12 +45,6 @@ return {
 	runners = runners,
 	autoclose_ms = autoclose_ms,
 	window = { w = 0.8, h = 0.8, border = "rounded", zindex = 50 },
-	network = {
-		interval_ms = 120000, -- 每两分钟查询一次；多实例共享结果
-		connect_timeout_s = 10,
-		timeout_s = 30,
-		url = "https://ipinfo.io/country",
-	},
 	notifications = { enabled = true, poll_ms = 1000, timeout_ms = 5000, retention_s = 86400 },
 	pulse = { enabled = true, period_s = 4.8, interval_ms = 80 },
 }

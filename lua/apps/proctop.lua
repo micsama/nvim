@@ -15,7 +15,7 @@
 local map = require("utils.map").map
 
 local M = {}
-local network = require('apps.floatty.network')
+local network = require('apps.network.probe')
 
 local BAR_WIDTH = 12
 local NS = vim.api.nvim_create_namespace('proctop')
@@ -170,7 +170,7 @@ local function collect_rows()
 
   local seen_pids = {}
   for _, row in ipairs(rows) do
-    row.transient = row.pid == network.probe_pid
+    row.transient = network.is_probe(row.pid)
     row.label = labels[row.pid] or (row.transient and "网络探测" or nil)
     row.live_cpu_pct = compute_live_cpu_pct(row, now_ms)
     seen_pids[row.pid] = true

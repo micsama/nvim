@@ -5,6 +5,7 @@
 vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 
 -- 1. 加载核心配置
+require("apps.network").setup() -- 在插件和子进程启动前应用代理
 require("config.base") -- 加载基础 Vim/Neovim 选项配置
 require("config.keymaps") -- 加载全局键盘快捷键映射
 require("config.autocmds") -- 纯内置自动命令

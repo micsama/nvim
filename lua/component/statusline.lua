@@ -274,6 +274,7 @@ function M.render()
 		C.git(buf),
 		C.lsp(buf),
 		"%=",
+		require("apps.network").statusline_segment(),
 		floatty.statusline_segment(),
 		C.lsp_progress(buf),
 		C.ruler(buf, win, mode_hl),

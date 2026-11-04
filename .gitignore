@@ -25,7 +25,6 @@ tmp/
 tags
 
 .env
-lua/config/local.lua
 
 mini.md
 AGENTS.md
