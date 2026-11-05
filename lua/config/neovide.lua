@@ -82,6 +82,7 @@ vim.g.neovide_cursor_animate_in_insert_mode = true -- 插入模式下也启用�
 vim.g.neovide_scroll_animation_far_lines = 1 -- 启用快速滚动时的平滑动画
 vim.g.neovide_cursor_vfx_particle_density = 15.0 -- 光标特效粒子密度
 vim.g.neovide_underline_stroke_scale = 1.0 -- 下划线笔触缩放比例
+vim.g.neovide_system_scrollbar = true -- macOs原生滚动条
 
 vim.g.neovide_scale_factor = vim.g.neovide_scale_factor or 1.0
 
