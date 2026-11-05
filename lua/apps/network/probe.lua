@@ -7,6 +7,7 @@ local ffi = require("ffi")
 ffi.cdef("int flock(int fd, int operation);")
 local entries = {}
 local directory = vim.fn.stdpath("state") .. "/network"
+M.directory = directory
 local reasons = {
 	[5] = "代理解析失败",
 	[6] = "域名解析失败",
@@ -65,6 +66,25 @@ function M.check(exit, force, changed)
 	local started = uv.hrtime()
 	entry.record = vim.tbl_extend("force", previous, { next_probe_at = os.time() + options.timeout_s + 1 })
 	store.write(entry.path .. ".json", entry.record)
+	local function finish(code, stdout, failure)
+		entry.job = nil
+		local country = vim.trim(stdout or ""):match("^[A-Z][A-Z]$")
+		local ok = code == 0 and country ~= nil
+		entry.record = {
+			status = ok and "ok" or "failed",
+			country = ok and country or nil,
+			failure = not ok and (failure or reasons[code] or "探测失败") or nil,
+			offline_since = not ok and (previous.offline_since or os.time()) or nil,
+			elapsed_ms = math.floor((uv.hrtime() - started) / 1e6),
+			checked_at = os.time(),
+			next_probe_at = os.time() + options.interval_s,
+		}
+		store.write(entry.path .. ".json", entry.record)
+		uv.fs_close(entry.fd)
+		entry.fd = nil
+		changed()
+	end
+	-- --proxy "" 即直连；--noproxy "" 防止 no_proxy 环境变量绕过所选代理。
 	local args = {
 		"curl",
 		"--disable",
@@ -78,32 +98,26 @@ function M.check(exit, force, changed)
 		"--proxy",
 		exit.proxy,
 		"--noproxy",
-		exit.proxy == "" and "*" or "",
+		"",
 		options.url,
 	}
-	entry.job = vim.system(args, { text = true, timeout = (options.timeout_s + 1) * 1000 }, function(result)
-		vim.schedule(function()
-			if entries[exit.id] ~= entry then
-				return
-			end
-			entry.job = nil
-			local country = vim.trim(result.stdout or ""):match("^[A-Z][A-Z]$")
-			local ok = result.code == 0 and country ~= nil
-			entry.record = {
-				status = ok and "ok" or "failed",
-				country = ok and country or nil,
-				failure = not ok and (reasons[result.code] or "探测失败") or nil,
-				offline_since = not ok and (previous.offline_since or os.time()) or nil,
-				elapsed_ms = math.floor((uv.hrtime() - started) / 1e6),
-				checked_at = os.time(),
-				next_probe_at = os.time() + options.interval_s,
-			}
-			store.write(entry.path .. ".json", entry.record)
-			uv.fs_close(entry.fd)
-			entry.fd = nil
-			changed()
-		end)
-	end)
+	local spawned, job = pcall(
+		vim.system,
+		args,
+		{ text = true, timeout = (options.timeout_s + 1) * 1000 },
+		function(result)
+			vim.schedule(function()
+				if entries[exit.id] == entry then
+					finish(result.code, result.stdout)
+				end
+			end)
+		end
+	)
+	if spawned then
+		entry.job = job
+	else
+		finish(-1, nil, "无法启动 curl")
+	end
 end
 
 function M.describe(exit)
@@ -122,10 +136,6 @@ function M.describe(exit)
 		return ("✓ %s · %d ms"):format(record.country, record.elapsed_ms)
 	end
 	return "× " .. record.failure
-end
-
-function M.setup()
-	vim.fn.mkdir(directory, "p", 448)
 end
 
 function M.stop()

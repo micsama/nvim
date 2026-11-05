@@ -5,13 +5,13 @@
 vim.loader.enable() -- 启用 LuaJIT 加载器，优化启动速度
 
 -- 1. 加载核心配置
-require("apps.network").setup() -- 在插件和子进程启动前应用代理
+require("apps.network").apply_saved() -- 在插件和子进程启动前应用代理环境变量
 require("config.base") -- 加载基础 Vim/Neovim 选项配置
 require("config.keymaps") -- 加载全局键盘快捷键映射
 require("config.autocmds") -- 纯内置自动命令
 -- 自制独立功能：require 时无副作用，keymap / 命令 / augroup 都在各自的 setup() 里
--- floatty 浮窗终端 · proctop 进程监控 · zoom 窗口放大 · recent_repos 最近仓库
-for _, app in ipairs({ "floatty", "proctop", "zoom", "recent_repos" }) do
+-- network 代理出口 · floatty 浮窗终端 · proctop 进程监控 · zoom 窗口放大 · recent_repos 最近仓库
+for _, app in ipairs({ "network", "floatty", "proctop", "zoom", "recent_repos" }) do
 	require("apps." .. app).setup()
 end
 
@@ -92,4 +92,3 @@ require("config.deferred") -- 依赖插件的延迟加载
 require("component.stldata").setup()
 require("component.statusline").setup()
 require("component.tabline").setup()
-
