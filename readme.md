@@ -23,8 +23,8 @@ lua/
 │   ├── lsp.lua            #   诊断 UI + vim.lsp.enable() 服务列表
 │   ├── deferred.lua       #   VimEnter/FileType 触发的延迟加载
 │   ├── floatty.lua        #   Floatty 应用列表/快捷键/Runner/窗口参数
-│   ├── neovide.lua        #   仅 Neovide 客户端生效的设置
-│   └── local.lua.example  #   本机专属配置（代理等）模板，真实文件已 gitignore
+│   ├── network.lua        #   网络出口列表（代理地址）与探测参数
+│   └── neovide.lua        #   仅 Neovide 客户端生效的设置
 ├── plugins/               # 插件的具体配置（插件已注册后加载）
 │   ├── mini.lua           #   mini.nvim 各模块：补全/文件树/git/图标/代码片段…
 │   ├── ui.lua             #   notify、which-key、原生 UI2
@@ -45,6 +45,7 @@ lua/
 │   │   ├── registry.lua   #     持久会话注册表（孤儿会话续接）
 │   │   ├── claude.lua     #     Claude Code 会话元数据 watcher
 │   │   └── pulse.lua      #     busy 时的呼吸边框
+│   ├── network/           #   代理出口切换（:Proxy）+ 出口国家探测，状态栏显示
 │   ├── proctop.lua        #   子进程 CPU/内存监视器 (<D-p> / :ProcTop)
 │   ├── recent_repos.lua   #   最近 Git 仓库 frecency 排序 + Telescope picker
 │   └── zoom.lua           #   窗口最大化/恢复 (<D-f>)
@@ -168,8 +169,10 @@ nvim
 
 - Floatty 的常改参数集中在 `lua/config/floatty.lua`，保持原有应用顺序与快捷键。`apps` 配置会复制后使用，运行状态不会写回配置表。
 - 应用可设置 `key`、`pick_key`、`cmd`、`shell`、`w`、`h`、`idle_ttl_ms`；AI 菜单通过 `choices` 配置，Claude 配置目录使用 `claude.dir`。
-- 网络状态通过 `https_proxy` / `HTTPS_PROXY` 请求单个国外接口 `https://speed.cloudflare.com/cdn-cgi/trace`，同时检查连通性并读取出口地区，不再请求 Google。后台周期 10 秒，连接超时 10 秒、总超时 30 秒；请求未完成时不重叠发起。配置位于 `lua/config/floatty.lua` 的 `network`。状态栏展示地区旗帜及代码：澳大利亚绿色、其他地区或地区未知黄色；失败红色，显示失败原因和持续离线时长（每秒更新，恢复后清零）。首次失败 notify，同一故障期间不重复提醒。PAC 下地区代表该诊断域名的出口；打开浮窗不等待探测。通知窗口层级设为 300，位于 Floatty 上方。
-- 相同代理及探测配置的多个 Neovim 共享网络结果：只有一个实例运行 curl，使用内核文件锁选出探测者；退出或崩溃后其他实例自动接替。不同代理配置单独探测。ProcTop 中正在运行的探测仍标为“网络探测”，退出后不归档，其他任务的 curl 不受影响。共享锁使用 macOS / Linux 的 flock。
+- 网络出口独立为 `lua/apps/network/`，出口列表在 `lua/config/network.lua`（默认 HTTP 7890、HTTP 1082、直连）。`:Proxy`（命令行可直接输 `:proxy`）选择出口：同步设置大小写 `http(s)_proxy`，清掉 `ALL_PROXY`，记住选择；启动最早期 `apply_saved()` 恢复，插件和子进程都继承。
+- 后台每 120 秒对全部出口请求 `https://ipinfo.io/country`，选择列表只显示缓存结果、不等待，末项可强制重测。状态栏显示当前出口与国家，仅 AU 为绿色；失败显示原因和持续时间。
+- 「直连」用 `curl --proxy ""` 忽略代理环境变量，家里路由器 HomeProxy 透明代理时选它。HomeProxy 分流规则匹配域名 `ipinfo.io` 即可（不用写 `https://` 或 `/country`），送往想监测的节点 / 策略组。结果只代表探测域名的出口，不能证明所有网站都走同一路线。
+- 同一出口的多个 Neovim 共享探测结果：持有 flock 的实例才运行 curl，退出或崩溃后其他实例接替。ProcTop 把正在运行的探测标为“网络探测”。
 - Floatty 的 Codex / Claude 通过官方回调写入本机事件文件，当前聚焦的 Neovim 使用 notify 提醒“本轮结束 / 等待授权”；后台事件在重新聚焦时汇总。同一浮窗的完成事件静默，授权事件始终提醒。配置位于 `notifications`。Codex 首次需在 `/hooks` 信任新增的 PermissionRequest / PostToolUse hook；Claude 授权提醒使用 `permission_prompt`，实际等待约 6 秒才触发，也覆盖网络授权。仅影响重启后新启动的 Floatty 会话，不修改全局 CLI 配置。详见 [通知设计](docs/design/floatty-task-notifications.md)。
 - 全局窗口默认值在 `window`，呼吸边框在 `pulse`（`enabled`、`period_s`、`interval_ms`），成功退出关窗延迟为 `autoclose_ms`。
 - 状态栏读取缓存；注册表在启动、会话操作、焦点恢复和目录变化时刷新。仍沿用共享 JSON 和最近会话恢复机制，多实例事务与精确会话恢复尚未改动。

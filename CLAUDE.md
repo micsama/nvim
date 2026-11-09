@@ -34,6 +34,7 @@
 * `deferred.lua`: 由 `VimEnter` 或 `FileType` 事件触发的延迟加载逻辑
 * `floatty.lua`: Floatty 的用户可调选项（应用列表、快捷键、Runner、窗口、动画）
 * `neovide.lua`: 针对 Neovide 客户端的特定设置
+* `network.lua`: 网络出口列表（`exits`：id / name / proxy，`""` 为直连）与探测参数
 
 
 3. **lua/plugins/** - 插件配置文件（在插件注册后加载）
@@ -63,6 +64,7 @@
   * `claude.lua`: Claude Code 会话元数据 watcher（`STATUS_GLYPHS`、`--session-id`、`-c` 续接）
   * `pulse.lua`: Claude busy 时的呼吸边框
   * 多种模式：终端、Lazygit、AI 菜单 (Codex/Claude/Shell)；**Runner 模式**根据文件类型自动选择运行命令（Python: `uv run`, Lua: `lua` 等）
+* `network/`: 代理出口切换（`:Proxy`）与出口国家探测；`init.lua` 提供 `apply_saved()`（init.lua 最早调用，恢复代理环境变量）和 `statusline_segment()`，`probe.lua` 用 flock 让多实例共享 curl 探测结果
 * `proctop.lua`: 子进程 CPU/内存监视器（`<D-p>` / `:ProcTop`）
 * `recent_repos.lua`: 最近 Git 仓库 frecency 排序与 Telescope picker；自己监听 `VimEnter` / `DirChanged` / `TabEnter`，cwd 为 git 根时计一次访问
 * `zoom.lua`: 窗口最大化/恢复切换（`<D-f>`）
