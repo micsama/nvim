@@ -85,7 +85,7 @@ vim.pack.add({ "https://github.com/..." }, { load = function() end })
 | UI/外观 | catppuccin、which-key.nvim、nvim-notify |
 | 搜索 | telescope.nvim + telescope-fzf-native.nvim |
 | 语法 | nvim-treesitter、nvim-treesitter-context、nvim-ts-autotag |
-| 编辑增强 | wildfire.nvim、hlchunk.nvim、undotree、nvim-neoclip.lua |
+| 编辑增强 | hlchunk.nvim、undotree、nvim-neoclip.lua |
 | AI | codecompanion.nvim（按需加载） |
 | 语言工具安装 | mason.nvim（首次 `:Mason*` 时 setup） |
 | Markdown | render-markdown.nvim、bullets.nvim（首个 markdown buffer 时加载） |
