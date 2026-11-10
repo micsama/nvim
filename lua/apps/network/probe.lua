@@ -46,10 +46,15 @@ end
 function M.check(exit, force, changed)
 	M.get(exit)
 	local entry = entries[exit.id]
-	if entry.job then
+	-- 内存里的 next_probe_at 未到就不碰磁盘；到点再读共享结果（可能已被其他实例更新）。
+	if entry.job or (not force and os.time() < (entry.record.next_probe_at or 0)) then
 		return
 	end
+	local checked_at = entry.record.checked_at
 	entry.record = store.read(entry.path .. ".json", {})
+	if entry.record.checked_at ~= checked_at then
+		changed()
+	end
 	if not force and os.time() < (entry.record.next_probe_at or 0) then
 		return
 	end

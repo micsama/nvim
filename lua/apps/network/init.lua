@@ -91,7 +91,10 @@ function M.setup()
 		1000,
 		vim.schedule_wrap(function()
 			M.refresh(false)
-			vim.cmd.redrawstatus() -- 失败持续时间按秒走动
+			-- 结果变化由探测回调重绘；只有失败时状态栏的持续秒数需要逐秒走动。
+			if probe.get(selected).status == "failed" then
+				vim.cmd.redrawstatus()
+			end
 		end)
 	)
 	vim.api.nvim_create_autocmd("VimLeavePre", {
