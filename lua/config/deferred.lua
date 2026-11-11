@@ -21,6 +21,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 -- JSONL / NDJSON 每行一个 JSON 值，复用 JSON parser；保留独立 filetype，避免普通 JSON LSP 误诊。
 vim.treesitter.language.register("json", "jsonl")
+-- .env 是 KEY=value，语法是 sh 的子集，复用 bash parser；保留 env filetype，不触发 bashls。
+vim.treesitter.language.register("bash", "env")
 
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("DeferredTreesitter", { clear = true }),
